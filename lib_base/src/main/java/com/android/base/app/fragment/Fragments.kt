@@ -1,0 +1,463 @@
+@file:JvmName("Fragments")
+
+package com.android.base.app.fragment
+
+
+import android.support.annotation.NonNull
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
+import android.view.View
+import com.android.base.app.activity.ActivityDelegate
+import com.android.base.app.activity.ActivityDelegateOwner
+import com.android.base.app.activity.ActivityStatus
+import com.android.base.kotlin.javaClassName
+import kotlin.reflect.KClass
+
+@JvmOverloads
+fun Fragment.exitFragment(immediate: Boolean = false) {
+    activity.exitFragment(immediate)
+}
+
+@JvmOverloads
+fun FragmentActivity?.exitFragment(immediate: Boolean = false) {
+    if (this == null) {
+        return
+    }
+    val supportFragmentManager = this.supportFragmentManager
+    val backStackEntryCount = supportFragmentManager.backStackEntryCount
+    if (backStackEntryCount > 0) {
+        if (immediate) {
+            supportFragmentManager.popBackStackImmediate()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
+    } else {
+        this.supportFinishAfterTransition()
+    }
+}
+
+/**
+ * @param clazz    the interface container must implemented
+ * @param <T>      Type
+ * @return the interface context must implemented
+ */
+fun <T> Fragment.requireContainerImplement(clazz: Class<T>): T? {
+    if (clazz.isInstance(parentFragment)) {
+        return clazz.cast(parentFragment)
+    }
+    return if (clazz.isInstance(activity)) {
+        clazz.cast(activity)
+    } else {
+        throw RuntimeException("use this Fragment:$this, Activity or Fragment must impl interface :$clazz")
+    }
+}
+
+/**
+ * @param clazz    the interface context must implemented
+ * @param <T>      Type
+ * @return the interface context must implemented
+ */
+fun <T> Fragment.requireContextImplement(clazz: Class<T>): T? {
+    return if (!clazz.isInstance(activity)) {
+        throw RuntimeException("use this Fragment:$this, Activity must impl interface :$clazz")
+    } else {
+        clazz.cast(activity)
+    }
+}
+
+/**
+ * @param clazz    the interface parent must implemented
+ * @param <T>      Type
+ * @return the interface context must implemented
+ */
+fun <T> Fragment.requireParentImplement(clazz: Class<T>): T? {
+    return if (!clazz.isInstance(parentFragment)) {
+        throw RuntimeException("use this Fragment:$this, ParentFragment must impl interface :$clazz")
+    } else {
+        clazz.cast(parentFragment)
+    }
+}
+
+/** 使用 [clazz] 的全限定类名作为 tag 查找 Fragment */
+fun <T : Fragment> FragmentManager.findFragmentByTag(clazz: KClass<T>): T? {
+    @Suppress("UNCHECKED_CAST")
+    return findFragmentByTag(clazz.java.name) as? T
+}
+
+fun FragmentManager.popBackTo(flag: String, immediate: Boolean = false) {
+    if (immediate) {
+        popBackStackImmediate(flag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    } else {
+        popBackStack(flag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+}
+
+fun FragmentManager.clearBackStack(immediate: Boolean = false) {
+    if (immediate) {
+        this.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    } else {
+        this.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+}
+
+private fun FragmentManager.isFragmentInStack(clazz: Class<out Fragment>): Boolean {
+    val backStackEntryCount = backStackEntryCount
+    if (backStackEntryCount == 0) {
+        return false
+    }
+    for (i in 0 until backStackEntryCount) {
+        if (clazz.name == getBackStackEntryAt(i).name) {
+            return true
+        }
+    }
+    return false
+}
+
+inline fun FragmentManager.inTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+    val fragmentTransaction = beginTransaction()
+    EnhanceFragmentTransaction(this, fragmentTransaction).func()
+    fragmentTransaction.commit()
+}
+
+inline fun FragmentActivity.inFragmentTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+    val transaction = supportFragmentManager.beginTransaction()
+    EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
+    transaction.commit()
+}
+
+fun <T> T.inSafelyFragmentTransaction(
+        func: EnhanceFragmentTransaction.() -> Unit
+): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
+
+    var delegate = findDelegate {
+        it is SafelyFragmentTransactionActivityDelegate
+    }as? SafelyFragmentTransactionActivityDelegate
+
+    if (delegate == null) {
+        delegate = SafelyFragmentTransactionActivityDelegate()
+        addDelegate(delegate)
+    }
+
+    val transaction = supportFragmentManager.beginTransaction()
+
+    EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
+
+    return delegate.safeCommit(this, transaction)
+}
+
+inline fun Fragment.inChildFragmentTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+    val transaction = childFragmentManager.beginTransaction()
+    EnhanceFragmentTransaction(childFragmentManager, transaction).func()
+    transaction.commit()
+}
+
+fun <T> T.inSafelyChildFragmentTransaction(
+        func: EnhanceFragmentTransaction.() -> Unit
+): Boolean where T : Fragment, T : FragmentDelegateOwner {
+
+    var delegate: SafelyFragmentTransactionFragmentDelegate? = findDelegate {
+        it is SafelyFragmentTransactionFragmentDelegate
+    } as? SafelyFragmentTransactionFragmentDelegate
+
+    if (delegate == null) {
+        delegate = SafelyFragmentTransactionFragmentDelegate()
+        addDelegate(delegate)
+    }
+
+    val transaction = childFragmentManager.beginTransaction()
+
+    EnhanceFragmentTransaction(childFragmentManager, transaction).func()
+
+    return delegate.safeCommit(this, transaction)
+}
+
+private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<FragmentActivity> {
+
+    private val mPendingTransactions = mutableListOf<FragmentTransaction>()
+
+    fun safeCommit(@NonNull activityDelegateOwner: ActivityDelegateOwner, @NonNull transaction: FragmentTransaction): Boolean {
+        val status = activityDelegateOwner.status
+        val isCommitterResumed = (status == ActivityStatus.CREATE || status == ActivityStatus.START || status == ActivityStatus.RESUME)
+
+        return if (isCommitterResumed) {
+            transaction.commit()
+            false
+        } else {
+            mPendingTransactions.add(transaction)
+            true
+        }
+    }
+
+    override fun onResumeFragments() {
+        if (mPendingTransactions.isNotEmpty()) {
+            mPendingTransactions.forEach { it.commit() }
+            mPendingTransactions.clear()
+        }
+    }
+
+}
+
+private class SafelyFragmentTransactionFragmentDelegate : FragmentDelegate<Fragment> {
+
+    private val mPendingTransactions = mutableListOf<FragmentTransaction>()
+
+    fun safeCommit(@NonNull fragment: Fragment, @NonNull transaction: FragmentTransaction): Boolean {
+        return if (fragment.isResumed) {
+            transaction.commit()
+            false
+        } else {
+            mPendingTransactions.add(transaction)
+            true
+        }
+    }
+
+    override fun onResume() {
+        if (!mPendingTransactions.isEmpty()) {
+            mPendingTransactions.forEach { it.commit() }
+            mPendingTransactions.clear()
+        }
+    }
+
+}
+
+class EnhanceFragmentTransaction constructor(
+        private val fragmentManager: FragmentManager,
+        private val fragmentTransaction: FragmentTransaction
+) : FragmentTransaction() {
+
+    //------------------------------------------------------------------------------------------------
+    // extra functions
+    //------------------------------------------------------------------------------------------------
+
+    /**
+     * 把 [fragment] 添加到回退栈中，并 hide 其他 fragment，
+     * 如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
+     */
+    fun addWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+        //hide top
+        hideTopFragment()
+        //set add to stack
+        val nonnullTag = (tag ?: fragment.javaClassName())
+        addToBackStack(nonnullTag)
+        //add
+        fragmentTransaction.add(containerId.confirmId(), fragment, nonnullTag)
+        if (transition) {
+            //set a transition
+            setTransitionOpen()
+        }
+        return this
+    }
+
+    /**
+     * replace 方式把 [fragment] 添加到回退栈中，
+     * 如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
+     */
+    fun replaceWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+        //set add to stack
+        val nonnullTag = (tag ?: fragment.javaClassName())
+        addToBackStack(nonnullTag)
+        //add
+        fragmentTransaction.replace(containerId.confirmId(), fragment, nonnullTag)
+        //set a transition
+        if (transition) {
+            setTransitionOpen()
+        }
+        return this
+    }
+
+    private fun Int.confirmId(): Int {
+        return if (this == 0) {
+            FragmentConfig.defaultContainerId()
+        } else {
+            this
+        }
+    }
+
+    /**
+     * 添加 [fragment]，
+     * 默认使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [tag] 为null，则使用 [fragment] 的全限定类名*
+     */
+    fun addWithDefaultContainer(fragment: Fragment, tag: String? = null): FragmentTransaction {
+        val nonnullTag = (tag ?: fragment.javaClassName())
+        return fragmentTransaction.add(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
+    }
+
+    /**
+     * 替换为 [fragment]，
+     * id 使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [tag] 为null，则使用 [fragment] 的全限定类名
+     */
+    fun replaceWithDefaultContainer(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
+        val nonnullTag = (tag ?: fragment.javaClassName())
+        if (transition) {
+            setTransitionOpen()
+        }
+        return fragmentTransaction.replace(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
+    }
+
+    /**隐藏所有的 fragment */
+    private fun hideOtherFragments() {
+        for (fragment in fragmentManager.fragments) {
+            if (fragment != null && fragment.isVisible) {
+                fragmentTransaction.hide(fragment)
+            }
+        }
+    }
+
+    /**隐藏第一个可见的 fragment */
+    private fun hideTopFragment() {
+        fragmentManager.fragments.lastOrNull { it.isVisible }?.let {
+            fragmentTransaction.hide(it)
+        }
+    }
+
+    fun setTransitionOpen(): FragmentTransaction {
+        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+    }
+
+    fun setTransitionClose(): FragmentTransaction {
+        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+    }
+
+    fun setTransitionFade(): FragmentTransaction {
+        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+    }
+
+    //------------------------------------------------------------------------------------------------
+    // original functions
+    //------------------------------------------------------------------------------------------------
+    override fun setBreadCrumbShortTitle(res: Int): FragmentTransaction {
+        return fragmentTransaction.setBreadCrumbShortTitle(res)
+    }
+
+    override fun setBreadCrumbShortTitle(text: CharSequence?): FragmentTransaction {
+        return fragmentTransaction.setBreadCrumbShortTitle(text)
+    }
+
+    override fun setPrimaryNavigationFragment(fragment: Fragment?): FragmentTransaction {
+        return fragmentTransaction.setPrimaryNavigationFragment(fragment)
+    }
+
+    override fun runOnCommit(runnable: Runnable): FragmentTransaction {
+        return fragmentTransaction.runOnCommit(runnable)
+    }
+
+    override fun add(fragment: Fragment, tag: String?): FragmentTransaction {
+        return fragmentTransaction.add(fragment, tag)
+    }
+
+    override fun add(containerViewId: Int, fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.add(containerViewId, fragment)
+    }
+
+    override fun add(containerViewId: Int, fragment: Fragment, tag: String?): FragmentTransaction {
+        return fragmentTransaction.add(containerViewId, fragment, tag)
+    }
+
+    override fun hide(fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.hide(fragment)
+    }
+
+    override fun replace(containerViewId: Int, fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.replace(containerViewId, fragment)
+    }
+
+    override fun replace(containerViewId: Int, fragment: Fragment, tag: String?): FragmentTransaction {
+        return fragmentTransaction.replace(containerViewId, fragment, tag)
+    }
+
+    override fun detach(fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.detach(fragment)
+    }
+
+    @Deprecated("")
+    override fun setAllowOptimization(allowOptimization: Boolean): FragmentTransaction {
+        return fragmentTransaction.setAllowOptimization(allowOptimization)
+    }
+
+    override fun setCustomAnimations(enter: Int, exit: Int): FragmentTransaction {
+        return fragmentTransaction.setCustomAnimations(enter, exit)
+    }
+
+    override fun setCustomAnimations(enter: Int, exit: Int, popEnter: Int, popExit: Int): FragmentTransaction {
+        return fragmentTransaction.setCustomAnimations(enter, exit, popEnter, popExit)
+    }
+
+    override fun addToBackStack(name: String?): FragmentTransaction {
+        return fragmentTransaction.addToBackStack(name)
+    }
+
+    override fun disallowAddToBackStack(): FragmentTransaction {
+        return fragmentTransaction.disallowAddToBackStack()
+    }
+
+    override fun setTransitionStyle(styleRes: Int): FragmentTransaction {
+        return fragmentTransaction.setTransitionStyle(styleRes)
+    }
+
+    override fun setTransition(transit: Int): FragmentTransaction {
+        return fragmentTransaction.setTransition(transit)
+    }
+
+    override fun attach(fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.attach(fragment)
+    }
+
+    override fun show(fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.show(fragment)
+    }
+
+    override fun isEmpty(): Boolean {
+        return fragmentTransaction.isEmpty
+    }
+
+    override fun remove(fragment: Fragment): FragmentTransaction {
+        return fragmentTransaction.remove(fragment)
+    }
+
+    override fun isAddToBackStackAllowed(): Boolean {
+        return fragmentTransaction.isAddToBackStackAllowed
+    }
+
+    override fun addSharedElement(sharedElement: View, name: String): FragmentTransaction {
+        return fragmentTransaction.addSharedElement(sharedElement, name)
+    }
+
+    override fun setBreadCrumbTitle(res: Int): FragmentTransaction {
+        return fragmentTransaction.setBreadCrumbTitle(res)
+    }
+
+    override fun setBreadCrumbTitle(text: CharSequence?): FragmentTransaction {
+        return fragmentTransaction.setBreadCrumbTitle(text)
+    }
+
+    override fun setReorderingAllowed(reorderingAllowed: Boolean): FragmentTransaction {
+        return fragmentTransaction.setReorderingAllowed(reorderingAllowed)
+    }
+
+    @Deprecated("commit will be called automatically")
+    override fun commit(): Int {
+        throw UnsupportedOperationException("commit will be called automatically")
+    }
+
+    @Deprecated("commitAllowingStateLoss will be called automatically")
+    override fun commitAllowingStateLoss(): Int {
+        throw UnsupportedOperationException("commitAllowingStateLoss will be called automatically")
+    }
+
+    @Deprecated("commitNow will be called automatically", ReplaceWith("throw UnsupportedOperationException(\"commitNow will be called automatically\")"))
+    override fun commitNow() {
+        throw UnsupportedOperationException("commitNow will be called automatically")
+    }
+
+    @Deprecated("commitNowAllowingStateLoss will be called automatically", ReplaceWith("throw UnsupportedOperationException(\"commitNowAllowingStateLoss will be called automatically\")"))
+    override fun commitNowAllowingStateLoss() {
+        throw UnsupportedOperationException("commitNowAllowingStateLoss will be called automatically")
+    }
+
+}

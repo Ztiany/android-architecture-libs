@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    //support
+    implementation androidLibraries.androidCompatV7
+    implementation androidLibraries.androidDesign
+
+    /*imageLoader*/
+    compileOnly thirdLibraries.glide
+
+    //other optional
+    //知乎 Matisse：https://github.com/zhihu/Matisse
+    //PictureSelector ：https://github.com/LuckSiege/PictureSelector
+    //Album：https://github.com/yanzhenjie/Album
+
+    implementation('com.bilibili:boxing:1.0.4') {
+        exclude group: 'com.android.support'
+    }
+
+    implementation('com.bilibili:boxing-impl:1.0.4') {
+        exclude group: 'com.android.support'
+    }
+
+    //other optional
+    //cropper about
+    // smartCropper：https://github.com/pqpo/SmartCropper
+    // simpleCropper：https:github.com/igreenwood/SimpleCropView
+    implementation('com.yalantis:ucrop:2.2.0') {
+        exclude group: 'com.android.support'
+        exclude group: 'com.squareup.okio'
+        exclude group: 'com.squareup.okhttp3'
+    }
+}

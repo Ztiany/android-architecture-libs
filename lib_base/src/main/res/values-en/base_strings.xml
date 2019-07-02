@@ -1,0 +1,32 @@
+<resources>
+
+    <string name="Base_Confirm">Confirm</string>
+    <string name="Base_Cancel">Cancel</string>
+
+
+    <!-- ================== error layout  ================== -->
+    <string name="base_error_load_fail_tips">Failed to load/(ㄒoㄒ)/~~ </string>
+    <string name="base_error_retry_action_tips">Click me to retry</string>
+    <string name="base_error_no_data">There is no data oh !</string>
+    <string name="base_error_no_network">Network is not accessible !</string>
+    <string name="base_error_server_error">Server error!</string>
+
+    <!-- ================== permission  ================== -->
+    <string name="Base_permission_denied">%s  permission denied</string>
+    <string name="Base_request_permission_rationale">We need you to provide %s permission so that we can serve you better.</string>
+    <string name="Base_permission_denied_ask_again_rationale">Allow %2$s in Settings->Apps->%1$s to use %1$s features.</string>
+    <string name="Base_to_set_permission">Settings</string>
+
+    <string name="Base_character_seg">,&#160;</string>
+    <string name="Base_permission_name_calendar">Calendar</string>
+    <string name="Base_permission_name_camera">Camera</string>
+    <string name="Base_permission_name_contacts">Contacts</string>
+    <string name="Base_permission_name_location">Location</string>
+    <string name="Base_permission_name_microphone">Microphone</string>
+    <string name="Base_permission_name_phone">Phone information</string>
+    <string name="Base_permission_name_sensors">Body Sensors</string>
+    <string name="Base_permission_name_sms">SMS</string>
+    <string name="Base_permission_name_storage">Storage</string>
+    <string name="Base_permission_name_accounts">Accounts</string>
+
+</resources>

@@ -1,0 +1,21 @@
+<manifest package="com.android.sdk.social"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <!-- 支付宝支付 start-->
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"/>
+        <activity
+            android:name="com.alipay.sdk.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"/>
+        <!-- 支付宝支付 end-->
+
+    </application>
+
+</manifest>

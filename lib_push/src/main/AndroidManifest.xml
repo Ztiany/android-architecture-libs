@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="com.android.sdk.push"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <!-- 用户自定义的广播接收器-->
+        <receiver
+            android:name=".jpush.JPushReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <!--Required  用户注册SDK的intent-->
+                <action android:name="cn.jpush.android.intent.REGISTRATION"/>
+
+                <!--Required  用户接收SDK消息的intent-->
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED"/>
+
+                <!--Required  用户接收SDK通知栏信息的intent-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED"/>
+
+                <!--Required  用户打开自定义通知栏的intent，用户点击了通知。 一般情况下，用户不需要配置此 receiver action。
+                如果开发者在 AndroidManifest.xml 里未配置此 receiver action，那么，SDK 会默认打开应用程序的主 Activity，相当于用户点击桌面图标的效果。-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED"/>
+
+                <!-- 接收网络变化 连接/断开 since 1.6.3 -->
+                <action android:name="cn.jpush.android.intent.CONNECTION"/>
+                <category android:name="${JPUSH_PKGNAME}"/>
+
+            </intent-filter>
+        </receiver>
+
+        <!-- 用户自定义接收消息器，3.0.7 开始支持，目前新 tag/alias 接口设置结果会在该广播接收器对应的方法中回调-->
+        <receiver
+            android:name=".jpush.TagAliasJPushMessageReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE"/>
+                <category android:name="${JPUSH_PKGNAME}"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

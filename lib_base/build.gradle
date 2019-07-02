@@ -1,0 +1,130 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+androidExtensions {
+    experimental = true
+}
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += "src/github/java"
+            res.srcDirs += "src/github/res"
+        }
+    }
+
+    project.afterEvaluate {
+        Task assembleReleaseTask = project.tasks.findByPath("assembleRelease")
+        if (assembleReleaseTask != null) {
+            assembleReleaseTask.doLast {
+                File infile = project.file("build/outputs/aar/")
+                File outfile = project.file("./release")
+                project.copy {
+                    from infile
+                    into outfile
+                }
+            }
+        }
+    }
+
+}
+
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+
+    //测试
+    testImplementation testLibraries.junit
+
+    //AndroidSupport
+    api androidLibraries.androidCompatV4
+    api androidLibraries.androidCompatV7
+    api androidLibraries.androidRecyclerView
+    api androidLibraries.androidDesign
+    api androidLibraries.androidPrecent
+    api androidLibraries.constraintLayout
+
+    //AAC
+    api androidLibraries.lifecycle
+    api androidLibraries.lifecycleJava8
+    api androidLibraries.lifecycleExtensions
+    api androidLibraries.liveDataReactiveStreams
+
+    //Kotlin
+    api kotlinLibraries.kotlinStdlib
+    api kotlinLibraries.kotlinReflect
+    api kotlinLibraries.kotlinCoroutines
+    api kotlinLibraries.kotlinAndroidCoroutines
+
+    //RxJava
+    api thirdLibraries.rxJava
+    api thirdLibraries.rxAndroid
+    api thirdLibraries.rxBinding
+    api thirdLibraries.autoDispose
+    api thirdLibraries.autoDisposeLifecycleArchcomponents
+
+    /*Dagger2*/
+    api thirdLibraries.dagger2
+    api thirdLibraries.jsr305
+    api thirdLibraries.dagger2Android
+    api thirdLibraries.dagger2AndroidSupport
+    kapt thirdLibraries.dagger2Apt
+    kapt thirdLibraries.dagger2AndroidApt
+
+    //LoadMore
+    api uiLibraries.wrapperAdapter
+
+    //Adapter
+    api uiLibraries.multiType
+    api uiLibraries.multiTypeKotlin
+
+    //Log
+    api thirdLibraries.timber
+
+    //ImageLoader
+    api thirdLibraries.glide
+    api thirdLibraries.glideOkHttp
+    api thirdLibraries.okHttp
+
+    //Utils
+    api thirdLibraries.utilcode
+    api thirdLibraries.jOOR
+    api thirdLibraries.andPermission
+    api thirdLibraries.supportOptional
+
+}
