@@ -14,14 +14,17 @@ import static com.android.base.permission.PermissionCode.REQUEST_PERMISSION_FOR_
 class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
 
     private final boolean mShouldAskAgain;
+    private final boolean mShowTips;
+
     private ActFragWrapper mContextWrapper;
     private PermissionCallback mPermissionCallback;
     private IPermissionUIProvider mIPermissionUIProvider;
 
-    PermissionRequesterImpl(PermissionCallback permissionCallback, ActFragWrapper contextWrapper, boolean shouldAskAgain, IPermissionUIProvider iPermissionUIProvider) {
+    PermissionRequesterImpl(PermissionCallback permissionCallback, ActFragWrapper contextWrapper, boolean shouldAskAgain, boolean showTips, IPermissionUIProvider iPermissionUIProvider) {
         mPermissionCallback = permissionCallback;
         mContextWrapper = contextWrapper;
         mShouldAskAgain = shouldAskAgain;
+        mShowTips = showTips;
         mIPermissionUIProvider = iPermissionUIProvider;
     }
 
@@ -80,7 +83,9 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
     private void notifyPermissionDenied(List<String> perms) {
         Timber.d("notifyPermissionDenied() called with: perms = [" + perms + "]");
         mPermissionCallback.onPermissionDenied(perms);
-        getPermissionUIProvider().showPermissionDeniedTip(mContextWrapper.getContext(), perms.toArray(new String[0]));
+        if (mShowTips) {
+            getPermissionUIProvider().showPermissionDeniedTip(mContextWrapper.getContext(), perms.toArray(new String[0]));
+        }
     }
 
 }

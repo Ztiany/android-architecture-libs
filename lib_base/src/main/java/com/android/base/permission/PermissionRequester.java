@@ -33,18 +33,20 @@ class PermissionRequester {
     private PermissionCallback mPermissionCallback;
     private EasyPermissions.PermissionCaller mPermissionCaller;
     private final boolean mAskAgain;
+    private final boolean mShowTips;
     private final IPermissionUIProvider mPermissionUIProvider;
 
-    PermissionRequester(ActFragWrapper actFragWrapper, PermissionCallback permissionCallback, boolean askAgain, IPermissionUIProvider permissionUIProvider) {
+    PermissionRequester(ActFragWrapper actFragWrapper, PermissionCallback permissionCallback, boolean askAgain, boolean showTips, IPermissionUIProvider permissionUIProvider) {
         mPermissionCallback = permissionCallback;
         mActFragWrapper = actFragWrapper;
         mAskAgain = askAgain;
+        mShowTips = showTips;
         mPermissionUIProvider = permissionUIProvider;
     }
 
     private EasyPermissions.PermissionCaller getPermissionCaller() {
         if (mPermissionCaller == null) {
-            mPermissionCaller = new PermissionRequesterImpl(mPermissionCallback, mActFragWrapper, mAskAgain, mPermissionUIProvider);
+            mPermissionCaller = new PermissionRequesterImpl(mPermissionCallback, mActFragWrapper, mAskAgain, mShowTips,mPermissionUIProvider);
         }
         return mPermissionCaller;
     }
@@ -63,7 +65,11 @@ class PermissionRequester {
             if (!EasyPermissions.hasPermissions(mActFragWrapper.getContext(), mPerms)) {//Setting界面回来之后，没有授予权限
                 String[] filter = EasyPermissions.filter(mActFragWrapper.getContext(), mPerms);
                 mPermissionCallback.onPermissionDenied(Arrays.asList(filter));//权限被拒绝
-                mPermissionCaller.getPermissionUIProvider().showPermissionDeniedTip(mActFragWrapper.getContext(), filter);
+
+                if (mShowTips) {
+                    mPermissionCaller.getPermissionUIProvider().showPermissionDeniedTip(mActFragWrapper.getContext(), filter);
+                }
+
             } else {
                 mPermissionCallback.onAllPermissionGranted();//所有权限被获取
             }

@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 
 import com.android.base.utils.android.ActFragWrapper;
 
+import java.util.Arrays;
+
 import timber.log.Timber;
 
 import static com.android.base.permission.PermissionCode.PERMISSION_REQUESTER_CODE;
@@ -36,6 +38,7 @@ public class AutoPermissionRequester {
     private final FragmentActivity mActivity;
     private String[] mPerms;
     private boolean mAskAgain = true;
+    private boolean mShowTips = false;
 
     private OnAllPermissionGrantedListener mOnAllPermissionGrantedListener;
     private OnPermissionDeniedListener mOnPermissionDeniedListener;
@@ -79,6 +82,11 @@ public class AutoPermissionRequester {
         return this;
     }
 
+    public AutoPermissionRequester showTips(boolean showTips) {
+        mShowTips = showTips;
+        return this;
+    }
+
     public AutoPermissionRequester askAgain(boolean askAgain) {
         mAskAgain = askAgain;
         return this;
@@ -111,7 +119,7 @@ public class AutoPermissionRequester {
         if (fragment == null) {
             fragment = AutoPermissionFragment.newInstance();
 
-            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mPermissionUIProvider);
+            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
             fragment.setRequester(getCallback());
 
             supportFragmentManager.beginTransaction()
@@ -120,7 +128,7 @@ public class AutoPermissionRequester {
 
         } else {
             fragment.setRequester(getCallback());
-            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mPermissionUIProvider);
+            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
         }
 
         fragment.startRequest();
@@ -147,7 +155,7 @@ public class AutoPermissionRequester {
 
                 @Override
                 public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-                    Timber.d("onRequestPermissionsResult() called with: requestCode = [" + requestCode + "], permissions = [" + permissions + "], grantResults = [" + grantResults + "]");
+                    Timber.d("onRequestPermissionsResult() called with: requestCode = [" + requestCode + "], permissions = [" + Arrays.toString(permissions) + "], grantResults = [" + Arrays.toString(grantResults) + "]");
                     if (requestCode == PERMISSION_REQUESTER_CODE && mPermissionRequester != null) {
                         mPermissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     }
