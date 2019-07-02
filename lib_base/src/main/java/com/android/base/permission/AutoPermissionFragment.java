@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import timber.log.Timber;
+
 /**
  * @author Ztiany
  * Email: ztiany3@gmail.com
@@ -21,7 +23,7 @@ public class AutoPermissionFragment extends Fragment {
     private final Handler mHandler = new Handler();
     private final Runnable mRunnable = this::startChecked;
 
-    private AutoPermissionFragmentCallback mRequester;
+    private AutoPermissionFragmentCallback mRequesterReference;
     private boolean mIsActivityReady = false;
 
     @Override
@@ -45,32 +47,40 @@ public class AutoPermissionFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (mRequester != null) {
-            mRequester.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Timber.d("onRequestPermissionsResult() called " + mRequesterReference);
+
+        AutoPermissionFragmentCallback callback = getCallback();
+        if (callback != null) {
+            callback.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        mRequester = null;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.d("onActivityResult() called " + mRequesterReference);
+
         super.onActivityResult(requestCode, resultCode, data);
-        if (mRequester != null) {
-            mRequester.onActivityResult(requestCode, resultCode, data);
+        AutoPermissionFragmentCallback callback = getCallback();
+        if (callback != null) {
+            callback.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     void startRequest() {
+        mHandler.removeCallbacks(mRunnable);
         startChecked();
     }
 
     private void startChecked() {
+        Timber.d("startChecked() called " + mRequesterReference);
         if (mIsActivityReady) {
-            if (mRequester != null) {
-                mRequester.onReady();
+            AutoPermissionFragmentCallback callback = getCallback();
+            if (callback != null) {
+                callback.onReady();
             }
             mHandler.removeCallbacks(mRunnable);
         } else {
-            mHandler.post(mRunnable);
+            mHandler.postDelayed(mRunnable, 300);
         }
     }
 
@@ -81,10 +91,15 @@ public class AutoPermissionFragment extends Fragment {
     }
 
     void setRequester(AutoPermissionFragmentCallback requester) {
-        mRequester = requester;
+        Timber.d("setRequester() called with: requester = [" + requester + "]");
+        mRequesterReference = requester;
     }
 
-    interface AutoPermissionFragmentCallback{
+    private AutoPermissionFragmentCallback getCallback() {
+        return mRequesterReference;
+    }
+
+    interface AutoPermissionFragmentCallback {
         void onReady();
 
         void onActivityResult(int requestCode, int resultCode, Intent data);

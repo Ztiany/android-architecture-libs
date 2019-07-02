@@ -1,5 +1,7 @@
 package com.android.base.permission;
 
+import android.arch.lifecycle.DefaultLifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -7,6 +9,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import com.android.base.utils.android.ActFragWrapper;
+
+import timber.log.Timber;
 
 import static com.android.base.permission.PermissionCode.PERMISSION_REQUESTER_CODE;
 
@@ -33,28 +37,38 @@ public class AutoPermissionRequester {
     private String[] mPerms;
     private boolean mAskAgain = true;
 
-    private IPermissionUIProvider mPermissionUIProvider;
-    private PermissionCallback mPermissionCallback;
-    private PermissionRequester mPermissionRequester;
-
     private OnAllPermissionGrantedListener mOnAllPermissionGrantedListener;
     private OnPermissionDeniedListener mOnPermissionDeniedListener;
 
+    private PermissionCallback mPermissionCallback;
+
+    private IPermissionUIProvider mPermissionUIProvider;
+    private PermissionRequester mPermissionRequester;
+
     private AutoPermissionFragment.AutoPermissionFragmentCallback mAutoPermissionFragmentCallback;
 
-    private AutoPermissionRequester(FragmentActivity activity) {
+    private AutoPermissionRequester(FragmentActivity activity, LifecycleOwner lifecycleOwner) {
         mActivity = activity;
         if (mActivity == null) {
             throw new NullPointerException();
         }
+
+        DefaultLifecycleObserver observer = new DefaultLifecycleObserver() {
+            @Override
+            public void onDestroy(@NonNull LifecycleOwner owner) {
+                mOnAllPermissionGrantedListener = null;
+                mOnPermissionDeniedListener = null;
+            }
+        };
+        lifecycleOwner.getLifecycle().addObserver(observer);
     }
 
     public static AutoPermissionRequester with(Fragment fragment) {
-        return new AutoPermissionRequester(fragment.getActivity());
+        return new AutoPermissionRequester(fragment.getActivity(), fragment);
     }
 
     public static AutoPermissionRequester with(FragmentActivity activity) {
-        return new AutoPermissionRequester(activity);
+        return new AutoPermissionRequester(activity, activity);
     }
 
     public AutoPermissionRequester permission(String... permissions) {
@@ -114,9 +128,10 @@ public class AutoPermissionRequester {
 
     private AutoPermissionFragment.AutoPermissionFragmentCallback getCallback() {
         if (mAutoPermissionFragmentCallback == null) {
-            return mAutoPermissionFragmentCallback = new AutoPermissionFragment.AutoPermissionFragmentCallback() {
+            mAutoPermissionFragmentCallback = new AutoPermissionFragment.AutoPermissionFragmentCallback() {
                 @Override
                 public void onReady() {
+                    Timber.d("onReady() called");
                     if (mPermissionRequester != null) {
                         mPermissionRequester.requestPermission(PERMISSION_REQUESTER_CODE, mPerms);
                     }
@@ -124,16 +139,16 @@ public class AutoPermissionRequester {
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-                    if (PERMISSION_REQUESTER_CODE != requestCode) {
-                        if (mPermissionRequester != null) {
-                            mPermissionRequester.onActivityResult(requestCode, resultCode, data);
-                        }
+                    Timber.d("onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
+                    if (mPermissionRequester != null) {
+                        mPermissionRequester.onActivityResult(requestCode, resultCode, data);
                     }
                 }
 
                 @Override
                 public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-                    if (mPermissionRequester != null) {
+                    Timber.d("onRequestPermissionsResult() called with: requestCode = [" + requestCode + "], permissions = [" + permissions + "], grantResults = [" + grantResults + "]");
+                    if (requestCode == PERMISSION_REQUESTER_CODE && mPermissionRequester != null) {
                         mPermissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     }
                 }

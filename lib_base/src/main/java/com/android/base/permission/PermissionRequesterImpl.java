@@ -6,6 +6,8 @@ import com.android.base.utils.android.ActFragWrapper;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.android.base.permission.PermissionCode.REQUEST_PERMISSION_FOR_SETTING;
 
 
@@ -25,6 +27,7 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
 
     @Override
     public Object getRequester() {
+        Timber.d("getRequester() called");
         if (mContextWrapper.getFragment() != null) {
             return mContextWrapper.getFragment();
         }
@@ -33,6 +36,7 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
 
     @Override
     public IPermissionUIProvider getPermissionUIProvider() {
+        Timber.d("getPermissionUIProvider() called");
         if (mIPermissionUIProvider == null) {
             return PermissionUIProviderFactory.getPermissionUIProvider();
         }
@@ -44,6 +48,7 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
      */
     @Override
     public void onPortionPermissionsGranted(boolean allGranted, int requestCode, List<String> perms) {
+        Timber.d("onPortionPermissionsGranted() called with: allGranted = [" + allGranted + "], requestCode = [" + requestCode + "], perms = [" + perms + "]");
         // do nothing
         if (allGranted) {
             mPermissionCallback.onAllPermissionGranted();
@@ -52,6 +57,7 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
 
     @Override
     public void onPermissionsDenied(final int requestCode, final List<String> perms) {
+        Timber.d("onPermissionsDenied() called with: requestCode = [" + requestCode + "], perms = [" + perms + "]");
         if (!mShouldAskAgain) {
             notifyPermissionDenied(perms);
             return;
@@ -72,9 +78,9 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
     }
 
     private void notifyPermissionDenied(List<String> perms) {
+        Timber.d("notifyPermissionDenied() called with: perms = [" + perms + "]");
         mPermissionCallback.onPermissionDenied(perms);
         getPermissionUIProvider().showPermissionDeniedTip(mContextWrapper.getContext(), perms.toArray(new String[0]));
     }
-
 
 }
