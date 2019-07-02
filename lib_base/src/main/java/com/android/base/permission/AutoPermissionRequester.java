@@ -119,17 +119,14 @@ public class AutoPermissionRequester {
         if (fragment == null) {
             fragment = AutoPermissionFragment.newInstance();
 
-            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
-            fragment.setRequester(getCallback());
-
             supportFragmentManager.beginTransaction()
                     .add(fragment, AutoPermissionFragment.class.getName())
                     .commitNowAllowingStateLoss();
 
-        } else {
-            fragment.setRequester(getCallback());
-            mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
         }
+
+        fragment.setRequester(getCallback());
+        mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
 
         fragment.startRequest();
     }
