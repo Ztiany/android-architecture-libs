@@ -71,8 +71,12 @@ class PermissionCallerImpl implements EasyPermissions.PermissionCaller {
             getPermissionUIProvider()
                     .showAskAgainDialog(mContextWrapper.getContext(), perms.toArray(new String[0]),
                             (dialog, which) -> {
-                                Intent intentForPermission = EasyPermissions.getIntentForPermission(mContextWrapper.getContext());
-                                mContextWrapper.startActivityForResult(intentForPermission, REQUEST_PERMISSION_FOR_SETTING, null);
+                                try {
+                                    Intent intentForPermission = EasyPermissions.getIntentForPermission(mContextWrapper.getContext());
+                                    mContextWrapper.startActivityForResult(intentForPermission, REQUEST_PERMISSION_FOR_SETTING, null);
+                                } catch (Exception e) {
+                                    notifyPermissionDenied(perms);
+                                }
                             },
                             (dialog, which) -> notifyPermissionDenied(perms));
         } else {
