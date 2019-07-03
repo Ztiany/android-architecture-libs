@@ -11,7 +11,7 @@ import timber.log.Timber;
 import static com.android.base.permission.PermissionCode.REQUEST_PERMISSION_FOR_SETTING;
 
 
-class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
+class PermissionCallerImpl implements EasyPermissions.PermissionCaller {
 
     private final boolean mShouldAskAgain;
     private final boolean mShowTips;
@@ -20,7 +20,7 @@ class PermissionRequesterImpl implements EasyPermissions.PermissionCaller {
     private PermissionCallback mPermissionCallback;
     private IPermissionUIProvider mIPermissionUIProvider;
 
-    PermissionRequesterImpl(PermissionCallback permissionCallback, ActFragWrapper contextWrapper, boolean shouldAskAgain, boolean showTips, IPermissionUIProvider iPermissionUIProvider) {
+    PermissionCallerImpl(PermissionCallback permissionCallback, ActFragWrapper contextWrapper, boolean shouldAskAgain, boolean showTips, IPermissionUIProvider iPermissionUIProvider) {
         mPermissionCallback = permissionCallback;
         mContextWrapper = contextWrapper;
         mShouldAskAgain = shouldAskAgain;

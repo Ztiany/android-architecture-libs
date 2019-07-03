@@ -23,7 +23,7 @@ public class AutoPermissionFragment extends Fragment {
     private final Handler mHandler = new Handler();
     private final Runnable mRunnable = this::startChecked;
 
-    private AutoPermissionFragmentCallback mRequesterReference;
+    private AutoPermissionFragmentCallback mCallback;
     private boolean mIsActivityReady = false;
 
     @Override
@@ -47,7 +47,7 @@ public class AutoPermissionFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Timber.d("onRequestPermissionsResult() called " + mRequesterReference);
+        Timber.d("onRequestPermissionsResult() called " + mCallback);
 
         AutoPermissionFragmentCallback callback = getCallback();
         if (callback != null) {
@@ -57,7 +57,7 @@ public class AutoPermissionFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Timber.d("onActivityResult() called " + mRequesterReference);
+        Timber.d("onActivityResult() called " + mCallback);
 
         super.onActivityResult(requestCode, resultCode, data);
         AutoPermissionFragmentCallback callback = getCallback();
@@ -72,7 +72,7 @@ public class AutoPermissionFragment extends Fragment {
     }
 
     private void startChecked() {
-        Timber.d("startChecked() called " + mRequesterReference);
+        Timber.d("startChecked() called " + mCallback);
         if (mIsActivityReady) {
             AutoPermissionFragmentCallback callback = getCallback();
             if (callback != null) {
@@ -88,15 +88,16 @@ public class AutoPermissionFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacks(mRunnable);
+        mCallback = null;
     }
 
     void setRequester(AutoPermissionFragmentCallback requester) {
         Timber.d("setRequester() called with: requester = [" + requester + "]");
-        mRequesterReference = requester;
+        mCallback = requester;
     }
 
     private AutoPermissionFragmentCallback getCallback() {
-        return mRequesterReference;
+        return mCallback;
     }
 
     interface AutoPermissionFragmentCallback {

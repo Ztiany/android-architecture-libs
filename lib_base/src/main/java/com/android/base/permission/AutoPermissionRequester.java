@@ -15,6 +15,7 @@ import java.util.Arrays;
 import timber.log.Timber;
 
 import static com.android.base.permission.PermissionCode.PERMISSION_REQUESTER_CODE;
+import static com.android.base.permission.PermissionCode.REQUEST_PERMISSION_FOR_SETTING;
 
 /**
  * <pre>
@@ -42,18 +43,21 @@ public class AutoPermissionRequester {
 
     private OnAllPermissionGrantedListener mOnAllPermissionGrantedListener;
     private OnPermissionDeniedListener mOnPermissionDeniedListener;
+    private IPermissionUIProvider mPermissionUIProvider;
+
+    private ActFragWrapper mActFragWrapper;
 
     private PermissionCallback mPermissionCallback;
 
-    private IPermissionUIProvider mPermissionUIProvider;
-    private PermissionRequester mPermissionRequester;
+    private boolean mIsRequested;
 
     private AutoPermissionFragment.AutoPermissionFragmentCallback mAutoPermissionFragmentCallback;
+    private EasyPermissions.PermissionCaller mPermissionCaller;
 
     private AutoPermissionRequester(FragmentActivity activity, LifecycleOwner lifecycleOwner) {
         mActivity = activity;
         if (mActivity == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("activity is null.");
         }
 
         DefaultLifecycleObserver observer = new DefaultLifecycleObserver() {
@@ -61,21 +65,24 @@ public class AutoPermissionRequester {
             public void onDestroy(@NonNull LifecycleOwner owner) {
                 mOnAllPermissionGrantedListener = null;
                 mOnPermissionDeniedListener = null;
+                mPermissionUIProvider = null;
+                mPermissionCallback.setDestroyed();
             }
         };
+
         lifecycleOwner.getLifecycle().addObserver(observer);
     }
 
-    public static AutoPermissionRequester with(Fragment fragment) {
+    public static AutoPermissionRequester with(@NonNull Fragment fragment) {
         return new AutoPermissionRequester(fragment.getActivity(), fragment);
     }
 
-    public static AutoPermissionRequester with(FragmentActivity activity) {
+    public static AutoPermissionRequester with(@NonNull FragmentActivity activity) {
         return new AutoPermissionRequester(activity, activity);
     }
 
-    public AutoPermissionRequester permission(String... permissions) {
-        if (permissions == null || permissions.length == 0) {
+    public AutoPermissionRequester permission(@NonNull String... permissions) {
+        if (permissions.length == 0) {
             throw new IllegalArgumentException();
         }
         mPerms = permissions;
@@ -108,6 +115,10 @@ public class AutoPermissionRequester {
     }
 
     public void request() {
+        if (mIsRequested) {
+            throw new UnsupportedOperationException("AutoPermissionRequester instance just can be used by once.");
+        }
+        mIsRequested = true;
         mPermissionCallback = new PermissionCallback(mOnPermissionDeniedListener, mOnAllPermissionGrantedListener);
         startRequest();
     }
@@ -118,15 +129,14 @@ public class AutoPermissionRequester {
 
         if (fragment == null) {
             fragment = AutoPermissionFragment.newInstance();
-
             supportFragmentManager.beginTransaction()
                     .add(fragment, AutoPermissionFragment.class.getName())
                     .commitNowAllowingStateLoss();
-
         }
 
         fragment.setRequester(getCallback());
-        mPermissionRequester = new PermissionRequester(ActFragWrapper.create(fragment), mPermissionCallback, mAskAgain, mShowTips, mPermissionUIProvider);
+
+        mActFragWrapper = ActFragWrapper.create(fragment);
 
         fragment.startRequest();
     }
@@ -137,29 +147,57 @@ public class AutoPermissionRequester {
                 @Override
                 public void onReady() {
                     Timber.d("onReady() called");
-                    if (mPermissionRequester != null) {
-                        mPermissionRequester.requestPermission(PERMISSION_REQUESTER_CODE, mPerms);
-                    }
+                    requestPermission(mPerms);
                 }
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
                     Timber.d("onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
-                    if (mPermissionRequester != null) {
-                        mPermissionRequester.onActivityResult(requestCode, resultCode, data);
-                    }
+                    AutoPermissionRequester.this.onActivityResult(requestCode, resultCode, data);
                 }
 
                 @Override
                 public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
                     Timber.d("onRequestPermissionsResult() called with: requestCode = [" + requestCode + "], permissions = [" + Arrays.toString(permissions) + "], grantResults = [" + Arrays.toString(grantResults) + "]");
-                    if (requestCode == PERMISSION_REQUESTER_CODE && mPermissionRequester != null) {
-                        mPermissionRequester.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    if (requestCode == PERMISSION_REQUESTER_CODE) {
+                        AutoPermissionRequester.this.onRequestPermissionsResult(requestCode, permissions, grantResults);
                     }
                 }
             };
         }
         return mAutoPermissionFragmentCallback;
+    }
+
+    private EasyPermissions.PermissionCaller getPermissionCaller() {
+        if (mPermissionCaller == null) {
+            mPermissionCaller = new PermissionCallerImpl(mPermissionCallback, mActFragWrapper, mAskAgain, mShowTips, mPermissionUIProvider);
+        }
+        return mPermissionCaller;
+    }
+
+    private void requestPermission(String... perms) {
+        mPerms = perms;
+        EasyPermissions.requestPermissions(getPermissionCaller(), PermissionCode.PERMISSION_REQUESTER_CODE, mPerms);
+    }
+
+    private void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, getPermissionCaller());
+    }
+
+    private void onActivityResult(int requestCode, @SuppressWarnings("unused") int resultCode, @SuppressWarnings("unused") Intent data) {
+        if (requestCode == REQUEST_PERMISSION_FOR_SETTING) {//申请权限
+            if (!EasyPermissions.hasPermissions(mActFragWrapper.getContext(), mPerms)) {//Setting界面回来之后，没有授予权限
+                String[] filter = EasyPermissions.filter(mActFragWrapper.getContext(), mPerms);
+                mPermissionCallback.onPermissionDenied(Arrays.asList(filter));//权限被拒绝
+
+                if (mShowTips) {
+                    getPermissionCaller().getPermissionUIProvider().showPermissionDeniedTip(mActFragWrapper.getContext(), filter);
+                }
+
+            } else {
+                mPermissionCallback.onAllPermissionGranted();//所有权限被获取
+            }
+        }
     }
 
 }

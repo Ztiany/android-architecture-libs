@@ -12,7 +12,6 @@ import android.text.style.ForegroundColorSpan;
 import com.android.base.R;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.yanzhenjie.permission.Permission;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +45,7 @@ class DefaultPermissionUIProvider implements IPermissionUIProvider {
                 .setPositiveButton(R.string.Base_to_set_permission, onToSetPermissionListener)
                 .setNegativeButton(R.string.Base_Cancel, onCancelListener)
                 .create();
+
         dialog.show();
     }
 

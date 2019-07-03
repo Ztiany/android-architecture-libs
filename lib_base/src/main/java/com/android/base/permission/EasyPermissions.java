@@ -53,7 +53,7 @@ final class EasyPermissions {
         void onPermissionsDenied(int requestCode, List<String> perms);
 
         /**
-         * @return PermissionCaller must is Fragment(app and support) or Activity
+         * @return PermissionCaller must be Fragment(app and support) or Activity
          */
         Object getRequester();
 
@@ -91,7 +91,6 @@ final class EasyPermissions {
         return true;
     }
 
-
     /**
      * 请求权限
      */
@@ -128,8 +127,7 @@ final class EasyPermissions {
     static String[] filter(Context context, String[] perms) {
         List<String> permList = new ArrayList<>();
         for (String perm : perms) {
-            boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) ==
-                    PackageManager.PERMISSION_GRANTED);
+            boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED);
             if (!hasPerm) {
                 permList.add(perm);
             }
@@ -199,8 +197,7 @@ final class EasyPermissions {
         } else if (permissionCaller.getRequester() instanceof Fragment) {
             return ((Fragment) permissionCaller.getRequester()).shouldShowRequestPermissionRationale(perm);
         } else
-            return permissionCaller.getRequester() instanceof android.app.Fragment
-                    && ((android.app.Fragment) permissionCaller.getRequester()).shouldShowRequestPermissionRationale(perm);
+            return permissionCaller.getRequester() instanceof android.app.Fragment && ((android.app.Fragment) permissionCaller.getRequester()).shouldShowRequestPermissionRationale(perm);
     }
 
     /**
@@ -216,4 +213,5 @@ final class EasyPermissions {
             ((android.app.Fragment) permissionCaller.getRequester()).requestPermissions(perms, requestCode);
         }
     }
+
 }

@@ -1,8 +1,10 @@
-package com.android.base.permission;   // Callback
+package com.android.base.permission;
 
 import java.util.List;
 
 class PermissionCallback {
+
+    private boolean mIsDestroyed = false;
 
     private final OnPermissionDeniedListener mOnPermissionDeniedListener;
     private final OnAllPermissionGrantedListener mOnAllPermissionGrantedListener;
@@ -13,15 +15,19 @@ class PermissionCallback {
     }
 
     void onPermissionDenied(List<String> strings) {
-        if (mOnPermissionDeniedListener != null) {
+        if (mOnPermissionDeniedListener != null && !mIsDestroyed) {
             mOnPermissionDeniedListener.onPermissionDenied(strings);
         }
     }
 
     void onAllPermissionGranted() {
-        if (mOnAllPermissionGrantedListener != null) {
+        if (mOnAllPermissionGrantedListener != null && !mIsDestroyed) {
             mOnAllPermissionGrantedListener.onAllPermissionGranted();
         }
+    }
+
+    void setDestroyed() {
+        mIsDestroyed = true;
     }
 
 }
