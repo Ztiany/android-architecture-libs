@@ -13,7 +13,7 @@
     <!-- ================== permission  ================== -->
     <string name="Base_to_set_permission">去设置</string>
     <string name="Base_permission_denied">%s  权限被拒绝</string>
-    <string name="Base_request_permission_rationale">我们需要您提供%s权限以使我们能够更好的为您服务。</string>
+    <string name="Base_request_permission_rationale">我们需要您提供%s权限以使我们能够更好地为您服务。</string>
     <string name="Base_permission_denied_ask_again_rationale">在设置->应用->%1$s->权限管理中开启%2$s权限，以正常使用%1$s功能。</string>
 
     <string name="Base_character_seg">、</string>
