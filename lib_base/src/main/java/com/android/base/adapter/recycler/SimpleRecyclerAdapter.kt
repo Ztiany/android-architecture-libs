@@ -4,8 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import com.android.base.kotlin.KtViewHolder
 
 /**
  * A simple way to build a simple list. If you want to build a multi type list, perhaps you need to use [MultiTypeAdapter].
@@ -14,23 +13,23 @@ import kotlin.reflect.full.primaryConstructor
  * Email: ztiany3@gmail.com
  * Date : 2019-01-15 11:41
  */
-abstract class SimpleRecyclerAdapter<T, VH : ViewHolder>(context: Context, data: List<T>? = null) : RecyclerAdapter<T, VH>(context, data) {
+abstract class SimpleRecyclerAdapter<T>(context: Context, data: List<T>? = null) : RecyclerAdapter<T, KtViewHolder>(context, data) {
 
     private var mLayoutInflater: LayoutInflater = LayoutInflater.from(mContext)
 
-    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KtViewHolder {
         val layout = provideLayout(parent, viewType)
         val itemView = if (layout is Int) {
             mLayoutInflater.inflate(layout, parent, false)
         } else
             layout as View
-        return provideViewHolder(itemView)
+        return KtViewHolder(itemView).apply {
+            onViewHolderCreated(this)
+        }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    open fun provideViewHolder(itemView: View): VH {
-        return (this::class.supertypes[0].arguments[1].type?.classifier as? KClass<VH>)?.primaryConstructor?.call(itemView)
-                ?: throw IllegalArgumentException("need primaryConstructor, and arguments is (View)")
+    protected fun onViewHolderCreated(ktViewHolder: KtViewHolder) {
+
     }
 
     /**provide a layout id or a View*/
@@ -40,7 +39,7 @@ abstract class SimpleRecyclerAdapter<T, VH : ViewHolder>(context: Context, data:
         return TYPE_ITEM
     }
 
-    override fun onBindViewHolder(viewHolder: VH, position: Int) {
+    override fun onBindViewHolder(viewHolder: KtViewHolder, position: Int) {
         if (viewHolder.itemViewType == TYPE_ITEM) {
             bind(viewHolder, getItem(position))
         } else {
@@ -48,7 +47,7 @@ abstract class SimpleRecyclerAdapter<T, VH : ViewHolder>(context: Context, data:
         }
     }
 
-    protected abstract fun bind(viewHolder: VH, item: T)
+    protected abstract fun bind(viewHolder: KtViewHolder, item: T)
 
     protected open fun bindOtherTypes(viewHolder: ViewHolder, position: Int) {}
 

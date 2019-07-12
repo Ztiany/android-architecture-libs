@@ -1,7 +1,5 @@
 package com.android.base.data
 
-import android.arch.lifecycle.LiveData
-
 
 inline fun <T> Resource<T>.onLoading(onLoading: () -> Unit): Resource<T> {
     if (this.isLoading) {
@@ -38,8 +36,4 @@ inline fun <T> Resource<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): Reso
         onSuccess(this.data())
     }
     return this
-}
-
-fun <T> LiveData<Resource<T>>.resourceData(): T? {
-    return if (value?.isSuccess == true) value?.orElse(null) else null
 }

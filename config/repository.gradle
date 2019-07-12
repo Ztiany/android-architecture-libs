@@ -303,7 +303,7 @@ static Repository innerNewRepository() {
 
             /*text view*/
             //https://github.com/chenBingX/SuperTextView
-            superTextView            : 'com.github.chenBingX:SuperTextView:v3.1.1',
+            superTextView            : 'com.github.chenBingX:SuperTextView:v3.1.4',
             //https://github.com/iwgang/CountdownView
             countdownView            : 'com.github.iwgang:countdownview:2.1.3',
 
