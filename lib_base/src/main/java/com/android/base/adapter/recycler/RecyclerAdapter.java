@@ -23,7 +23,7 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
     private RecyclerDataManagerImpl<T> mDataManager;
 
     @NonNull
-    protected Context mContext;
+    protected final Context mContext;
 
     public RecyclerAdapter(@NonNull Context context, List<T> data) {
         mDataManager = new RecyclerDataManagerImpl<>(data, this);

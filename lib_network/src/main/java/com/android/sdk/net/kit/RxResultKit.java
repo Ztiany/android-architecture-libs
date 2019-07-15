@@ -11,7 +11,6 @@ import com.github.dmstocking.optional.java.util.Optional;
 import org.reactivestreams.Publisher;
 
 import java.io.IOException;
-import java.net.ConnectException;
 
 import io.reactivex.Flowable;
 import io.reactivex.flowables.ConnectableFlowable;
@@ -71,7 +70,7 @@ public class RxResultKit {
                     if (!localData.isPresent()) {
                         return remote.doOnNext(tOptional -> onNewData.accept(tOptional.orElse(null)));
                     }
-                    /*有缓存是网络错误，不触发错误，只有在过期时返回新的数据*/
+                    /*有缓存时网络错误，不触发错误，只有在过期时返回新的数据*/
                     return remote
                             .onErrorResumeNext(onErrorResumeFunction(onNewData))
                             .filter(remoteData -> selector.test(localData.get(), remoteData.orElse(null)))
@@ -90,7 +89,7 @@ public class RxResultKit {
         if (local != null) {
             return Flowable.concat(
                     Flowable.just(Optional.of(local)),
-                    /*有缓存是网络错误，不触发错误，只有在过期时返回新的数据*/
+                    /*有缓存时网络错误，不触发错误，只有在过期时返回新的数据*/
                     remote.onErrorResumeNext(onErrorResumeFunction(onNewData))
                             .filter(tOptional -> selector.test(local, tOptional.orElse(null)))
                             .doOnNext(tOptional -> onNewData.accept(tOptional.orElse(null))));
@@ -114,8 +113,7 @@ public class RxResultKit {
     }
 
     private static boolean isNetworkError(Throwable exception) {
-        return exception instanceof ConnectException
-                || exception instanceof IOException
+        return exception instanceof IOException
                 || exception instanceof HttpException
                 || exception instanceof NetworkErrorException;
     }
