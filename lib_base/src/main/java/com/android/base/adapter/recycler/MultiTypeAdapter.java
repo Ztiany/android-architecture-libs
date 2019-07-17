@@ -15,7 +15,7 @@ import me.drakeet.multitype.TypePool;
  */
 public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter implements DataManager<Object> {
 
-    protected final Context mContext;
+    private final Context mContext;
 
     private RecyclerDataManagerImpl<Object> mRecyclerDataManager;
 
@@ -161,6 +161,10 @@ public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter impl
         ArrayList<Object> objects = new ArrayList<>(items);
         super.setItems(objects);
         mRecyclerDataManager.setDataSource(objects, true);
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
 }

@@ -31,7 +31,7 @@ fun MenuItem.alwaysShow(): MenuItem {
     return this
 }
 
-fun MenuItem.setSimpleClickListener(onClick: (MenuItem) -> Unit): MenuItem {
+fun MenuItem.onMenuItemClick(onClick: (MenuItem) -> Unit): MenuItem {
     setOnMenuItemClickListener {
         onClick(it)
         true
