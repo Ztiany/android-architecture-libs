@@ -214,7 +214,7 @@ private class SafelyFragmentTransactionFragmentDelegate : FragmentDelegate<Fragm
     }
 
     override fun onResume() {
-        if (!mPendingTransactions.isEmpty()) {
+        if (mPendingTransactions.isNotEmpty()) {
             mPendingTransactions.forEach { it.commit() }
             mPendingTransactions.clear()
         }
@@ -243,7 +243,7 @@ class EnhanceFragmentTransaction constructor(
         val nonnullTag = (tag ?: fragment.javaClassName())
         addToBackStack(nonnullTag)
         //add
-        fragmentTransaction.add(containerId.confirmId(), fragment, nonnullTag)
+        fragmentTransaction.add(confirmLayoutId(containerId), fragment, nonnullTag)
         if (transition) {
             //set a transition
             setTransitionOpen()
@@ -252,8 +252,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * replace 方式把 [fragment] 添加到回退栈中，
-     * 如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * replace 方式把 [fragment] 添加到回退栈中，如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
     fun replaceWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
@@ -261,7 +260,7 @@ class EnhanceFragmentTransaction constructor(
         val nonnullTag = (tag ?: fragment.javaClassName())
         addToBackStack(nonnullTag)
         //add
-        fragmentTransaction.replace(containerId.confirmId(), fragment, nonnullTag)
+        fragmentTransaction.replace(confirmLayoutId(containerId), fragment, nonnullTag)
         //set a transition
         if (transition) {
             setTransitionOpen()
@@ -269,18 +268,16 @@ class EnhanceFragmentTransaction constructor(
         return this
     }
 
-    private fun Int.confirmId(): Int {
-        return if (this == 0) {
+    private fun confirmLayoutId(layoutId: Int): Int {
+        return if (layoutId == 0) {
             FragmentConfig.defaultContainerId()
         } else {
-            this
+            layoutId
         }
     }
 
     /**
-     * 添加 [fragment]，
-     * 默认使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
-     * 如果 [tag] 为null，则使用 [fragment] 的全限定类名*
+     * 添加 [fragment]，默认使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类。
      */
     fun addWithDefaultContainer(fragment: Fragment, tag: String? = null): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
@@ -288,9 +285,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * 替换为 [fragment]，
-     * id 使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
-     * 如果 [tag] 为null，则使用 [fragment] 的全限定类名
+     * 替换为 [fragment]，id 使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
     fun replaceWithDefaultContainer(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
@@ -301,7 +296,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**隐藏所有的 fragment */
-    private fun hideOtherFragments() {
+    private fun hideFragments() {
         for (fragment in fragmentManager.fragments) {
             if (fragment != null && fragment.isVisible) {
                 fragmentTransaction.hide(fragment)
@@ -317,15 +312,15 @@ class EnhanceFragmentTransaction constructor(
     }
 
     fun setTransitionOpen(): FragmentTransaction {
-        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_OPEN)
     }
 
     fun setTransitionClose(): FragmentTransaction {
-        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+        return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_CLOSE)
     }
 
     fun setTransitionFade(): FragmentTransaction {
-        return fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+        return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_FADE)
     }
 
     //------------------------------------------------------------------------------------------------
