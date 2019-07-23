@@ -11,14 +11,14 @@ import com.android.base.app.ui.StateLayoutConfig;
  * Email: ztiany3@gmail.com
  * Date : 2018-05-17 17:25
  */
-interface StateProcessor {
+public abstract class StateProcessor {
 
-    void onInitialize(SimpleMultiStateView simpleMultiStateView);
+    protected abstract void onInitialize(SimpleMultiStateView simpleMultiStateView);
 
-    void onParseAttrs(TypedArray typedArray);
+    protected abstract void onParseAttrs(TypedArray typedArray);
 
-    void processStateInflated(@StateLayoutConfig.ViewState int viewState, @NonNull View view);
+    protected abstract void processStateInflated(@StateLayoutConfig.ViewState int viewState, @NonNull View view);
 
-    StateLayoutConfig getStateLayoutConfigImpl();
+    protected abstract StateLayoutConfig getStateLayoutConfigImpl();
 
 }

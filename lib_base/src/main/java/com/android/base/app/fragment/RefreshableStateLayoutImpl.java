@@ -10,6 +10,7 @@ import com.android.base.app.ui.RefreshView;
 import com.android.base.app.ui.RefreshViewFactory;
 import com.android.base.app.ui.StateLayout;
 import com.android.base.app.ui.StateLayoutConfig;
+import com.android.base.widget.StateProcessor;
 
 import static com.android.base.app.ui.CommonId.REFRESH_ID;
 import static com.android.base.app.ui.CommonId.STATE_ID;
@@ -150,6 +151,12 @@ final class RefreshableStateLayoutImpl implements RefreshStateLayout, StateLayou
     }
 
     @Override
+    public StateLayoutConfig setMessageGravity(int state, int gravity) {
+        checkMultiStateView().getStateLayoutConfig().setMessageGravity(state, gravity);
+        return this;
+    }
+
+    @Override
     public StateLayoutConfig setStateIcon(@RetryableState int state, Drawable drawable) {
         checkMultiStateView().getStateLayoutConfig().setStateIcon(state, drawable);
         return this;
@@ -177,6 +184,11 @@ final class RefreshableStateLayoutImpl implements RefreshStateLayout, StateLayou
     public StateLayoutConfig disableOperationWhenRequesting(boolean disable) {
         checkMultiStateView().getStateLayoutConfig().disableOperationWhenRequesting(disable);
         return this;
+    }
+
+    @Override
+    public StateProcessor getProcessor() {
+        return checkMultiStateView().getStateLayoutConfig().getProcessor();
     }
 
     private StateLayout checkMultiStateView() {

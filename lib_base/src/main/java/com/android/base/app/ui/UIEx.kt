@@ -4,6 +4,7 @@ package com.android.base.app.ui
 
 import com.android.base.app.BaseKit
 import com.android.base.utils.common.Checker
+import timber.log.Timber
 
 fun <T> RefreshListLayout<T>.processListResultWithStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore) {
@@ -136,7 +137,11 @@ fun <T> RefreshStateLayout.processResultWithStatus(t: T?, onResult: ((T) -> Unit
     }
 }
 
-fun RefreshStateLayout.processErrorWithStatus(throwable: Throwable) {
+fun RefreshStateLayout.processErrorWithStatus(throwable: Throwable?) {
+    if (throwable == null) {
+        Timber.d("processErrorWithStatus called, but throwable is null")
+        return
+    }
     if (isRefreshing) {
         refreshCompleted()
     }

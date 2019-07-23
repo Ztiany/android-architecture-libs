@@ -26,7 +26,7 @@ import static com.android.base.app.ui.StateLayoutConfig.ViewState;
  */
 public class SimpleMultiStateView extends MultiStateView implements StateLayout {
 
-    private StateActionProcessor mStateActionProcessor;
+    private StateProcessor mStateProcessor;
     private StateListener mStateListener;
 
     public SimpleMultiStateView(Context context) {
@@ -45,8 +45,8 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
 
         initProcessor(typedArray);
 
-        mStateActionProcessor.onInitialize(this);
-        mStateActionProcessor.onParseAttrs(typedArray);
+        mStateProcessor.onInitialize(this);
+        mStateProcessor.onParseAttrs(typedArray);
 
         typedArray.recycle();
     }
@@ -57,15 +57,15 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
         if (!StringChecker.isEmpty(processorPath)) {
             try {
                 Class<?> processorClass = Class.forName(processorPath);
-                mStateActionProcessor = (StateActionProcessor) processorClass.newInstance();
+                mStateProcessor = (StateProcessor) processorClass.newInstance();
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
                 Timber.e("initProcessor() called can not instance processor: " + processorPath);
             }
         }
 
-        if (mStateActionProcessor == null) {
-            mStateActionProcessor = new StateActionProcessor();
+        if (mStateProcessor == null) {
+            mStateProcessor = new StateActionProcessor();
         }
     }
 
@@ -89,7 +89,7 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
     }
 
     private void processStateInflated(@ViewState int viewState, @NonNull View view) {
-        mStateActionProcessor.processStateInflated(viewState, view);
+        mStateProcessor.processStateInflated(viewState, view);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
 
     @Override
     public StateLayoutConfig getStateLayoutConfig() {
-        return mStateActionProcessor.getStateLayoutConfigImpl();
+        return mStateProcessor.getStateLayoutConfigImpl();
     }
 
 }

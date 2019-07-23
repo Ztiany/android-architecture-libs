@@ -4,6 +4,8 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 
+import com.android.base.widget.StateProcessor;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -50,6 +52,8 @@ public interface StateLayoutConfig {
 
     StateLayoutConfig setStateMessage(@RetryableState int state, CharSequence message);
 
+    StateLayoutConfig setMessageGravity(@RetryableState int state, int gravity);
+
     StateLayoutConfig setStateIcon(@RetryableState int state, Drawable drawable);
 
     StateLayoutConfig setStateIcon(@RetryableState int state, @DrawableRes int drawableId);
@@ -59,5 +63,7 @@ public interface StateLayoutConfig {
     StateLayoutConfig setStateRetryListener(OnRetryActionListener retryActionListener);
 
     StateLayoutConfig disableOperationWhenRequesting(boolean disable);
+
+    StateProcessor getProcessor();
 
 }

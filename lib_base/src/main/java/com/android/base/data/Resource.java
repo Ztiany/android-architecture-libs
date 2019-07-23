@@ -15,13 +15,11 @@ public class Resource<T> {
     private final Throwable mError;
     private final Status mStatus;
     private final T mData; //data or default data
-    private final T mDefaultData; //data or default data
 
-    private Resource(Throwable error, T data, T defaultData, Status status) {
+    private Resource(Throwable error, T data, Status status) {
         mError = error;
         mStatus = status;
         mData = data;
-        mDefaultData = defaultData;
     }
 
     public boolean isSuccess() {
@@ -45,27 +43,33 @@ public class Resource<T> {
     }
 
     public static <T> Resource<T> success() {
-        return new Resource<>(null, null, null, Status.SUCCESS);
+        return new Resource<>(null, null, Status.SUCCESS);
     }
 
-    public static <T> Resource<T> success(@Nullable T t) {
-        return new Resource<>(null, t, null, Status.SUCCESS);
+    public static <T> Resource<T> success(@Nullable T data) {
+        return new Resource<>(null, data, Status.SUCCESS);
     }
 
     public static <T> Resource<T> error(@NonNull Throwable error) {
         return error(error, null);
     }
 
+    /**
+     * 创建一个 error 状态，且设置一个默认的数据
+     */
     public static <T> Resource<T> error(@NonNull Throwable error, T defaultValue) {
-        return new Resource<>(error, null, defaultValue, Status.ERROR);
+        return new Resource<>(error, defaultValue, Status.ERROR);
     }
 
     public static <T> Resource<T> loading() {
         return loading(null);
     }
 
+    /**
+     * 创建一个 loading 状态，且设置一个默认的数据
+     */
     public static <T> Resource<T> loading(T defaultValue) {
-        return new Resource<>(null, null, defaultValue, Status.LOADING);
+        return new Resource<>(null, defaultValue, Status.LOADING);
     }
 
     /**
@@ -74,9 +78,16 @@ public class Resource<T> {
      * @return Resource
      */
     public static Resource noChange() {
-        return new Resource<>(null, null, null, Status.NOT_CHANGED);
+        return new Resource<>(null, null, Status.NOT_CHANGED);
     }
 
+    /**
+     * 获取 Resource 中保存的数据，只有在 success 状态并且存在数据时下才能调用此方法，否则将抛出异常。
+     *
+     * @return Resource 中保存的数据。
+     * @throws UnsupportedOperationException 非 success 状态调用此方法。
+     * @throws NullPointerException          Resource 中没有保存数据时调用此方法。
+     */
     @NonNull
     public T data() {
         if (isError() || isLoading() || isNoChange()) {
@@ -88,17 +99,40 @@ public class Resource<T> {
         return mData;
     }
 
+    /**
+     * 获取 Resource 中保存的数据，如果不存在数据则返回 defaultData 所设置的默认数据，在不同状态下获取的数据具有不同的意义：
+     *
+     * <pre>
+     *     <li>success 状态下，返回一个成功操作所产生的数据</li>
+     *     <li>error 状态下，返回一个默认的数据，如果存在的话</li>
+     *     <li>loading 状态下，返回一个默认的数据，如果存在的话</li>
+     * </pre>
+     *
+     * @param defaultData 如果不存在数据则返回 defaultData 所设置的默认数据。
+     * @return Resource 中保存的数据。
+     */
     @Nullable
-    public T orElse(@Nullable T elseData) {
+    public T orElse(@Nullable T defaultData) {
         if (mData == null) {
-            return elseData;
+            return defaultData;
         }
         return mData;
     }
 
+    /**
+     * 获取 Resource 中保存的数据，在不同状态下获取的数据具有不同的意义：
+     *
+     * <pre>
+     *     <li>success 状态下，返回一个成功操作所产生的数据</li>
+     *     <li>error 状态下，返回一个默认的数据，如果存在的话</li>
+     *     <li>loading 状态下，返回一个默认的数据，如果存在的话</li>
+     * </pre>
+     *
+     * @return Resource 中保存的数据。
+     */
     @Nullable
-    public T defaultData() {
-        return mDefaultData;
+    public T get() {
+        return mData;
     }
 
     public Throwable error() {
@@ -112,7 +146,6 @@ public class Resource<T> {
                 "mError=" + mError +
                 ", mStatus=" + mStatus +
                 ", mData=" + mData +
-                ", mDefaultData=" + mDefaultData +
                 '}';
     }
 

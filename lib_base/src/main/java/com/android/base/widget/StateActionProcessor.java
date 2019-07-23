@@ -27,7 +27,7 @@ import static com.android.base.app.ui.StateLayoutConfig.SERVER_ERROR;
  * Email: ztiany3@gmail.com
  * Date : 2018-05-17 17:08
  */
-public class StateActionProcessor implements StateProcessor {
+public class StateActionProcessor extends StateProcessor {
 
     private OnRetryActionListener mOnRetryActionListener;
 
@@ -102,6 +102,7 @@ public class StateActionProcessor implements StateProcessor {
         private final int mState;
         private Drawable mDrawable;
         private CharSequence mMessage;
+        private int mMessageGravity;
         private CharSequence mActionText;
         private View mStateView;
         private TextView mMessageTv;
@@ -125,6 +126,7 @@ public class StateActionProcessor implements StateProcessor {
             setActionText(mActionText);
             setMessage(mMessage);
             setDrawable(mDrawable);
+            setMessageGravity(mMessageGravity);
         }
 
         void setDrawable(Drawable drawable) {
@@ -138,6 +140,13 @@ public class StateActionProcessor implements StateProcessor {
             mMessage = message;
             if (mMessageTv != null) {
                 mMessageTv.setText(mMessage);
+            }
+        }
+
+        void setMessageGravity(int gravity) {
+            mMessageGravity = gravity;
+            if (mMessageTv != null) {
+                mMessageTv.setGravity(mMessageGravity);
             }
         }
 
@@ -160,6 +169,12 @@ public class StateActionProcessor implements StateProcessor {
         @Override
         public StateLayoutConfig setStateMessage(@ViewState int state, CharSequence message) {
             getViewInfoForState(state).setMessage(message);
+            return this;
+        }
+
+        @Override
+        public StateLayoutConfig setMessageGravity(int state, int gravity) {
+            getViewInfoForState(state).setMessageGravity(gravity);
             return this;
         }
 
@@ -192,6 +207,12 @@ public class StateActionProcessor implements StateProcessor {
             mSimpleMultiStateView.setDisableOperationWhenRequesting(disable);
             return this;
         }
+
+        @Override
+        public StateProcessor getProcessor() {
+            return StateActionProcessor.this;
+        }
+
     };
 
 }
