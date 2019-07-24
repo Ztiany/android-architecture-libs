@@ -26,8 +26,12 @@ abstract class SimpleItemViewBinder<T> : ItemViewBinder<T, KtViewHolder>() {
             inflater.inflate(layout, parent, false)
         } else
             layout as View
-        return KtViewHolder(itemView)
+        return KtViewHolder(itemView).apply {
+            onViewHolderCreated(this)
+        }
     }
+
+    protected open fun onViewHolderCreated(viewHolder: KtViewHolder) = Unit
 
     /**provide a layout id or a View*/
     abstract fun provideLayout(inflater: LayoutInflater, parent: ViewGroup): Any
