@@ -56,6 +56,8 @@ public interface DataManager<T> {
 
     void removeItems(List<T> elements);
 
+    void removeItems(List<T> elements, boolean isSuccessive);
+
     //get
     T getItem(int position);
 

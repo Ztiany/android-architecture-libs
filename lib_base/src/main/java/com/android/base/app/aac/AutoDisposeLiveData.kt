@@ -8,38 +8,6 @@ import com.github.dmstocking.optional.java.util.Optional
 import com.uber.autodispose.*
 
 
-fun <T> ObservableSubscribeProxy<T>.toLiveData(): LiveData<T> {
-    val liveData = MutableLiveData<T>()
-    this.subscribeIgnoreError {
-        liveData.postValue(it)
-    }
-    return liveData
-}
-
-fun <T> FlowableSubscribeProxy<T>.toLiveData(): LiveData<T> {
-    val liveData = MutableLiveData<T>()
-    this.subscribeIgnoreError {
-        liveData.postValue(it)
-    }
-    return liveData
-}
-
-fun <T> SingleSubscribeProxy<T>.toLiveData(): LiveData<T> {
-    val liveData = MutableLiveData<T>()
-    this.subscribeIgnoreError {
-        liveData.postValue(it)
-    }
-    return liveData
-}
-
-fun <T> MaybeSubscribeProxy<T>.toLiveData(): LiveData<T> {
-    val liveData = MutableLiveData<T>()
-    this.subscribeIgnoreError {
-        liveData.postValue(it)
-    }
-    return liveData
-}
-
 //-----------------------------------------------------------------------------------------
 
 fun <T> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<Resource<T>>) {
@@ -152,6 +120,18 @@ fun CompletableSubscribeProxy.subscribeWithLiveData(liveData: MutableLiveData<Re
     )
 }
 
+fun <T> CompletableSubscribeProxy.subscribeWithLiveData(liveData: MutableLiveData<Resource<T>>, provider: () -> T) {
+    liveData.postValue(Resource.loading())
+    this.subscribe(
+            {
+                liveData.postValue(Resource.success(provider()))
+            },
+            {
+                liveData.postValue(Resource.error(it))
+            }
+    )
+}
+
 //-----------------------------------------------------------------------------------------
 
 fun <T> ObservableSubscribeProxy<T>.toResourceLiveData(): LiveData<Resource<T>> {
@@ -222,4 +202,38 @@ fun CompletableSubscribeProxy.toResourceLiveData(): LiveData<Resource<Any>> {
             }
     )
     return mutableLiveData
+}
+
+//-----------------------------------------------------------------------------------------
+
+fun <T> ObservableSubscribeProxy<T>.toLiveData(): LiveData<T> {
+    val liveData = MutableLiveData<T>()
+    this.subscribeIgnoreError {
+        liveData.postValue(it)
+    }
+    return liveData
+}
+
+fun <T> FlowableSubscribeProxy<T>.toLiveData(): LiveData<T> {
+    val liveData = MutableLiveData<T>()
+    this.subscribeIgnoreError {
+        liveData.postValue(it)
+    }
+    return liveData
+}
+
+fun <T> SingleSubscribeProxy<T>.toLiveData(): LiveData<T> {
+    val liveData = MutableLiveData<T>()
+    this.subscribeIgnoreError {
+        liveData.postValue(it)
+    }
+    return liveData
+}
+
+fun <T> MaybeSubscribeProxy<T>.toLiveData(): LiveData<T> {
+    val liveData = MutableLiveData<T>()
+    this.subscribeIgnoreError {
+        liveData.postValue(it)
+    }
+    return liveData
 }

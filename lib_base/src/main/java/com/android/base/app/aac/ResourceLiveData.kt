@@ -120,6 +120,18 @@ fun Completable.subscribeWithLiveData(liveData: MutableLiveData<Resource<Any>>) 
     )
 }
 
+fun <T> Completable.subscribeWithLiveData(liveData: MutableLiveData<Resource<T>>, provider: () -> T) {
+    liveData.postValue(Resource.loading())
+    this.subscribe(
+            {
+                liveData.postValue(Resource.success(provider()))
+            },
+            {
+                liveData.postValue(Resource.error(it))
+            }
+    )
+}
+
 //-----------------------------------------------------------------------------------------
 
 fun <T> Observable<T>.toResourceLiveData(): LiveData<Resource<T>> {

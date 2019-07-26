@@ -120,7 +120,7 @@ final class RefreshableStateLayoutImpl implements RefreshStateLayout, StateLayou
     @Override
     public void showServerErrorLayout() {
         refreshCompleted();
-        checkMultiStateView().showNetErrorLayout();
+        checkMultiStateView().showServerErrorLayout();
     }
 
     @Override

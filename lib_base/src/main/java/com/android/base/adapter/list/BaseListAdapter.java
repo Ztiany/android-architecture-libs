@@ -137,6 +137,11 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
     }
 
     @Override
+    public void removeItems(List<T> elements, boolean isSuccessive) {
+        mDataManager.removeItems(elements, isSuccessive);
+    }
+
+    @Override
     public void removeAt(int index) {
         mDataManager.removeAt(index);
     }

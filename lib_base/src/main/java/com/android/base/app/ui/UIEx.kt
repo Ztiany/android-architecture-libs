@@ -148,8 +148,14 @@ fun RefreshStateLayout.processErrorWithStatus(throwable: Throwable?) {
     val errorTypeClassifier = BaseKit.get().errorClassifier()
     if (errorTypeClassifier != null) {
         when {
-            errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
-            errorTypeClassifier.isServerError(throwable) -> showServerErrorLayout()
+            errorTypeClassifier.isNetworkError(throwable) -> {
+                Timber.d("isNetworkError showNetErrorLayout")
+                showNetErrorLayout()
+            }
+            errorTypeClassifier.isServerError(throwable) -> {
+                Timber.d("isServerError showServerErrorLayout")
+                showServerErrorLayout()
+            }
             else -> showErrorLayout()
         }
     } else {

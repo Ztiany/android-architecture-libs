@@ -124,6 +124,11 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     }
 
     @Override
+    public void removeItems(List<T> elements, boolean isSuccessive) {
+        removeItems(elements);
+    }
+
+    @Override
     public void removeAt(int index) {
         if (mData != null && mData.size() > index) {
             mData.remove(index);

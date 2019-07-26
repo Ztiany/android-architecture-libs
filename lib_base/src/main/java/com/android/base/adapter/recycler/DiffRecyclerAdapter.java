@@ -196,6 +196,11 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
     }
 
     @Override
+    public void removeItems(List<T> elements, boolean isSuccessive) {
+        removeItems(elements);
+    }
+
+    @Override
     public void removeAt(int index) {
         if (getDataSize() > index) {
             List<T> newList = newList();

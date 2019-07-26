@@ -171,6 +171,25 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
     }
 
     @Override
+    public void removeItems(List<T> elements, boolean isSuccessive) {
+        if (Checker.isEmpty(elements) || Checker.isEmpty(mData)) {
+            return;
+        }
+        if (!isSuccessive) {
+            removeItems(elements);
+            return;
+        }
+        T data = elements.get(0);
+        int index = mData.indexOf(data);
+        if (index == -1) {
+            removeItems(elements);
+        } else {
+            mData.removeAll(elements);
+            notifyItemRangeRemoved(index, elements.size());
+        }
+    }
+
+    @Override
     public T getItem(int position) {
         position = position - getHeaderSize();
         if (position >= 0 && getDataSize() > position) {
@@ -239,6 +258,10 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
 
     private void notifyItemRemoved(int index) {
         mAdapter.notifyItemRemoved(index);
+    }
+
+    private void notifyItemRangeRemoved(int index, int size) {
+        mAdapter.notifyItemRangeRemoved(index, size);
     }
 
     void setHeaderSize(HeaderSize headerSize) {

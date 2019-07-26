@@ -1,6 +1,5 @@
 package com.android.base.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
@@ -8,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -32,7 +32,7 @@ public class MultiStateView extends FrameLayout {
     private LayoutInflater mInflater;
     private SparseArray<ViewHolder> mChildren;
     private View mContentView;
-    private boolean mDisableOperationWhenRequesting = true;
+    private boolean mDisableOperationWhenRequesting = false;
 
     @Nullable
     private StateListener mListener;
@@ -64,7 +64,7 @@ public class MultiStateView extends FrameLayout {
         int emptyViewResId = a.getResourceId(R.styleable.MultiStateView_msv_emptyView, -1);
         int errorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_errorView, -1);
         int netErrorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_net_errorView, -1);
-        int serverErrorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_net_errorView, -1);
+        int serverErrorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_server_errorView, -1);
 
         mChildren.put(LOADING, new ViewHolder(loadingViewResId));
         mChildren.put(REQUESTING, new ViewHolder(requestingViewResId));
@@ -73,7 +73,7 @@ public class MultiStateView extends FrameLayout {
         mChildren.put(NET_ERROR, new ViewHolder(netErrorViewResId));
         mChildren.put(SERVER_ERROR, new ViewHolder(serverErrorViewResId));
 
-        mDisableOperationWhenRequesting = a.getBoolean(R.styleable.MultiStateView_msv_disable_when_requesting, true);
+        mDisableOperationWhenRequesting = a.getBoolean(R.styleable.MultiStateView_msv_disable_when_requesting, false);
 
         ensureInitState(a.getInt(R.styleable.MultiStateView_msv_viewState, CONTENT));
 
@@ -272,25 +272,35 @@ public class MultiStateView extends FrameLayout {
 
         View curStateView = ensureStateView(mViewState);
         int size = mChildren.size();
+
         for (int i = 0; i < size; i++) {
             ViewHolder viewHolder = mChildren.valueAt(i);
             if (viewHolder.mView == null) {
                 continue;
             }
+
             if (viewHolder.mView != curStateView) {
-                if (mViewState == REQUESTING && viewHolder.mView != mContentView) {
-                    viewHolder.mView.setVisibility(GONE);
+                if (mViewState == REQUESTING && viewHolder.mView == mContentView) {
+                    viewHolder.mView.setVisibility(VISIBLE);
                 } else {
                     viewHolder.mView.setVisibility(GONE);
                 }
             }
         }
+
         curStateView.setVisibility(VISIBLE);
+    }
 
-        if (mViewState == REQUESTING) {
-            curStateView.setOnTouchListener(mDisableOperationWhenRequesting ? NO_ACTION_TOUCH_LISTENER : null);
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            if (mViewState == REQUESTING) {
+                return mDisableOperationWhenRequesting;
+            } else {
+                return false;
+            }
         }
-
+        return super.onInterceptTouchEvent(ev);
     }
 
     /**
@@ -322,17 +332,6 @@ public class MultiStateView extends FrameLayout {
 
     public void setDisableOperationWhenRequesting(boolean disableOperationWhenRequesting) {
         mDisableOperationWhenRequesting = disableOperationWhenRequesting;
-        ViewHolder viewHolder = mChildren.get(LOADING);
-        if (viewHolder == null || viewHolder.mView == null) {
-            return;
-        }
-        if (disableOperationWhenRequesting) {
-            if (mViewState == REQUESTING) {
-                viewHolder.mView.setOnTouchListener(NO_ACTION_TOUCH_LISTENER);
-            }
-        } else {
-            viewHolder.mView.setOnTouchListener(null);
-        }
     }
 
     /**
@@ -361,18 +360,15 @@ public class MultiStateView extends FrameLayout {
         void onStateInflated(@ViewState int viewState, @NonNull View view);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private static final OnTouchListener NO_ACTION_TOUCH_LISTENER = (v, event) -> true;
-
     private class ViewHolder {
         private View mView;
         private int mViewLayoutId;
 
-        public ViewHolder(int viewLayoutId) {
+        ViewHolder(int viewLayoutId) {
             this(null, viewLayoutId);
         }
 
-        public ViewHolder(View view, int viewLayoutId) {
+        ViewHolder(View view, int viewLayoutId) {
             mView = view;
             mViewLayoutId = viewLayoutId;
         }

@@ -4,7 +4,6 @@
     <item name="base_item_tag_view_id" type="id"/>
     <item name="base_tag_multi_state_view" type="id"/>
 
-
     <item name="base_retry_tv" type="id"/><!--重试text-->
     <item name="base_retry_icon" type="id"/><!--重试icon-->
     <item name="base_retry_btn" type="id"/><!--重试btn-->
@@ -13,6 +12,5 @@
     <item name="base_refresh_layout" type="id"/><!--刷新控件，如下拉刷新SwipeRefreshLayout-->
     <item name="base_state_layout" type="id"/><!--状态布局控件，如multiStatusView-->
     <item name="common_toolbar" type="id"/><!--toolbar-->
-
 
 </resources>

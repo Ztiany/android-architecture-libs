@@ -86,11 +86,19 @@ fun <T : Fragment> FragmentManager.findFragmentByTag(clazz: KClass<T>): T? {
     return findFragmentByTag(clazz.java.name) as? T
 }
 
-fun FragmentManager.popBackTo(flag: String, immediate: Boolean = false) {
+fun FragmentManager.popBackUntil(flag: String, immediate: Boolean = false) {
     if (immediate) {
         popBackStackImmediate(flag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     } else {
         popBackStack(flag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+}
+
+fun FragmentManager.popBackTo(flag: String, immediate: Boolean = false) {
+    if (immediate) {
+        popBackStackImmediate(flag, 0)
+    } else {
+        popBackStack(flag,0)
     }
 }
 

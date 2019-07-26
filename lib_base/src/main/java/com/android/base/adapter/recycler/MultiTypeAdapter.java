@@ -121,6 +121,11 @@ public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter impl
     }
 
     @Override
+    public void removeItems(List<Object> elements, boolean isSuccessive) {
+        mRecyclerDataManager.removeItems(elements, isSuccessive);
+    }
+
+    @Override
     public Object getItem(int position) {
         return mRecyclerDataManager.getItem(position);
     }
