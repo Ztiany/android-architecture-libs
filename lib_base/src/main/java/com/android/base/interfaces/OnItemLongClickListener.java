@@ -2,9 +2,6 @@ package com.android.base.interfaces;
 
 import android.view.View;
 
-import timber.log.Timber;
-
-
 
 public abstract class OnItemLongClickListener<T> implements View.OnLongClickListener {
 
@@ -13,13 +10,11 @@ public abstract class OnItemLongClickListener<T> implements View.OnLongClickList
     public final boolean onLongClick(View v) {
         Object tag = v.getTag();
         if (tag == null) {
-            Timber.w("OnItemLongClickListener tag is null , view = " + v);
-            return false;
+            throw new NullPointerException("OnItemLongClickListener --> no tag found");
         }
         return onClick(v, (T) tag);
     }
 
     public abstract boolean onClick(View view, T t);
-
 
 }

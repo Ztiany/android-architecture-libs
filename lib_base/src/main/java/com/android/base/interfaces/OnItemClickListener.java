@@ -1,8 +1,7 @@
 package com.android.base.interfaces;
 
+import android.support.annotation.NonNull;
 import android.view.View;
-
-import timber.log.Timber;
 
 
 public abstract class OnItemClickListener<T> implements View.OnClickListener {
@@ -12,13 +11,11 @@ public abstract class OnItemClickListener<T> implements View.OnClickListener {
     public final void onClick(View v) {
         Object tag = v.getTag();
         if (tag == null) {
-            Timber.w("OnItemClickListener tag is null , view = " + v);
-            return;
+            throw new NullPointerException("OnItemClickListener --> no tag found");
         }
         onClick(v, (T) tag);
     }
 
-    public abstract void onClick(View view, T t);
-
+    public abstract void onClick(@NonNull View view, @NonNull T t);
 
 }
