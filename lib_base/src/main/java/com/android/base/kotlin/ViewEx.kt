@@ -44,10 +44,14 @@ fun View.gone() {
     this.visibility = View.GONE
 }
 
+fun View.isVisible() = this.visibility == View.VISIBLE
+fun View.isInvisible() = this.visibility == View.INVISIBLE
+fun View.isGone() = this.visibility == View.GONE
+
 fun View.realContext() = ViewUtils.getRealContext(this)
 
 inline fun View.doOnLayoutAvailable(crossinline block: () -> Unit) {
-    //如果 view 已经通过至少一个布局，则返回true，因为它最后一次附加到窗口或从窗口分离。
+    //isLaidOut 方法作用：如果 view 已经通过至少一个布局，则返回true，因为它最后一次附加到窗口或从窗口分离。
     ViewCompat.isLaidOut(this).yes {
         block()
     }.otherwise {
@@ -76,7 +80,7 @@ inline fun <T : View> T.onGlobalLayoutOnce(crossinline action: T.() -> Unit) {
             })
 }
 
-fun View.paddingAll(padding: Int) {
+fun View.setPaddingAll(padding: Int) {
     this.setPadding(padding, padding, padding, padding)
 }
 
@@ -126,7 +130,7 @@ fun View.setSize(width: Int, height: Int) {
 }
 
 fun View.onDebouncedClick(onClick: (View) -> Unit) {
-    onClickObservable(300)
+    onClickObservable(500)
             .subscribeIgnoreError { onClick(this) }
 }
 
@@ -136,12 +140,12 @@ fun View.onDebouncedClick(milliseconds: Long, onClick: (View) -> Unit) {
 }
 
 fun View.onClickObservable(): Observable<Any> {
-    return onClickObservable(300)
+    return onClickObservable(500)
 }
 
 fun View.onClickObservable(milliseconds: Long): Observable<Any> {
     return RxView.clicks(this)
-            .debounce(milliseconds, TimeUnit.MILLISECONDS)
+            .throttleFirst(milliseconds, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
 }
 

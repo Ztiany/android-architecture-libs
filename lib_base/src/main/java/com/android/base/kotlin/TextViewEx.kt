@@ -111,7 +111,7 @@ fun TextView.clearComponentDrawable() {
     this.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
 }
 
-fun Button.enable(et: EditText, checker: (s: CharSequence?) -> Boolean) {
+fun Button.enableByEditText(et: EditText, checker: (s: CharSequence?) -> Boolean = { it -> !it.isNullOrEmpty() }) {
     val btn = this
     et.addTextChangedListener(object : TextWatcherAdapter {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
