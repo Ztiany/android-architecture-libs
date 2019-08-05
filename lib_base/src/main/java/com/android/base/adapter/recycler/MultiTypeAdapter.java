@@ -100,7 +100,7 @@ public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter impl
     }
 
     @Override
-    public void setDataSource(List<Object> newDataSource, boolean notifyDataSetChanged) {
+    public void setDataSource(@NonNull List<Object> newDataSource, boolean notifyDataSetChanged) {
         super.setItems(newDataSource);
         mRecyclerDataManager.setDataSource(newDataSource, notifyDataSetChanged);
     }

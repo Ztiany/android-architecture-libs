@@ -234,7 +234,7 @@ static Repository innerNewRepository() {
             stethoOkhttp3          : 'com.facebook.stetho:stetho-okhttp3:1.4.2',
 
             //https://github.com/eleme/UETool ui调试工具
-            ueTool                 : 'me.ele:uetool:1.0.15',
+            ueTool                 : 'me.ele:uetool:1.2.1',
 
             //https://github.com/Kyson/AndroidGodEye 全面的调试工具
             godeyeCore             : 'cn.hikyson.godeye:godeye-core:2.1.1',
