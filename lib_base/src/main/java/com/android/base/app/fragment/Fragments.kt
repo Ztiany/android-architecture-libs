@@ -98,7 +98,7 @@ fun FragmentManager.popBackTo(flag: String, immediate: Boolean = false) {
     if (immediate) {
         popBackStackImmediate(flag, 0)
     } else {
-        popBackStack(flag,0)
+        popBackStack(flag, 0)
     }
 }
 
@@ -254,7 +254,7 @@ class EnhanceFragmentTransaction constructor(
         fragmentTransaction.add(confirmLayoutId(containerId), fragment, nonnullTag)
         if (transition) {
             //set a transition
-            setTransitionOpen()
+            setOpeningTransition()
         }
         return this
     }
@@ -271,7 +271,7 @@ class EnhanceFragmentTransaction constructor(
         fragmentTransaction.replace(confirmLayoutId(containerId), fragment, nonnullTag)
         //set a transition
         if (transition) {
-            setTransitionOpen()
+            setOpeningTransition()
         }
         return this
     }
@@ -298,7 +298,7 @@ class EnhanceFragmentTransaction constructor(
     fun replaceWithDefaultContainer(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
         if (transition) {
-            setTransitionOpen()
+            setOpeningTransition()
         }
         return fragmentTransaction.replace(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
     }
@@ -319,15 +319,16 @@ class EnhanceFragmentTransaction constructor(
         }
     }
 
-    fun setTransitionOpen(): FragmentTransaction {
+    @Suppress
+    fun setOpeningTransition(): FragmentTransaction {
         return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_OPEN)
     }
 
-    fun setTransitionClose(): FragmentTransaction {
+    fun setClosingTransition(): FragmentTransaction {
         return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_CLOSE)
     }
 
-    fun setTransitionFade(): FragmentTransaction {
+    fun setFadingTransition(): FragmentTransaction {
         return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_FADE)
     }
 
