@@ -40,12 +40,3 @@ inline fun <T> Resource<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): Reso
     }
     return this
 }
-
-val <T> Resource<T>?.isFailed
-    get() = this != null && this.isError
-
-val <T> Resource<T>?.isSucceeded
-    get() = this != null && this.isSuccess
-
-val <T> Resource<T>?.inLoading
-    get() = this != null && this.isLoading
