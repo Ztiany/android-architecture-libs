@@ -6,6 +6,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -102,7 +103,7 @@ public class StateActionProcessor extends StateProcessor {
         private final int mState;
         private Drawable mDrawable;
         private CharSequence mMessage;
-        private int mMessageGravity;
+        private int mMessageGravity = Gravity.CENTER;
         private CharSequence mActionText;
         private View mStateView;
         private TextView mMessageTv;

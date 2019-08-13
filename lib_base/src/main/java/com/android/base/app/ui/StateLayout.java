@@ -24,4 +24,8 @@ public interface StateLayout {
     void showServerErrorLayout();
 
     StateLayoutConfig getStateLayoutConfig();
+
+    @StateLayoutConfig.ViewState
+    int currentStatus();
+
 }

@@ -34,6 +34,7 @@ internal class RefreshLoadMoreStateLayoutImpl private constructor(layout: View) 
     override fun showBlank() = checkMultiStateView().showBlank()
     override fun showNetErrorLayout() = checkMultiStateView().showNetErrorLayout()
     override fun showServerErrorLayout() = checkMultiStateView().showServerErrorLayout()
+    override fun currentStatus() = checkMultiStateView().currentStatus()
 
     override fun getStateLayoutConfig(): StateLayoutConfig = checkMultiStateView().stateLayoutConfig
 

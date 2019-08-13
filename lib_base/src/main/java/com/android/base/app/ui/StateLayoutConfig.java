@@ -29,6 +29,7 @@ public interface StateLayoutConfig {
             EMPTY,
             ERROR,
             NET_ERROR,
+            SERVER_ERROR,
     })
     @Retention(RetentionPolicy.SOURCE)
     @interface RetryableState {

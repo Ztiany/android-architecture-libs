@@ -142,4 +142,10 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
         return mStateProcessor.getStateLayoutConfigImpl();
     }
 
+    @Override
+    @ViewState
+    public int currentStatus() {
+        return getViewState();
+    }
+
 }

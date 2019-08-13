@@ -98,5 +98,6 @@ abstract class BaseListV2Fragment<T> : BaseFragment(), RefreshListLayout<T> {
     override fun showNetErrorLayout() = stateLayout.showNetErrorLayout()
     override fun showServerErrorLayout() = stateLayout.showServerErrorLayout()
     override fun isLoadingMore() = stateLayout.refreshView.isLoadingMore
+    override fun currentStatus() = stateLayout.currentStatus()
 
 }

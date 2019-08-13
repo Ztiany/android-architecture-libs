@@ -59,7 +59,7 @@ public abstract class BaseStateDialogFragment extends BaseDialogFragment impleme
         return mStateLayout.getRefreshView();
     }
 
-    protected void onRetry(int state) {
+    protected void onRetry(@StateLayoutConfig.RetryableState int state) {
         if (getRefreshView() != null) {
             if (!getRefreshView().isRefreshing()) {
                 autoRefresh();
@@ -140,6 +140,11 @@ public abstract class BaseStateDialogFragment extends BaseDialogFragment impleme
     @Override
     public void showServerErrorLayout() {
         getStateLayout().showServerErrorLayout();
+    }
+
+    @Override
+    public int currentStatus() {
+        return mStateLayout.currentStatus();
     }
 
 }

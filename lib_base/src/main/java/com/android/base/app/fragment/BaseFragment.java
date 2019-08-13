@@ -246,9 +246,16 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
 
     private LoadingView getLoadingViewImpl() {
         if (mLoadingViewImpl == null) {
+            mLoadingViewImpl = onCreateLoadingView();
+        }
+        if (mLoadingViewImpl == null) {
             mLoadingViewImpl = BaseKit.get().getLoadingViewFactory().createLoadingDelegate(getContext());
         }
         return mLoadingViewImpl;
+    }
+
+    protected LoadingView onCreateLoadingView() {
+        return null;
     }
 
     @Override

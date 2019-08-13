@@ -130,6 +130,11 @@ final class RefreshableStateLayoutImpl implements RefreshStateLayout, StateLayou
     }
 
     @Override
+    public int currentStatus() {
+        return mMultiStateView.currentStatus();
+    }
+
+    @Override
     public void refreshCompleted() {
         if (mRefreshView != null) {
             mRefreshView.refreshCompleted();
