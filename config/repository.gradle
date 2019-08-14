@@ -203,7 +203,7 @@ static Repository innerNewRepository() {
             //https://github.com/yanzhenjie/AndPermission
             andPermission                     : 'com.yanzhenjie.permission:support:2.0.1',
             //image compression：https://github.com/Sunzxyong/Tiny
-            tiny                              : 'com.zxy.android:tiny:0.0.5',
+            tiny                              : 'com.zxy.android:tiny:1.1.0',
             //zip4j
             zip4j                             : 'net.lingala.zip4j:zip4j:1.3.2',
             //JobScheduler：https://github.com/evernote/android-job
