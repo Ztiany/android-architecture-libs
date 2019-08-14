@@ -5,9 +5,13 @@ import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
+import android.support.v4.widget.NestedScrollView
 import android.view.View
+import android.view.View.FOCUS_DOWN
+import android.view.View.FOCUS_UP
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.ScrollView
 import com.android.base.rx.subscribeIgnoreError
 import com.android.base.utils.android.ViewUtils
 import com.android.base.utils.android.compat.AndroidVersion.atLeast
@@ -150,3 +154,19 @@ fun View.onClickObservable(milliseconds: Long): Observable<Any> {
 }
 
 inline val ViewGroup.views get() = (0 until childCount).map { getChildAt(it) }
+
+fun ScrollView.scrollToBottom() {
+    fullScroll(FOCUS_DOWN)
+}
+
+fun ScrollView.scrollToTop() {
+    fullScroll(FOCUS_UP)
+}
+
+fun NestedScrollView.scrollToBottom() {
+    fullScroll(FOCUS_DOWN)
+}
+
+fun NestedScrollView.scrollToTop() {
+    fullScroll(FOCUS_UP)
+}

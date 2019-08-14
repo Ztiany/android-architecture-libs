@@ -19,7 +19,6 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     private final List<WeakReference<ObserverWrapper<T>>> mWrapperObserverList = new ArrayList<>();
 
-
     @Override
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
         super.observe(owner, getOrNewObserver(observer, mVersion));
@@ -38,10 +37,27 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     @Override
     public void removeObserver(@NonNull Observer<T> observer) {
-        Observer<T> wrapper = findWrapper(observer);
-        Timber.d("removeObserver() called with: observer = [" + observer + "], wrapper = [" + wrapper + "]");
-        if (wrapper != null) {
+        if (observer instanceof ObserverWrapper) {
+            super.removeObserver(observer);
+            removeWrapper((ObserverWrapper) observer);
+            Timber.d("removeObserver() called with: observer = wrapper = [" + observer + "]");
+        } else {
+            ObserverWrapper<T> wrapper = findWrapper(observer);
+            Timber.d("removeObserver() called with: observer = [" + observer + "], wrapper = [" + wrapper + "]");
             super.removeObserver(wrapper);
+            removeWrapper(wrapper);
+        }
+    }
+
+    private void removeWrapper(ObserverWrapper observer) {
+        ListIterator<WeakReference<ObserverWrapper<T>>> iterator = mWrapperObserverList.listIterator();
+        while (iterator.hasNext()) {
+            WeakReference<ObserverWrapper<T>> next = iterator.next();
+            ObserverWrapper<T> item = next.get();
+            if (item == observer) {
+                iterator.remove();
+                break;
+            }
         }
     }
 

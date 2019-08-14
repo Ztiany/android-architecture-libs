@@ -23,5 +23,10 @@
 ## 3 其他备选参考
 
 -  [boxing](https://github.com/Bilibili/boxing)
--  [uCrop](https://github.com/Yalantis/uCrop)
+-  [Matisse](https://github.com/zhihu/Matisse)
 -  [ImagePicker](https://github.com/jeasonlzy/ImagePicker)
+-  [PictureSelector](https://github.com/LuckSiege/PictureSelector)
+-  [Album](https://github.com/yanzhenjie/Album)
+-  [uCrop](https://github.com/Yalantis/uCrop)
+-  [smartCropper](https://github.com/pqpo/SmartCropper)
+-  [simpleCropper](https:github.com/igreenwood/SimpleCropView)

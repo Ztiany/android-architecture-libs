@@ -32,11 +32,6 @@ dependencies {
     /*imageLoader*/
     compileOnly thirdLibraries.glide
 
-    //other optional
-    //知乎 Matisse：https://github.com/zhihu/Matisse
-    //PictureSelector ：https://github.com/LuckSiege/PictureSelector
-    //Album：https://github.com/yanzhenjie/Album
-
     implementation('com.bilibili:boxing:1.0.4') {
         exclude group: 'com.android.support'
     }
@@ -45,10 +40,12 @@ dependencies {
         exclude group: 'com.android.support'
     }
 
-    //other optional
-    //cropper about
-    // smartCropper：https://github.com/pqpo/SmartCropper
-    // simpleCropper：https:github.com/igreenwood/SimpleCropView
+    implementation('com.chensl.rotatephotoview:rotatephotoview:1.0.5') {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+    }
+
     implementation('com.yalantis:ucrop:2.2.0') {
         exclude group: 'com.android.support'
         exclude group: 'com.squareup.okio'

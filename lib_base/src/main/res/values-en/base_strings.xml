@@ -3,7 +3,6 @@
     <string name="Base_Confirm">Confirm</string>
     <string name="Base_Cancel">Cancel</string>
 
-
     <!-- ================== error layout  ================== -->
     <string name="base_error_load_fail_tips">Failed to load/(ㄒoㄒ)/~~ </string>
     <string name="base_error_retry_action_tips">Click me to retry</string>
