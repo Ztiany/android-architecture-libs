@@ -1,7 +1,5 @@
 package com.android.base.utils.security;
 
-import com.android.base.utils.security.util.AESUtils;
-
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -28,15 +26,15 @@ public class AESCipherStrategy extends CipherStrategy {
 
     @Override
     public String decrypt(String encryptContent) {
-        byte[] encrypByte = decodeConvert(encryptContent);
-        byte[] decryptByte = AESUtils.decryptData(encrypByte, key);
+        byte[] encryptByte = decodeConvert(encryptContent);
+        byte[] decryptByte = AESUtils.decryptData(encryptByte, key);
         String result = "";
         try {
             result = new String(decryptByte, CHARSET);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
         return result;
     }
+
 }

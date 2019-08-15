@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.base.utils.security.util;
+package com.android.base.utils.security;
 
 import java.security.SecureRandom;
 
@@ -23,9 +23,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-/**
- * Created by Administrator on 2015/11/11.
- */
+@SuppressWarnings("WeakerAccess")
 public class DESUtils {
 
     /**
@@ -33,7 +31,6 @@ public class DESUtils {
      *
      * @param bytesContent 待加密内容
      * @param key          加密的密钥
-     * @return
      */
     public static byte[] encrypt(byte[] bytesContent, String key) {
         try {
@@ -43,8 +40,7 @@ public class DESUtils {
             SecretKey securekey = keyFactory.generateSecret(desKey);
             Cipher cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.ENCRYPT_MODE, securekey, random);
-            byte[] result = cipher.doFinal(bytesContent);
-            return result;
+            return cipher.doFinal(bytesContent);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -56,20 +52,20 @@ public class DESUtils {
      *
      * @param content 待解密内容
      * @param key     解密的密钥
-     * @return
      */
     public static byte[] decrypt(byte[] content, String key) {
         try {
             SecureRandom random = new SecureRandom();
             DESKeySpec desKey = new DESKeySpec(key.getBytes());
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            SecretKey securekey = keyFactory.generateSecret(desKey);
+            SecretKey secretKey = keyFactory.generateSecret(desKey);
             Cipher cipher = Cipher.getInstance("DES");
-            cipher.init(Cipher.DECRYPT_MODE, securekey, random);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, random);
             return cipher.doFinal(content);
         } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

@@ -1,8 +1,6 @@
 package com.android.base.utils.security;
 
 
-import com.android.base.utils.security.util.DESUtils;
-
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -32,8 +30,8 @@ public class DESCipherStrategy extends CipherStrategy {
 
     @Override
     public String decrypt(String encryptContent) {
-        byte[] encrypByte = decodeConvert(encryptContent);
-        byte[] decryptByte = DESUtils.decrypt(encrypByte, key);
+        byte[] encryptByte = decodeConvert(encryptContent);
+        byte[] decryptByte = DESUtils.decrypt(encryptByte, key);
         String result = "";
         try {
             result = new String(decryptByte, CHARSET);

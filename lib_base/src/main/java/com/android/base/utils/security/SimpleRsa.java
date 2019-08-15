@@ -5,6 +5,7 @@ import android.util.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -45,7 +46,7 @@ public class SimpleRsa {
             PublicKey pubKey = getPublicKeyFromX509(ALGORITHM, RSA_PUBLIC_KEY);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-            byte plaintext[] = content.getBytes("UTF-8");
+            byte[] plaintext = content.getBytes(StandardCharsets.UTF_8);
             byte[] output = cipher.doFinal(plaintext);
             return new String(Base64.encode(output, Base64.DEFAULT));
         } catch (Exception e) {
@@ -78,7 +79,7 @@ public class SimpleRsa {
                 }
                 writer.write(cipher.doFinal(block));
             }
-            return new String(writer.toByteArray(), "utf-8");
+            return new String(writer.toByteArray(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }

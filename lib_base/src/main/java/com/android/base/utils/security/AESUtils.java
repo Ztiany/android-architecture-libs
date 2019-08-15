@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.base.utils.security.util;
+package com.android.base.utils.security;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -25,10 +25,11 @@ import javax.crypto.spec.SecretKeySpec;
  * AES 对称加密
  */
 public class AESUtils {
+
     /**
      * 算法/模式/填充 *
      */
-    private static final String CipherMode = "AES";
+    private static final String CIPHER_MODE = "AES";
 
     /**
      * 创建密钥
@@ -38,7 +39,7 @@ public class AESUtils {
      * @return SecretKeySpec 实例
      */
     private static SecretKeySpec generateAESKey(String password) {
-        byte[] data = null;
+        byte[] data;
         StringBuilder sb = new StringBuilder();
         sb.append(password);
         while (sb.length() < 16)
@@ -46,8 +47,8 @@ public class AESUtils {
         if (sb.length() > 16)
             sb.setLength(16);
         try {
-            data = sb.toString().getBytes("UTF-8");
-            return new SecretKeySpec(data, "AES");
+            data = sb.toString().getBytes(StandardCharsets.UTF_8);
+            return new SecretKeySpec(data, CIPHER_MODE);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -64,10 +65,9 @@ public class AESUtils {
     public static byte[] encryptData(byte[] content, String password) {
         try {
             SecretKeySpec key = generateAESKey(password);
-            Cipher cipher = Cipher.getInstance(CipherMode);
+            Cipher cipher = Cipher.getInstance(CIPHER_MODE);
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            byte[] result = cipher.doFinal(content);
-            return result;
+            return cipher.doFinal(content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,13 +84,12 @@ public class AESUtils {
     public static String encryptData(String content, String password) {
         byte[] data = null;
         try {
-            data = content.getBytes("UTF-8");
+            data = content.getBytes(StandardCharsets.UTF_8);
         } catch (Exception e) {
             e.printStackTrace();
         }
         data = encryptData(data, password);
-        String result = byte2hex(data);
-        return result;
+        return byte2hex(data);
     }
 
     /**
@@ -103,7 +102,7 @@ public class AESUtils {
     public static byte[] decryptData(byte[] content, String password) {
         try {
             SecretKeySpec key = generateAESKey(password);
-            Cipher cipher = Cipher.getInstance(CipherMode);
+            Cipher cipher = Cipher.getInstance(CIPHER_MODE);
             cipher.init(Cipher.DECRYPT_MODE, key);
             return cipher.doFinal(content);
         } catch (Exception e) {
@@ -126,26 +125,21 @@ public class AESUtils {
         if (data == null)
             return null;
         String result = null;
-        try {
-            result = new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        result = new String(data, StandardCharsets.UTF_8);
         return result;
     }
 
     /**
      * 字节数组转成16进制字符串
      *
-     * @param b
      * @return 16进制字符串
      */
-    public static String byte2hex(byte[] b) { // 一个字节的数，
-        StringBuffer sb = new StringBuffer(b.length * 2);
-        String tmp = "";
-        for (int n = 0; n < b.length; n++) {
+    public static String byte2hex(byte[] bytes) { // 一个字节的数，
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        String tmp;
+        for (byte theByte : bytes) {
             // 整数转成十六进制表示
-            tmp = (Integer.toHexString(b[n] & 0XFF));
+            tmp = (Integer.toHexString(theByte & 0XFF));
             if (tmp.length() == 1) {
                 sb.append("0");
             }
@@ -155,7 +149,7 @@ public class AESUtils {
     }
 
     /**
-     * 将hex字符串转换成字节数组 *
+     * 将hex字符串转换成字节数组
      *
      * @param inputString 16进制的字符串
      * @return 字节数组

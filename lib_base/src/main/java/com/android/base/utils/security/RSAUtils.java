@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.base.utils.security.util;
+package com.android.base.utils.security;
 
 import android.util.Base64;
 
@@ -39,16 +39,14 @@ import javax.crypto.Cipher;
 
 /**
  * @author Mr.Zheng
- * @date 2014年8月22日 下午1:44:23
  */
 public final class RSAUtils {
+
     private final static String KEY_PAIR = "RSA";
     private final static String CIPHER = "RSA/ECB/PKCS1Padding";
 
     /**
      * 随机生成RSA密钥对(默认密钥长度为1024)
-     *
-     * @return
      */
     public static KeyPair generateRSAKeyPair() {
         return generateRSAKeyPair(1024);
@@ -57,9 +55,7 @@ public final class RSAUtils {
     /**
      * 随机生成RSA密钥对
      *
-     * @param keyLength 密钥长度，范围：512～2048<br>
-     *                  一般1024
-     * @return
+     * @param keyLength 密钥长度，范围：512～2048，一般1024
      */
     public static KeyPair generateRSAKeyPair(int keyLength) {
         try {
@@ -98,7 +94,6 @@ public final class RSAUtils {
      *
      * @param encryptedData 经过encryptedData()加密返回的byte数据
      * @param privateKey    私钥
-     * @return
      */
     public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) {
         try {
@@ -113,8 +108,6 @@ public final class RSAUtils {
     /**
      * 通过公钥byte[](publicKey.getEncoded())将公钥还原，适用于RSA算法
      *
-     * @param keyBytes
-     * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -122,15 +115,12 @@ public final class RSAUtils {
             InvalidKeySpecException {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
-        PublicKey publicKey = keyFactory.generatePublic(keySpec);
-        return publicKey;
+        return keyFactory.generatePublic(keySpec);
     }
 
     /**
      * 通过私钥byte[]将公钥还原，适用于RSA算法
      *
-     * @param keyBytes
-     * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -138,16 +128,12 @@ public final class RSAUtils {
             InvalidKeySpecException {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-        return privateKey;
+        return keyFactory.generatePrivate(keySpec);
     }
 
     /**
      * 使用N、e值还原公钥
      *
-     * @param modulus
-     * @param publicExponent
-     * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -157,27 +143,21 @@ public final class RSAUtils {
         BigInteger bigIntPrivateExponent = new BigInteger(publicExponent);
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(bigIntModulus, bigIntPrivateExponent);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
-        PublicKey publicKey = keyFactory.generatePublic(keySpec);
-        return publicKey;
+        return keyFactory.generatePublic(keySpec);
     }
 
     /**
      * 使用N、d值还原私钥
      *
-     * @param modulus
-     * @param privateExponent
-     * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public static PrivateKey getPrivateKey(String modulus, String privateExponent)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PrivateKey getPrivateKey(String modulus, String privateExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         BigInteger bigIntModulus = new BigInteger(modulus);
         BigInteger bigIntPrivateExponent = new BigInteger(privateExponent);
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(bigIntModulus, bigIntPrivateExponent);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
-        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-        return privateKey;
+        return keyFactory.generatePrivate(keySpec);
     }
 
     /**
@@ -203,12 +183,7 @@ public final class RSAUtils {
     }
 
     /**
-     * 从字符串中加载私钥<br>
-     * 加载时使用的是PKCS8EncodedKeySpec（PKCS#8编码的Key指令）。
-     *
-     * @param privateKeyStr
-     * @return
-     * @throws Exception
+     * 从字符串中加载私钥，加载时使用的是PKCS8EncodedKeySpec（PKCS#8编码的Key指令）。
      */
     public static PrivateKey loadPrivateKey(String privateKeyStr) throws Exception {
         try {
@@ -244,10 +219,6 @@ public final class RSAUtils {
 
     /**
      * 从文件中加载私钥
-     *
-     * @param
-     * @return 是否成功
-     * @throws Exception
      */
     public static PrivateKey loadPrivateKey(InputStream in) throws Exception {
         try {
@@ -261,27 +232,24 @@ public final class RSAUtils {
 
     /**
      * 读取密钥信息
+     *
+     * <pre>
      * --------------------
      * CONTENT
      * --------------------
-     *
-     * @param in
-     * @return
-     * @throws IOException
+     * </pre>
      */
     private static String readKey(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String readLine = null;
+        String readLine;
         StringBuilder sb = new StringBuilder();
         while ((readLine = br.readLine()) != null) {
             if (readLine.charAt(0) == '-') {
                 continue;
-            } else {
-                sb.append(readLine);
-                sb.append('\r');
             }
+            sb.append(readLine);
+            sb.append('\r');
         }
-
         return sb.toString();
     }
 
