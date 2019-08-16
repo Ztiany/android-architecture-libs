@@ -15,14 +15,7 @@ public class TestApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        BaseKit.get().onApplicationAttachBaseContext(base);
+        BaseKit.get().getApplicationDelegate().attachBaseContext(base);
     }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        BaseKit.get().onApplicationCreate(this);
-    }
-
 
 }

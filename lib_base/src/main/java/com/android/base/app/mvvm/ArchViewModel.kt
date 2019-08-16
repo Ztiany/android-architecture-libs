@@ -2,7 +2,7 @@ package com.android.base.app.mvvm
 
 import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
-import com.android.base.rx.LifecycleScopeProviderEx
+import com.android.base.rx.AutoDisposeLifecycleScopeProviderEx
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleEndedException
 import com.uber.autodispose.lifecycle.LifecycleScopes
@@ -17,7 +17,7 @@ import io.reactivex.subjects.BehaviorSubject
  * Email: 1169654504@qq.com
  * Date : 2017-04-18 16:25
  */
-abstract class ArchViewModel : ViewModel(), LifecycleScopeProviderEx<ArchViewModel.ViewModelEvent> {
+abstract class ArchViewModel : ViewModel(), AutoDisposeLifecycleScopeProviderEx<ArchViewModel.ViewModelEvent> {
 
     private val archLifecycleSubject = BehaviorSubject.createDefault(ViewModelEvent.CREATED)
 

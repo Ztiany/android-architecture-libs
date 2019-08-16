@@ -1,7 +1,7 @@
 package com.android.base.app.mvp
 
 import android.support.annotation.CallSuper
-import com.android.base.rx.LifecycleScopeProviderEx
+import com.android.base.rx.AutoDisposeLifecycleScopeProviderEx
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction
 import com.uber.autodispose.lifecycle.LifecycleEndedException
 import com.uber.autodispose.lifecycle.LifecycleScopes
@@ -17,7 +17,7 @@ import io.reactivex.subjects.BehaviorSubject
  * Date : 2016-10-19 12:17
  * Email: 1169654504@qq.com
  */
-abstract class RxPresenter<V : IBaseView> : AbstractPresenter<V>(), LifecycleScopeProviderEx<RxPresenter.LifecycleEvent> {
+abstract class RxPresenter<V : IBaseView> : AbstractPresenter<V>(), AutoDisposeLifecycleScopeProviderEx<RxPresenter.LifecycleEvent> {
 
     private val lifecycleSubject = BehaviorSubject.create<LifecycleEvent>()
 

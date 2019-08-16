@@ -7,8 +7,8 @@ import com.android.base.app.activity.BaseActivity;
 
 /**
  * @author Ztiany
- *         Email: 1169654504@qq.com
- *         Date : 2017-06-22 09:37
+ * Email: 1169654504@qq.com
+ * Date : 2017-06-22 09:37
  */
 public class TestBaseActivity extends BaseActivity {
 
@@ -16,7 +16,7 @@ public class TestBaseActivity extends BaseActivity {
     protected void initialize(@Nullable Bundle savedInstanceState) {
         super.initialize(savedInstanceState);
     }
-    
+
     @Override
     protected Object layout() {
         return 0;
