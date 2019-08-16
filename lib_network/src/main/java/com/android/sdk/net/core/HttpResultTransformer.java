@@ -17,8 +17,11 @@ import io.reactivex.FlowableTransformer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.SingleTransformer;
 
-public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements ObservableTransformer<T, Downstream>, FlowableTransformer<T, Downstream> {
+public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements ObservableTransformer<T, Downstream>, FlowableTransformer<T, Downstream>, SingleTransformer<T, Downstream> {
 
     private final boolean mRequireNonNullData;
     private final DataExtractor<Downstream, Upstream> mDataExtractor;
@@ -54,6 +57,18 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
             return downstreamObservable.compose(postTransformer);
         } else {
             return downstreamObservable;
+        }
+    }
+
+    @Override
+    public SingleSource<Downstream> apply(Single<T> upstream) {
+        Single<Downstream> downstreamSingle = upstream.map(this::processData);
+        @SuppressWarnings("unchecked")
+        PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
+        if (postTransformer != null) {
+            return downstreamSingle.compose(postTransformer);
+        } else {
+            return downstreamSingle;
         }
     }
 
