@@ -22,6 +22,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.android.base.R;
+
 import timber.log.Timber;
 
 /**
@@ -172,13 +174,17 @@ public class SystemBarCompat {
      */
     @SuppressWarnings("WeakerAccess,unused")
     public static View setupStatusBarView(Context context, ViewGroup rootView, @ColorInt int color) {
-        View mStatusBarTintView = new View(context);
-        mStatusBarTintView.setBackgroundColor(color);
-        FrameLayout.LayoutParams mStatusBarParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight(context));
-        mStatusBarParams.gravity = Gravity.TOP;
-        mStatusBarTintView.setLayoutParams(mStatusBarParams);
-        rootView.addView(mStatusBarTintView, 0);
-        return mStatusBarTintView;
+        View statusBarTintView = rootView.findViewById(R.id.base_status_view_id);
+        if (statusBarTintView == null) {
+            statusBarTintView = new View(context);
+            statusBarTintView.setId(R.id.base_status_view_id);
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight(context));
+            layoutParams.gravity = Gravity.TOP;
+            statusBarTintView.setLayoutParams(layoutParams);
+            rootView.addView(statusBarTintView, 0);
+        }
+        statusBarTintView.setBackgroundColor(color);
+        return statusBarTintView;
     }
 
     /**

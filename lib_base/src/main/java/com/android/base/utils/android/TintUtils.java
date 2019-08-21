@@ -33,6 +33,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
  *              bbbTv.setCompoundDrawablesWithIntrinsicBounds(null, bbbTint, null, null);
  * </pre>
  */
+@SuppressWarnings("unused,WeakerAccess")
 public class TintUtils {
 
     private TintUtils() {

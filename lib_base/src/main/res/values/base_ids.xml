@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <item name="base_status_view_id" type="id"/>
+
     <item name="base_item_tag_view_id" type="id"/>
     <item name="base_tag_multi_state_view" type="id"/>
 
