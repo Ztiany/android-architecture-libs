@@ -22,7 +22,7 @@
     <string name="Base_permission_name_contacts">通讯录</string>
     <string name="Base_permission_name_location">位置信息</string>
     <string name="Base_permission_name_microphone">麦克风</string>
-    <string name="Base_permission_name_phone">获取手机信息</string>
+    <string name="Base_permission_name_phone">手机信息</string>
     <string name="Base_permission_name_sensors">身体传感器</string>
     <string name="Base_permission_name_sms">短信</string>
     <string name="Base_permission_name_storage">存储空间</string>

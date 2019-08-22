@@ -2,6 +2,7 @@ package com.android.base.permission;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 
 
 public interface IPermissionUIProvider {
@@ -14,7 +15,7 @@ public interface IPermissionUIProvider {
      * @param onContinueListener 继续
      * @param onCancelListener   取消
      */
-    void showPermissionRationaleDialog(Context context, final String[] permission, final DialogInterface.OnClickListener onContinueListener, DialogInterface.OnClickListener onCancelListener);
+    void showPermissionRationaleDialog(@NonNull Context context, @NonNull String[] permission, @NonNull DialogInterface.OnClickListener onContinueListener, @NonNull DialogInterface.OnClickListener onCancelListener);
 
     /**
      * 拒绝权限后，询问是否去设置界面授予应用权限
@@ -24,7 +25,7 @@ public interface IPermissionUIProvider {
      * @param onContinueListener 继续
      * @param onCancelListener   取消
      */
-    void showAskAgainDialog(Context context, final String[] permission, DialogInterface.OnClickListener onContinueListener, DialogInterface.OnClickListener onCancelListener);
+    void showAskAgainDialog(@NonNull Context context, @NonNull String[] permission, @NonNull DialogInterface.OnClickListener onContinueListener, @NonNull DialogInterface.OnClickListener onCancelListener);
 
     /**
      * 权限被拒绝后，展示一个提示消息，比如 toast
@@ -32,6 +33,6 @@ public interface IPermissionUIProvider {
      * @param contexts   上下文
      * @param permission 被拒绝的权限
      */
-    void showPermissionDeniedTip(Context contexts, String[] permission);
+    void showPermissionDeniedTip(@NonNull Context contexts, @NonNull String[] permission);
 
 }
