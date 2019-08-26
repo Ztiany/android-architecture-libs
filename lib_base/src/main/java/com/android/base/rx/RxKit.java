@@ -32,13 +32,13 @@ public class RxKit {
      * }
      * </pre>
      */
-    public static void unsubscribeIfNotNull(Disposable disposable) {
+    public static void disposeChecked(Disposable disposable) {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
     }
 
-    public static CompositeDisposable getNewCompositeSubIfUnsubscribed(CompositeDisposable disposable) {
+    public static CompositeDisposable newCompositeIfUnsubscribed(CompositeDisposable disposable) {
         if (disposable == null || disposable.isDisposed()) {
             return new CompositeDisposable();
         }

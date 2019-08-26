@@ -6,6 +6,22 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
+operator fun CompositeDisposable?.plusAssign(disposable: Disposable) {
+    this?.add(disposable)
+}
+
+fun Disposable.addTo(compositeDisposable: CompositeDisposable?) {
+    compositeDisposable?.add(this)
+}
+
+fun Disposable?.disposeChecked() {
+    RxKit.disposeChecked(this)
+}
+
+fun newCompositeIfDisposed(cd: CompositeDisposable?): CompositeDisposable {
+    return RxKit.newCompositeIfUnsubscribed(cd)
+}
+
 fun <T> Single<T>.observeOnUI(): Single<T> = this.observeOn(AndroidSchedulers.mainThread())
 fun <T> Maybe<T>.observeOnUI(): Maybe<T> = this.observeOn(AndroidSchedulers.mainThread())
 fun <T> Observable<T>.observeOnUI(): Observable<T> = this.observeOn(AndroidSchedulers.mainThread())
@@ -105,12 +121,4 @@ fun <T> Single<T>.retryWhen(maxRetries: Int, retryDelayMillis: Long, retryChecke
 
 fun <T> Maybe<T>.retryWhen(maxRetries: Int, retryDelayMillis: Long, retryChecker: RetryChecker? = null): Maybe<T> {
     return this.retryWhen(FlowableRetryDelay(maxRetries, retryDelayMillis, retryChecker))
-}
-
-operator fun CompositeDisposable?.plusAssign(disposable: Disposable) {
-    this?.add(disposable)
-}
-
-fun Disposable.addTo(compositeDisposable: CompositeDisposable?) {
-    compositeDisposable?.add(this)
 }
