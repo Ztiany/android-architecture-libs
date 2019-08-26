@@ -15,6 +15,9 @@ import com.android.base.app.activity.ActivityStatus
 import com.android.base.kotlin.javaClassName
 import kotlin.reflect.KClass
 
+/**被此 annotation 标注的方法，表示需要使用 [Fragment] 的全类名作为 [FragmentTransaction] 中相关方法的 flag 参数的实参，比如 add/replace 等*/
+annotation class UsingFragmentClassNameAsFlag
+
 @JvmOverloads
 fun Fragment.exitFragment(immediate: Boolean = false) {
     activity.exitFragment(immediate)
@@ -86,6 +89,10 @@ fun <T : Fragment> FragmentManager.findFragmentByTag(clazz: KClass<T>): T? {
     return findFragmentByTag(clazz.java.name) as? T
 }
 
+/**
+ * Fragment 出栈，包括 flag 对应的 Fragment，如果 flag 对应的 Fragment 不在栈中，此方法什么都不做。
+ */
+@UsingFragmentClassNameAsFlag
 fun FragmentManager.popBackUntil(flag: String, immediate: Boolean = false) {
     if (immediate) {
         popBackStackImmediate(flag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
@@ -94,11 +101,35 @@ fun FragmentManager.popBackUntil(flag: String, immediate: Boolean = false) {
     }
 }
 
+/**
+ * Fragment 出栈，不包括 flag 对应的 Fragment，如果 flag 对应的 Fragment 不在栈中，此方法什么都不做。
+ */
+@UsingFragmentClassNameAsFlag
 fun FragmentManager.popBackTo(flag: String, immediate: Boolean = false) {
     if (immediate) {
         popBackStackImmediate(flag, 0)
     } else {
         popBackStack(flag, 0)
+    }
+}
+
+/**
+ * 回到对应的 Fragment，如果 Fragment 在栈中，则该 Fragment 回到栈顶，如果 Fragment 不在栈中，则做一次弹栈操作。
+ */
+@UsingFragmentClassNameAsFlag
+fun FragmentManager.backToFragment(flag: String, immediate: Boolean = false) {
+    val target = findFragmentByTag(flag)
+
+    if (target != null) {
+        if (isFragmentInStack(target.javaClass)) {
+            if (immediate) {
+                popBackStackImmediate(flag, 0)
+            } else {
+                popBackStack(flag, 0)
+            }
+        } else {
+            popBackStack()
+        }
     }
 }
 
@@ -110,7 +141,8 @@ fun FragmentManager.clearBackStack(immediate: Boolean = false) {
     }
 }
 
-private fun FragmentManager.isFragmentInStack(clazz: Class<out Fragment>): Boolean {
+@UsingFragmentClassNameAsFlag
+fun FragmentManager.isFragmentInStack(clazz: Class<out Fragment>): Boolean {
     val backStackEntryCount = backStackEntryCount
     if (backStackEntryCount == 0) {
         return false
