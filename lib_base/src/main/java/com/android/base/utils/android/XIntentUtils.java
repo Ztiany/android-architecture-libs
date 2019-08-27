@@ -7,11 +7,13 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -144,6 +146,19 @@ public class XIntentUtils {
             return true;
         } catch (Exception ignore) {
             return false;
+        }
+    }
+
+    /**
+     * 通知系统有图片保存了
+     */
+    public static void notifyImageSaved(Context context, String path) {
+        //https://juejin.im/post/5ae0541df265da0b9d77e45a
+        try {
+            MediaStore.Images.Media.insertImage(context.getContentResolver(), path, "", "");
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
