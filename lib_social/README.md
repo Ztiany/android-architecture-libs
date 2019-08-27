@@ -56,3 +56,29 @@ manifest 配置参考
 ## 支付宝支付
 
 - sdk 版本：alipaySdk-15.6.2-20190416165100-noUtdid
+
+## QQ
+
+manifest 配置参考
+
+```xml
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                
+                <!--1101491530 为你得 AppId-->
+                <data android:scheme="tencent1101491530"/>
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+```

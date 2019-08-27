@@ -19,12 +19,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
-
     lintOptions {
         abortOnError false
     }

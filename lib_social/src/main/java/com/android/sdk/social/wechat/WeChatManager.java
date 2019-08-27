@@ -14,6 +14,7 @@ import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
@@ -31,6 +32,11 @@ public class WeChatManager {
     private static String sAppId;
     private static String sAppSecret;
 
+    /**
+     * @param context   上下文
+     * @param appId     app id
+     * @param appSecret 密钥，如果要进行微信登录，则需要提供。
+     */
     public static synchronized void initWeChatSDK(Context context, String appId, String appSecret) {
         if (sWeChatManager != null) {
             throw new UnsupportedOperationException("WeChatManager has already been initialized");
@@ -90,13 +96,15 @@ public class WeChatManager {
     }
 
     static void handleOnWxEntryResp(BaseResp baseResp) {
-        Timber.d("baseResp.type = " + baseResp.getType());
+        Timber.d("handleOnWxEntryResp type = " + baseResp.getType() + "errStr = " + baseResp.errStr);
         if (ConstantsAPI.COMMAND_SENDAUTH == baseResp.getType()) {
             handAuthResp(baseResp);
         } else if (ConstantsAPI.COMMAND_PAY_BY_WX == baseResp.getType()) {
             handleOnWxEntryPayResp(baseResp);
         } else if (ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM == baseResp.getType()) {
             handleMiniProgramResp(baseResp);
+        } else if (ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX == baseResp.getType()) {
+            handleSendMessageResp(baseResp);
         }
     }
 
@@ -110,20 +118,22 @@ public class WeChatManager {
      * @param userName 小程序原始id
      * @param path     拉起小程序页面的可带参路径，不填默认拉起小程序首页
      */
-    public void navToMinProgram(String userName, String path) {
+    public void navToMinProgram(String userName, String path, boolean isRelease) {
         WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
         req.userName = userName;
         req.path = path;
         // 可选打开开发版，体验版和正式版
-        req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE;
+        req.miniprogramType = isRelease ? WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE : WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW;
         mWxApi.sendReq(req);
     }
 
     private static void handleMiniProgramResp(BaseResp baseResp) {
-        WXLaunchMiniProgram.Resp launchMiniProResp = (WXLaunchMiniProgram.Resp) baseResp;
-        //对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
-        String extMsg = launchMiniProResp.extMsg;
-        Timber.d("extMsg = " + extMsg);
+        if (baseResp instanceof WXLaunchMiniProgram.Resp) {
+            WXLaunchMiniProgram.Resp launchMiniProResp = (WXLaunchMiniProgram.Resp) baseResp;
+            //对应小程序组件 <button open-type="launchApp"> 中的 app-parameter 属性
+            String extMsg = launchMiniProResp.extMsg;
+            Timber.d("handleMiniProgramResp = " + baseResp.errStr);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -184,7 +194,6 @@ public class WeChatManager {
     }
 
     @NonNull
-    @SuppressWarnings("WeakerAccess")
     public LiveData<Status<String>> authResult() {
         return mAuthCode;
     }
@@ -286,6 +295,25 @@ public class WeChatManager {
         } else if (baseResp.errCode == -2) {//用户取消无需处理。发生场景：用户不支付了，点击取消，返回APP。
             weChatManager.mWXPayResultData.postValue(Status.cancel());
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 支付
+    ///////////////////////////////////////////////////////////////////////////
+
+    public boolean share(WeChatShareInfo.ShareContent content) {
+        try {
+            SendMessageToWX.Req baseReq = WeChatShareInfo.buildReq(content);
+            mWxApi.sendReq(baseReq);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static void handleSendMessageResp(BaseResp baseResp) {
+        // no op
     }
 
 }
