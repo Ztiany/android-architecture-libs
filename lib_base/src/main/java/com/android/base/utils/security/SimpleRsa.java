@@ -1,5 +1,6 @@
 package com.android.base.utils.security;
 
+import android.os.Build;
 import android.util.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -31,7 +32,14 @@ public class SimpleRsa {
     private static PublicKey getPublicKeyFromX509(String algorithm, String bysKey) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
         byte[] decodedKey = Base64.decode(bysKey, Base64.DEFAULT);
         X509EncodedKeySpec x509 = new X509EncodedKeySpec(decodedKey);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm, "BC");
+        KeyFactory keyFactory;
+        //适配Android P及以后版本，否则报错NoSuchAlgorithmException
+        //https://android-developers.googleblog.com/2018/03/cryptography-changes-in-android-p.html
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            keyFactory = KeyFactory.getInstance(algorithm);
+        } else {
+            keyFactory = KeyFactory.getInstance(algorithm, "BC");
+        }
         return keyFactory.generatePublic(x509);
     }
 
@@ -68,14 +76,14 @@ public class SimpleRsa {
             InputStream ins = new ByteArrayInputStream(Base64.decode(content, Base64.DEFAULT));
             ByteArrayOutputStream writer = new ByteArrayOutputStream();
             byte[] buf = new byte[128];
-            int bufl;
-            while ((bufl = ins.read(buf)) != -1) {
+            int offset;
+            while ((offset = ins.read(buf)) != -1) {
                 byte[] block;
-                if (buf.length == bufl) {
+                if (buf.length == offset) {
                     block = buf;
                 } else {
-                    block = new byte[bufl];
-                    System.arraycopy(buf, 0, block, 0, bufl);
+                    block = new byte[offset];
+                    System.arraycopy(buf, 0, block, 0, offset);
                 }
                 writer.write(cipher.doFinal(block));
             }
