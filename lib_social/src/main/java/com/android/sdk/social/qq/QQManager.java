@@ -2,6 +2,7 @@ package com.android.sdk.social.qq;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.android.sdk.social.common.Utils;
@@ -41,6 +42,10 @@ public class QQManager {
 
     public boolean isQQInstalled(Context context) {
         return mTencent.isQQInstalled(context);
+    }
+
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent, ShareResultCallback shareResultCallback) {
+        return Tencent.onActivityResultData(requestCode, resultCode, intent, newDefaultListener(shareResultCallback));
     }
 
     private static IUiListener newDefaultListener(ShareResultCallback shareResultCallback) {
