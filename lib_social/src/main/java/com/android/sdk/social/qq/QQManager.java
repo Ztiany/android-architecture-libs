@@ -23,8 +23,6 @@ public class QQManager {
 
     private static String sAppId;
 
-    private static IUiListener sIUiListener;
-
     public static void initQQSDK(String appId) {
         sAppId = appId;
     }
@@ -47,14 +45,14 @@ public class QQManager {
     }
 
     public static boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
-        return Tencent.onActivityResultData(requestCode, resultCode, intent, sIUiListener);
+        return Tencent.onActivityResultData(requestCode, resultCode, intent, null);
     }
 
     private static IUiListener newDefaultListener(ShareResultCallback shareResultCallback) {
         if (shareResultCallback == null) {
             return null;
         }
-        return sIUiListener = new IUiListener() {
+        return new IUiListener() {
             @Override
             public void onComplete(Object o) {
                 Timber.d("shareToQQ onComplete: " + o);
