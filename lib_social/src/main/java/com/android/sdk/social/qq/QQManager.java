@@ -39,6 +39,10 @@ public class QQManager {
         mTencent.shareToQQ(activity, shareInfo.getBundle(), newDefaultListener(shareResultCallback));
     }
 
+    public boolean isQQInstalled(Context context) {
+        return mTencent.isQQInstalled(context);
+    }
+
     private static IUiListener newDefaultListener(ShareResultCallback shareResultCallback) {
         if (shareResultCallback == null) {
             return null;
