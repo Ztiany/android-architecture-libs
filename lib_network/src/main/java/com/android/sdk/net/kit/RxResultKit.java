@@ -1,7 +1,6 @@
 package com.android.sdk.net.kit;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.android.sdk.net.NetContext;
 import com.android.sdk.net.exception.ApiErrorException;
@@ -26,23 +25,23 @@ public class RxResultKit {
 
     /**
      * <pre>
-     * 1. 如果网络不可用，直接返回缓存，如果没有缓存，报错没有网络连接
-     * 2. 如果存在网络
-     *      2.1 如果没有缓存，则从网络获取
-     *      2.1 如果有缓存，则先返回缓存，然后从网络获取
-     *      2.1 对比缓存与网络数据，如果没有更新，则忽略
-     *      2.1 如果有更新，则更新缓存，并返回网络数据
+     * 1. 如果网络不可用，直接返回缓存，如果没有缓存，报错没有网络连接。
+     * 2. 如果存在网络。
+     *      2.1 如果没有缓存，则从网络获取，此时网络加载发生错误将会被忽略
+     *      2.1 如果有缓存，则先返回缓存，然后从网络获取。
+     *      2.1 对比缓存与网络数据，如果没有更新，则忽略。
+     *      2.1 如果有更新，则更新缓存，并返回网络数据。
      * </pre>
      *
-     * @param remote    网络数据源
-     * @param local     本地数据源
-     * @param onNewData 当有更新时，返回新的数据，可以在这里存储
-     * @param <T>       数据类型
-     * @param selector  比较器，返回当 true 表示两者相等，参数顺序为 (local, remote)
+     * @param remote    网络数据源。
+     * @param local     本地数据源。
+     * @param onNewData 当有更新时，返回新的数据，可以在这里进行存储操作。
+     * @param <T>       数据类型。
+     * @param selector  比较器，返回当 true 表示两者相等，如果相等，则 remote 数据将会被忽略。
      * @return 组合后的Observable
      * </T>
      */
-    public static <T> Flowable<Optional<T>> composeMultiSource(
+    public static <T> Flowable<Optional<T>> concatMultiSource(
             Flowable<Optional<T>> remote,
             Flowable<Optional<T>> local,
             Selector<T> selector,
@@ -50,13 +49,15 @@ public class RxResultKit {
 
         //没有网络
         if (!NetContext.get().connected()) {
-            return local.flatMap((Function<Optional<T>, Publisher<Optional<T>>>) tOptional -> {
-                if (tOptional.isPresent()) {
-                    return Flowable.just(tOptional);
+
+            return local.flatMap((Function<Optional<T>, Publisher<Optional<T>>>) optional -> {
+                if (optional.isPresent()) {
+                    return Flowable.just(optional);
                 } else {
                     return Flowable.error(new NetworkErrorException());
                 }
             });
+
         }
 
         //有网络
@@ -70,7 +71,7 @@ public class RxResultKit {
                     if (!localData.isPresent()) {
                         return remote.doOnNext(tOptional -> onNewData.accept(tOptional.orElse(null)));
                     }
-                    /*有缓存时网络错误，不触发错误，只有在过期时返回新的数据*/
+                    /*有缓存时网络错误，不触发错误，只有在缓存过期时返回新的数据*/
                     return remote
                             .onErrorResumeNext(onErrorResumeFunction(onNewData))
                             .filter(remoteData -> selector.test(localData.get(), remoteData.orElse(null)))
@@ -80,22 +81,61 @@ public class RxResultKit {
         return Flowable.concat(sharedLocal.filter(Optional::isPresent), complexRemote);
     }
 
-    public static <T> Flowable<Optional<T>> selectLocalOrRemote(Flowable<Optional<T>> remote, @Nullable T local, Selector<T> selector, Consumer<T> onNewData) {
-        //没有网络没有缓存
-        if (!NetContext.get().connected() && local == null) {
-            return Flowable.error(new NetworkErrorException());
-        }
-        //有缓存
-        if (local != null) {
-            return Flowable.concat(
-                    Flowable.just(Optional.of(local)),
-                    /*有缓存时网络错误，不触发错误，只有在过期时返回新的数据*/
-                    remote.onErrorResumeNext(onErrorResumeFunction(onNewData))
-                            .filter(tOptional -> selector.test(local, tOptional.orElse(null)))
-                            .doOnNext(tOptional -> onNewData.accept(tOptional.orElse(null))));
-        } else {
-            return remote;
-        }
+    /**
+     * 该方式，始终能得到错误通知。
+     *
+     * <pre>
+     *   1. 如果没有缓存，则从网络获取。
+     *   2. 如果有缓存，则先返回缓存，然后从网络获取，如果网络有错误，会以数据形式通知到下游。
+     *   3. 对比缓存与网络数据，如果没有更新，则忽略。
+     *   4. 如果有更新，则更新缓存，并返回网络数据。
+     * </pre>
+     *
+     * @param remote    网络数据源。
+     * @param local     本地数据源。
+     * @param onNewData 当有更新时，返回新的数据，可以在这里进行存储操作。
+     * @param <T>       数据类型。
+     * @param selector  比较器，返回当 true 表示两者相等，如果相等，则 remote 数据将会被忽略。
+     * @return 组合后的Observable
+     * </T>
+     */
+    public static <T> Flowable<CombinedResult<T>> combineMultiSource(
+            Flowable<Optional<T>> remote,
+            Flowable<Optional<T>> local,
+            Selector<T> selector,
+            Consumer<T> onNewData) {
+
+        ConnectableFlowable<Optional<T>> sharedLocal = local.replay();
+
+        sharedLocal.connect();
+
+        //组合数据
+        Flowable<CombinedResult<T>> complexRemote = sharedLocal
+                .flatMap((Function<Optional<T>, Publisher<CombinedResult<T>>>) localData -> {
+                    //没有缓存
+                    if (!localData.isPresent()) {
+                        return remote
+                                .doOnNext(tOptional -> onNewData.accept(tOptional.orElse(null)))
+                                .map(optional -> new CombinedResult<>(DataType.Remote, optional.orElse(null), null));
+                    }
+                    /*有缓存*/
+                    return remote
+                            .map(optional -> new CombinedResult<>(DataType.Remote, optional.orElse(null), null))
+                            .filter(remoteData -> selector.test(localData.get(), remoteData.getData()))
+                            .doOnNext(newData -> onNewData.accept(newData.getData()))
+                            .onErrorReturn(throwable -> {
+                                if (throwable instanceof ApiErrorException) {
+                                    onNewData.accept(null);
+                                }
+                                return new CombinedResult<>(DataType.Remote, null, throwable);
+                            });
+                });
+
+        Flowable<CombinedResult<T>> mappedLocal = sharedLocal
+                .filter(Optional::isPresent)
+                .map(optional -> new CombinedResult<>(DataType.Disk, optional.get(), null));
+
+        return Flowable.concat(mappedLocal, complexRemote);
     }
 
     @NonNull
@@ -113,9 +153,7 @@ public class RxResultKit {
     }
 
     private static boolean isNetworkError(Throwable exception) {
-        return exception instanceof IOException
-                || exception instanceof HttpException
-                || exception instanceof NetworkErrorException;
+        return exception instanceof IOException || exception instanceof HttpException || exception instanceof NetworkErrorException;
     }
 
 }

@@ -81,7 +81,7 @@ class NetProviderImpl implements NetProvider {
 
     void checkRequired() {
         if (mErrorMessage == null || mErrorDataAdapter == null || mNetworkChecker == null || mHttpConfig == null) {
-            throw new NullPointerException("缺少必要的参数，必须提供：ErrorMessage、mErrorDataAdapter、mNetworkChecker、HttpConfig。");
+            throw new NullPointerException("You must provide following object：ErrorMessage, mErrorDataAdapter, mNetworkChecker, HttpConfig.");
         }
     }
 

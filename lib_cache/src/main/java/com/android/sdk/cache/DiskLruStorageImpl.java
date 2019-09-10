@@ -156,7 +156,7 @@ public class DiskLruStorageImpl implements Storage {
     }
 
     @Override
-    public <T> Flowable<Optional<T>> optionalFlowable(String key, Type type) {
+    public <T> Flowable<Optional<T>> flowableOptional(String key, Type type) {
         return CommonImpl.flowableOptionalEntity(key, type, this);
     }
 

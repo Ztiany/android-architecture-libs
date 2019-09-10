@@ -94,7 +94,8 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
         }
 
         if (mRequireNonNullData) {
-            if (rResult.getData() == null) {//如果约定必须返回的数据却没有返回数据，则认为是服务器错误
+            //如果约定必须返回的数据却没有返回数据，则认为是服务器错误
+            if (rResult.getData() == null) {
                 throwAs(new ServerErrorException(ServerErrorException.UNKNOW_ERROR));
             }
         }

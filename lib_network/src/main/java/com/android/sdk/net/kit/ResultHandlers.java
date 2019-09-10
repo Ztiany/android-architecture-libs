@@ -73,8 +73,8 @@ public class ResultHandlers {
     }
 
     /**
-     * 与{@link #resultExtractor()}的行为类型，但是最后把 HttpResult&lt;T&gt; 中的数据 T 用 {@link Optional} 包装后再转发到下游。
-     * 适用于 HttpResult.getData() 可以为 Null 的情况
+     * 与{@link #resultExtractor()}的行为类似，但是最后把 HttpResult&lt;T&gt; 中的数据 T 用 {@link Optional} 包装后再转发到下游。
+     * 适用于 HttpResult.getData() 可能为 null 的情况
      */
     @SuppressWarnings("unchecked")
     private static <Upstream, T extends Result<Upstream>> HttpResultTransformer<Upstream, Optional<Upstream>, T> _optionalExtractor() {

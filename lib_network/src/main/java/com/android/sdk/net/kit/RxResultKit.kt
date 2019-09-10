@@ -43,29 +43,40 @@ fun <E, T : Result<E>> Single<T>.resultChecker(): Single<Result<E>> {
     return (this.compose(ResultHandlers.resultChecker<E>()))
 }
 
-/**组合远程数据与本地数据，参考 [RxResultKit.composeMultiSource]*/
-fun <T> composeMultiSource(
+/**组合远程数据与本地数据，参考 [RxResultKit.concatMultiSource]*/
+fun <T> concatMultiSource(
         remote: Flowable<Optional<T>>,
         local: Flowable<Optional<T>>,
-        selector: (local: T, remote: T?) -> Boolean,
+        selector: Selector<T>,
         onNewData: (T?) -> Unit
 ): Flowable<Optional<T>> {
-    return RxResultKit.composeMultiSource(remote, local, Selector(selector), Consumer { onNewData(it) })
+    return RxResultKit.concatMultiSource(remote, local, selector, Consumer { onNewData(it) })
 }
 
-/**组合远程数据与本地数据，参考 [RxResultKit.composeMultiSource]*/
-fun <T> composeMultiSource(
+/**组合远程数据与本地数据，参考 [RxResultKit.concatMultiSource]*/
+fun <T> concatMultiSource(
         remote: Flowable<Optional<T>>,
         local: Flowable<Optional<T>>,
         onNewData: (T?) -> Unit
 ): Flowable<Optional<T>> {
-    return RxResultKit.composeMultiSource(remote, local, { t1, t2 -> t1 != t2 }, { onNewData(it) })
+    return RxResultKit.concatMultiSource(remote, local, { t1, t2 -> t1 != t2 }, { onNewData(it) })
 }
 
-fun <T> selectLocalOrRemote(remote: Flowable<Optional<T>>, local: T?, selector: (local: T, remote: T?) -> Boolean, onNewData: (T?) -> Unit): Flowable<Optional<T>> {
-    return RxResultKit.selectLocalOrRemote(remote, local, selector, onNewData)
+/**组合远程数据与本地数据，参考 [RxResultKit.combineMultiSource]*/
+fun <T> combineMultiSource(
+        remote: Flowable<Optional<T>>,
+        local: Flowable<Optional<T>>,
+        selector: Selector<T>,
+        onNewData: (T?) -> Unit
+): Flowable<CombinedResult<T>> {
+    return RxResultKit.combineMultiSource(remote, local, selector, Consumer { onNewData(it) })
 }
 
-fun <T> selectLocalOrRemote(remote: Flowable<Optional<T>>, local: T?, onNewData: (T?) -> Unit): Flowable<Optional<T>> {
-    return RxResultKit.selectLocalOrRemote(remote, local, { t1, t2 -> t1 != t2 }, { onNewData(it) })
+/**组合远程数据与本地数据，参考 [RxResultKit.combineMultiSource]*/
+fun <T> combineMultiSource(
+        remote: Flowable<Optional<T>>,
+        local: Flowable<Optional<T>>,
+        onNewData: (T?) -> Unit
+): Flowable<CombinedResult<T>> {
+    return RxResultKit.combineMultiSource(remote, local, { t1, t2 -> t1 != t2 }, { onNewData(it) })
 }
