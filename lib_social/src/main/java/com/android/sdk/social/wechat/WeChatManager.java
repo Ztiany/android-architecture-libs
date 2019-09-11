@@ -31,6 +31,7 @@ public class WeChatManager {
 
     private static String sAppId;
     private static String sAppSecret;
+    private static WeChatShareCallback sWeChatShareCallback;
 
     /**
      * @param context   上下文
@@ -298,10 +299,11 @@ public class WeChatManager {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // 支付
+    // 分享
     ///////////////////////////////////////////////////////////////////////////
 
-    public boolean share(WeChatShareInfo.ShareContent content) {
+    public boolean share(WeChatShareInfo.ShareContent content, WeChatShareCallback shareCallback) {
+        sWeChatShareCallback = shareCallback;
         try {
             SendMessageToWX.Req baseReq = WeChatShareInfo.buildReq(content);
             mWxApi.sendReq(baseReq);
@@ -312,8 +314,46 @@ public class WeChatManager {
         }
     }
 
+    /**
+     * 微信分享回调
+     *
+     * @param baseResp
+     */
     private static void handleSendMessageResp(BaseResp baseResp) {
-        // no op
+        switch (baseResp.errCode) {
+            case BaseResp.ErrCode.ERR_OK:
+                if (sWeChatShareCallback != null) {
+                    sWeChatShareCallback.onSuccess();
+                }
+                break;
+            case BaseResp.ErrCode.ERR_USER_CANCEL:
+                if (sWeChatShareCallback != null) {
+                    sWeChatShareCallback.onCancel();
+                }
+                break;
+            case BaseResp.ErrCode.ERR_AUTH_DENIED:
+            case BaseResp.ErrCode.ERR_SENT_FAILED:
+            case BaseResp.ErrCode.ERR_UNSUPPORT:
+            case BaseResp.ErrCode.ERR_COMM:
+            case BaseResp.ErrCode.ERR_BAN:
+                if (sWeChatShareCallback != null) {
+                    sWeChatShareCallback.onFailed(baseResp);
+                }
+                break;
+        }
     }
 
+    public interface WeChatShareCallback {
+
+        void onSuccess();
+
+        void onCancel();
+
+        void onFailed(BaseResp baseResp);
+    }
+
+    public static void destroyShareCallback() {
+        if (sWeChatShareCallback != null)
+            sWeChatShareCallback = null;
+    }
 }
