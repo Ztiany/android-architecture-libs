@@ -124,7 +124,6 @@ dependencies {
     //Utils
     api thirdLibraries.utilcode
     api thirdLibraries.jOOR
-    api thirdLibraries.andPermission
     api thirdLibraries.supportOptional
 
 }
