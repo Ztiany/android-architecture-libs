@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 import static android.content.ContentValues.TAG;
 

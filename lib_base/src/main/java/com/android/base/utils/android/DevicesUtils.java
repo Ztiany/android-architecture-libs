@@ -3,7 +3,6 @@ package com.android.base.utils.android;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.android.base.utils.android.compat.AndroidVersion;
@@ -12,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import androidx.annotation.RequiresPermission;
 import timber.log.Timber;
 
 public class DevicesUtils {

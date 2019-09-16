@@ -1,7 +1,8 @@
 package com.android.base.interfaces;
 
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 
 public abstract class OnItemClickListener<T> implements View.OnClickListener {

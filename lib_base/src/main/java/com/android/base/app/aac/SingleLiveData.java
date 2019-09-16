@@ -1,33 +1,24 @@
 package com.android.base.app.aac;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import timber.log.Timber;
 
 public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     private int mVersion = 0;
 
-    private final List<WeakReference<ObserverWrapper<T>>> mWrapperObserverList = new ArrayList<>();
+    private final List<WeakReference<ObserverWrapper<? super T>>> mWrapperObserverList = new ArrayList<>();
 
-    @Override
-    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-        super.observe(owner, getOrNewObserver(observer, mVersion));
-    }
-
-    @Override
-    public void observeForever(@NonNull Observer<T> observer) {
-        super.observeForever(getOrNewObserver(observer, mVersion));
-    }
 
     @Override
     public void setValue(T value) {
@@ -36,13 +27,24 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
     }
 
     @Override
-    public void removeObserver(@NonNull Observer<T> observer) {
+    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
+        super.observe(owner, getOrNewObserver(observer, mVersion));
+    }
+
+    @Override
+    public void observeForever(@NonNull Observer<? super T> observer) {
+        super.observeForever(getOrNewObserver(observer, mVersion));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void removeObserver(@NonNull Observer<? super T> observer) {
         if (observer instanceof ObserverWrapper) {
             super.removeObserver(observer);
             removeWrapper((ObserverWrapper) observer);
             Timber.d("removeObserver() called with: observer = wrapper = [" + observer + "]");
         } else {
-            ObserverWrapper<T> wrapper = findWrapper(observer);
+            ObserverWrapper<? super T> wrapper = findWrapper(observer);
             Timber.d("removeObserver() called with: observer = [" + observer + "], wrapper = [" + wrapper + "]");
             super.removeObserver(wrapper);
             removeWrapper(wrapper);
@@ -50,10 +52,10 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
     }
 
     private void removeWrapper(ObserverWrapper observer) {
-        ListIterator<WeakReference<ObserverWrapper<T>>> iterator = mWrapperObserverList.listIterator();
+        ListIterator<WeakReference<ObserverWrapper<? super T>>> iterator = mWrapperObserverList.listIterator();
         while (iterator.hasNext()) {
-            WeakReference<ObserverWrapper<T>> next = iterator.next();
-            ObserverWrapper<T> item = next.get();
+            WeakReference<ObserverWrapper<? super T>> next = iterator.next();
+            ObserverWrapper<? super T> item = next.get();
             if (item == observer) {
                 iterator.remove();
                 break;
@@ -61,14 +63,14 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
         }
     }
 
-    private ObserverWrapper<T> findWrapper(Observer<T> observer) {
-        ListIterator<WeakReference<ObserverWrapper<T>>> iterator = mWrapperObserverList.listIterator();
+    private ObserverWrapper<? super T> findWrapper(Observer<? super T> observer) {
+        ListIterator<WeakReference<ObserverWrapper<? super T>>> iterator = mWrapperObserverList.listIterator();
 
-        ObserverWrapper<T> target = null;
+        ObserverWrapper<? super T> target = null;
 
         while (iterator.hasNext()) {
-            WeakReference<ObserverWrapper<T>> next = iterator.next();
-            ObserverWrapper<T> item = next.get();
+            WeakReference<ObserverWrapper<? super T>> next = iterator.next();
+            ObserverWrapper<? super T> item = next.get();
             if (item == null) {
                 iterator.remove();
             } else if (item.mOrigin == observer) {
@@ -79,8 +81,8 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
         return target;
     }
 
-    private Observer<T> getOrNewObserver(@NonNull Observer<T> observer, int observerVersion) {
-        ObserverWrapper<T> wrapper = findWrapper(observer);
+    private Observer<? super T> getOrNewObserver(@NonNull Observer<? super T> observer, int observerVersion) {
+        ObserverWrapper<? super T> wrapper = findWrapper(observer);
 
         if (wrapper == null) {
             wrapper = new ObserverWrapper<>(observerVersion, observer);

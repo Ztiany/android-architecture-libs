@@ -2,7 +2,8 @@ package com.android.base.permission;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 
 public interface IPermissionUIProvider {

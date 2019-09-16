@@ -3,7 +3,7 @@ package com.android.base.app.mvvm
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.support.v4.app.FragmentActivity
 
 inline fun <reified VM : ViewModel> Fragment.getViewModel(factory: ViewModelProvider.Factory? = null): VM {

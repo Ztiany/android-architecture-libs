@@ -3,7 +3,7 @@
     style="@style/Base_SimpleMultiStateView"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@id/base_list_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

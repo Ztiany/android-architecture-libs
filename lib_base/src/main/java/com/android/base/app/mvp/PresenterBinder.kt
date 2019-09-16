@@ -1,7 +1,7 @@
 package com.android.base.app.mvp
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import com.android.base.app.fragment.FragmentDelegate
 import com.android.base.app.fragment.FragmentDelegateOwner

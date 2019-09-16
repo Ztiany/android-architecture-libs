@@ -1,21 +1,24 @@
 package com.android.base.interfaces.adapter;
 
-import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+
+import org.jetbrains.annotations.NotNull;
+
+import androidx.drawerlayout.widget.DrawerLayout;
 
 
 public interface DrawerListenerAdapter extends DrawerLayout.DrawerListener {
 
     @Override
-    default void onDrawerSlide(View drawerView, float slideOffset) {
+    default void onDrawerSlide(@NotNull View drawerView, float slideOffset) {
     }
 
     @Override
-    default void onDrawerOpened(View drawerView) {
+    default void onDrawerOpened(@NotNull View drawerView) {
     }
 
     @Override
-    default void onDrawerClosed(View drawerView) {
+    default void onDrawerClosed(@NotNull View drawerView) {
     }
 
     @Override

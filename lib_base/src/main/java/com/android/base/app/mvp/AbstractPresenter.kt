@@ -1,6 +1,6 @@
 package com.android.base.app.mvp
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import java.lang.ref.WeakReference
 
 abstract class AbstractPresenter<V : IBaseView> : IPresenter<V> {

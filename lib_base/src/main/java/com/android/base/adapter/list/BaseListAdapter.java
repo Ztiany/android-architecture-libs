@@ -1,7 +1,6 @@
 package com.android.base.adapter.list;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,8 @@ import com.android.base.R;
 import com.android.base.adapter.DataManager;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /**
  * absListView通用的Adapter,注意：只有setDataSource才能替换原有数据源的引用。

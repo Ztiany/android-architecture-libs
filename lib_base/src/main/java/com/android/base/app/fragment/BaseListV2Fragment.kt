@@ -8,7 +8,7 @@ import com.android.base.app.ui.RefreshListLayout
 import com.android.base.app.ui.StateLayoutConfig
 
 /**
- * 区别于 [BaseListFragment] 只能支持 RecyclerView。[BaseListFragment] 采用包装 [android.support.v7.widget.RecyclerView.Adapter] 的方式，
+ * 区别于 [BaseListFragment] 只能支持 RecyclerView。[BaseListFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
  * 在底部添加 load more view 的 item，来实现加载更多。BaseListV2Fragment 没有采用此种方式，所以你使用的刷新视图应该是支持这下来刷新和加载更多功能的。
  *
  * 在调用BaseListV2Fragment [onActivityCreated] 之前，你应该设置好 [dataManager]。

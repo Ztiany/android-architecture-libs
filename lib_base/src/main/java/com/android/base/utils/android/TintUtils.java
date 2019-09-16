@@ -7,7 +7,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.DrawableCompat;
+
+import androidx.core.graphics.drawable.DrawableCompat;
 
 /**
  * usage:

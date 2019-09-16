@@ -1,7 +1,10 @@
 package com.android.base.widget.recyclerview;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * RecyclerView滑动时隐藏toolbar
@@ -13,7 +16,7 @@ public abstract class HidingScrollListener extends RecyclerView.OnScrollListener
     private boolean controlsVisible = true;
 
     @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
         int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         //show views if first item is first visible position and views are hidden

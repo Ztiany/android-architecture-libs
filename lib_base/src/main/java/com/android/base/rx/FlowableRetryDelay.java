@@ -1,12 +1,12 @@
 package com.android.base.rx;
 
-import android.support.annotation.Nullable;
 
 import org.reactivestreams.Publisher;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 import timber.log.Timber;
@@ -15,8 +15,7 @@ public class FlowableRetryDelay implements Function<Flowable<Throwable>, Publish
 
     private final int mMaxRetries;
     private final long mRetryDelayMillis;
-    @Nullable
-    private RetryChecker mRetryChecker;
+    @Nullable private RetryChecker mRetryChecker;
     private int mRetryCount = 0;
 
     @SuppressWarnings("unused")

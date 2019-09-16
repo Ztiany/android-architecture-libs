@@ -1,7 +1,7 @@
 package com.android.base.app.dagger;
 
-import android.arch.lifecycle.ViewModel;
 
+import androidx.lifecycle.ViewModel;
 import dagger.MapKey;
 import kotlin.annotation.AnnotationTarget;
 import kotlin.annotation.MustBeDocumented;
@@ -15,4 +15,5 @@ import kotlin.annotation.Target;
 public @interface ViewModelKey {
 
     Class<? extends ViewModel> value();
+
 }

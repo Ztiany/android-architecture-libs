@@ -3,12 +3,12 @@
 package com.android.base.app.fragment
 
 
-import android.support.annotation.NonNull
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
 import android.view.View
+import androidx.annotation.NonNull
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.android.base.app.activity.ActivityDelegate
 import com.android.base.app.activity.ActivityDelegateOwner
 import com.android.base.app.activity.ActivityStatus

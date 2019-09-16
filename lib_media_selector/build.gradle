@@ -26,8 +26,8 @@ android {
 
 dependencies {
     //support
-    implementation androidLibraries.androidCompatV7
-    implementation androidLibraries.androidDesign
+    implementation androidLibraries.compat
+    implementation androidLibraries.material
 
     /*imageLoader*/
     compileOnly thirdLibraries.glide

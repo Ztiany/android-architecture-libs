@@ -3,10 +3,6 @@ package com.android.base.utils.android.anim;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.support.annotation.AnimRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
@@ -14,6 +10,11 @@ import android.view.View;
 import android.view.Window;
 
 import com.android.base.utils.android.compat.AndroidVersion;
+
+import androidx.annotation.AnimRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 
 public class ActivityAnimUtils {
 

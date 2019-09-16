@@ -4,7 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.support.annotation.WorkerThread;
+
+import androidx.annotation.WorkerThread;
 
 public class VideoUtils {
 

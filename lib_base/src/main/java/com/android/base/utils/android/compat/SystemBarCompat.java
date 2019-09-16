@@ -8,7 +8,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.annotation.ColorInt;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -24,6 +23,7 @@ import android.widget.FrameLayout;
 
 import com.android.base.R;
 
+import androidx.annotation.ColorInt;
 import timber.log.Timber;
 
 /**

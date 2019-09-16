@@ -3,11 +3,6 @@ package com.android.base.app.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.UiThread;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +14,11 @@ import com.android.base.app.activity.OnBackPressListener;
 import com.android.base.app.ui.LoadingView;
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.UiThread;
+import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
 /**
@@ -119,7 +119,7 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
     }
 
     /**
-     * View is prepared, If {@link android.support.v4.app.Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)} return same layout, it will be called once
+     * View is prepared, If {@link androidx.fragment.app.Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)} return same layout, it will be called once
      *
      * @param view view of fragment
      */

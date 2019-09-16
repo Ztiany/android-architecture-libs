@@ -1,18 +1,18 @@
 package com.android.base.kotlin
 
-import android.support.v7.widget.PopupMenu
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.PopupMenu
 
 fun PopupMenu.setMenus(items: Array<String>): PopupMenu {
-    for (i in 0 until items.size) {
+    for (i in items.indices) {
         menu.add(Menu.NONE, i, i, items[i])
     }
     return this
 }
 
 fun PopupMenu.setMenus(items: Array<String>, ids: IntArray): PopupMenu {
-    for (i in 0 until items.size) {
+    for (i in items.indices) {
         menu.add(Menu.NONE, ids[i], i, items[i])
     }
     return this

@@ -1,6 +1,6 @@
 package com.android.base.kotlin
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 
 fun <T> MutableLiveData<T>.init(t: T): MutableLiveData<T> {
     this.postValue(t)

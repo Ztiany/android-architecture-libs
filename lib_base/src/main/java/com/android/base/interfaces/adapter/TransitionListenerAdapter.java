@@ -1,8 +1,9 @@
 package com.android.base.interfaces.adapter;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.transition.Transition;
+
+import androidx.annotation.RequiresApi;
 
 
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)

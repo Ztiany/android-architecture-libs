@@ -3,11 +3,12 @@ package com.android.base.kotlin
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.TypedArray
-import android.support.annotation.AttrRes
-import android.support.annotation.StyleRes
+
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.View
+import androidx.annotation.AttrRes
+import androidx.annotation.StyleRes
 
 /** 属性相关扩展：https://github.com/Kotlin/anko/issues/16*/
 val View.contextThemeWrapper: ContextThemeWrapper

@@ -1,8 +1,6 @@
 package com.android.base.permission;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -12,6 +10,9 @@ import com.blankj.utilcode.util.AppUtils;
 
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 /**
  * @author Ztiany

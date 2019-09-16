@@ -2,13 +2,14 @@ package com.android.base.utils.android;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * <pre>

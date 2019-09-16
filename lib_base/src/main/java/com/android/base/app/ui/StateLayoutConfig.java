@@ -1,13 +1,14 @@
 package com.android.base.app.ui;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
 
 import com.android.base.widget.StateProcessor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IntDef;
 
 /**
  * @author Ztiany

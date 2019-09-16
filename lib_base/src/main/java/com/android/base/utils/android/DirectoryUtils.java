@@ -1,12 +1,12 @@
 package com.android.base.utils.android;
 
 import android.os.Environment;
-import android.support.annotation.NonNull;
 
 import com.android.base.utils.BaseUtils;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class DirectoryUtils {

@@ -1,11 +1,12 @@
 package com.android.base.adapter;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 
 /**

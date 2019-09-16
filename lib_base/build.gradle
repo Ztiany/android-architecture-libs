@@ -41,29 +41,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    sourceSets {
-        main {
-            java.srcDirs += "src/github/java"
-            res.srcDirs += "src/github/res"
-        }
-    }
-
-    project.afterEvaluate {
-        Task assembleReleaseTask = project.tasks.findByPath("assembleRelease")
-        if (assembleReleaseTask != null) {
-            assembleReleaseTask.doLast {
-                File infile = project.file("build/outputs/aar/")
-                File outfile = project.file("./release")
-                project.copy {
-                    from infile
-                    into outfile
-                }
-            }
-        }
-    }
-
 }
-
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
@@ -72,18 +50,27 @@ dependencies {
     testImplementation testLibraries.junit
 
     //AndroidSupport
-    api androidLibraries.androidCompatV4
-    api androidLibraries.androidCompatV7
-    api androidLibraries.androidRecyclerView
-    api androidLibraries.androidDesign
-    api androidLibraries.androidPrecent
+    api androidLibraries.supportV4
+    api androidLibraries.appcompat
+    api androidLibraries.recyclerview
+    api androidLibraries.material
+    api androidLibraries.percentLayout
     api androidLibraries.constraintLayout
+    api androidLibraries.annotation
 
     //AAC
-    api androidLibraries.lifecycle
-    api androidLibraries.lifecycleJava8
-    api androidLibraries.lifecycleExtensions
-    api androidLibraries.liveDataReactiveStreams
+   api androidLibraries. archRuntime
+   api androidLibraries. archCommon
+   api androidLibraries. lifecycleCommon
+   api androidLibraries. lifecycleCommonJava8
+   api androidLibraries. lifecycleRuntimeKtx
+   api androidLibraries. lifecycleLiveDataCore
+   api androidLibraries. lifecycleLiveData
+   api androidLibraries. lifecycleLiveKtx
+   api androidLibraries. lifecycleViewModel
+   api androidLibraries. lifecycleViewModelKtx
+   api androidLibraries. lifecycleExtensions
+   api androidLibraries. lifecycleReactiveStreams
 
     //Kotlin
     api kotlinLibraries.kotlinStdlib

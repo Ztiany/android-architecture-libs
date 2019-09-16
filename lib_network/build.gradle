@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation androidLibraries.androidAnnotations
+    implementation androidLibraries.annotation
     implementation thirdLibraries.supportOptional
     implementation thirdLibraries.timber
     implementation thirdLibraries.retrofit

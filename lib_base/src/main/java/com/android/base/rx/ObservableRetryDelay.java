@@ -1,10 +1,10 @@
 package com.android.base.rx;
 
-import android.support.annotation.Nullable;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.Nullable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
@@ -14,8 +14,7 @@ public class ObservableRetryDelay implements Function<Observable<Throwable>, Obs
 
     private final int mMaxRetries;
     private final long mRetryDelayMillis;
-    @Nullable
-    private RetryChecker mRetryChecker;
+    @Nullable private RetryChecker mRetryChecker;
     private int mRetryCount = 0;
 
     @SuppressWarnings("unused")

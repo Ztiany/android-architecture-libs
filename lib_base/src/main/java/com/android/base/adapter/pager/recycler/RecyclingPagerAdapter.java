@@ -1,9 +1,10 @@
 package com.android.base.adapter.pager.recycler;
 
-import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * A {@link PagerAdapter} which behaves like an {@link android.widget.Adapter} with view types and view recycling.

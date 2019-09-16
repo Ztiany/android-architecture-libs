@@ -17,13 +17,14 @@
 package com.android.base.utils.android.text;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.text.Html;
 import android.text.Spanned;
 import android.widget.TextView;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * <p>Build a valid HTML string for a {@link TextView}.</p>

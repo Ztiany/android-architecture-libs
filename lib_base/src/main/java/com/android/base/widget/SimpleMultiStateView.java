@@ -2,7 +2,6 @@ package com.android.base.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -11,6 +10,7 @@ import com.android.base.app.ui.StateLayout;
 import com.android.base.app.ui.StateLayoutConfig;
 import com.android.base.utils.common.StringChecker;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 import static com.android.base.app.ui.StateLayoutConfig.CONTENT;

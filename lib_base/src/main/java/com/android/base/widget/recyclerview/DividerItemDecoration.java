@@ -6,11 +6,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 可以指定 SkipDrawStartCount 和 SkipDrawEndCount
@@ -35,7 +38,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     /**
      * Creates a divider {@link RecyclerView.ItemDecoration} that can be used with a
-     * {@link android.support.v7.widget.LinearLayoutManager}.
+     * {@link androidx.recyclerview.widget.LinearLayoutManager}.
      *
      * @param context     Current context, it will be used to access resources.
      * @param orientation Divider orientation. Should be {@link #HORIZONTAL} or {@link #VERTICAL}.
@@ -84,7 +87,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDraw(@NotNull Canvas c, RecyclerView parent, @NotNull RecyclerView.State state) {
         if (parent.getLayoutManager() == null) {
             return;
         }

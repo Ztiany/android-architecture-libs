@@ -13,6 +13,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.android.base.R;
 
+
 /**
  * <pre>
  *     {@code
@@ -126,6 +127,7 @@ public class PullToZoomScrollView extends NestedScrollView {
     private boolean hasInnerView() {
         return mContainerView != null && mZoomView != null;
     }
+
 
     @Override
     protected boolean overScrollByCompat(int deltaX, int deltaY,

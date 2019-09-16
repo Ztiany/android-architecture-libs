@@ -1,7 +1,7 @@
 package com.android.base.app.aac
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.android.base.data.Resource
 import com.android.base.rx.subscribeIgnoreError
 import com.github.dmstocking.optional.java.util.Optional

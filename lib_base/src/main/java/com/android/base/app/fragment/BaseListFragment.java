@@ -1,9 +1,6 @@
 package com.android.base.app.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 
 import com.android.base.adapter.DataManager;
 import com.android.base.app.ui.AutoPageNumber;
@@ -14,6 +11,10 @@ import com.ztiany.loadmore.adapter.OnLoadMoreListener;
 import com.ztiany.loadmore.adapter.WrapperAdapter;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 通用的RecyclerView列表界面：支持下拉刷新和加载更多。

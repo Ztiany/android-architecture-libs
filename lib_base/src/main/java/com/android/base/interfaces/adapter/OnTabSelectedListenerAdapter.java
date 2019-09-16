@@ -1,6 +1,7 @@
 package com.android.base.interfaces.adapter;
 
-import android.support.design.widget.TabLayout;
+
+import com.google.android.material.tabs.TabLayout;
 
 public interface OnTabSelectedListenerAdapter extends TabLayout.OnTabSelectedListener {
 

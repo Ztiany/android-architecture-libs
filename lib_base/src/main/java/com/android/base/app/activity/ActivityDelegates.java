@@ -2,14 +2,15 @@ package com.android.base.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v7.app.AppCompatActivity;
 
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * @author Ztiany

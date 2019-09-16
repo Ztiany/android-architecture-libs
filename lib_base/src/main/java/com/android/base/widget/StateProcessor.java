@@ -1,10 +1,11 @@
 package com.android.base.widget;
 
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.android.base.app.ui.StateLayoutConfig;
+
+import androidx.annotation.NonNull;
 
 /**
  * @author Ztiany

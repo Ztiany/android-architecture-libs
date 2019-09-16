@@ -1,8 +1,9 @@
 package com.android.base.app.fragment;
 
-import android.support.annotation.UiThread;
 
 import com.github.dmstocking.optional.java.util.function.Predicate;
+
+import androidx.annotation.UiThread;
 
 @UiThread
 public interface FragmentDelegateOwner {

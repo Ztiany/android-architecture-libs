@@ -1,9 +1,9 @@
 package com.android.base.rx;
 
-import android.support.annotation.NonNull;
 
 import java.util.UUID;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 import io.reactivex.processors.PublishProcessor;
 

@@ -11,7 +11,7 @@ import com.android.base.R;
 public class RatioLayout extends FrameLayout {
 
     // 宽和高的比例
-    private float ratio = 0.0f;
+    private float ratio;
 
     public RatioLayout(Context context) {
         this(context, null);

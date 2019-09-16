@@ -1,8 +1,9 @@
 package com.android.base.app.activity;
 
-import android.support.annotation.UiThread;
 
 import com.github.dmstocking.optional.java.util.function.Predicate;
+
+import androidx.annotation.UiThread;
 
 @UiThread
 @SuppressWarnings("unused")

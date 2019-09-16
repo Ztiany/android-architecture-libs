@@ -1,9 +1,6 @@
 package com.android.base.widget.viewpager;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +9,10 @@ import android.widget.ImageView;
 import com.android.base.imageloader.ImageLoaderFactory;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.PagerAdapter;
 
 
 class BannerPagerAdapter extends PagerAdapter {

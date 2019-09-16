@@ -1,9 +1,10 @@
 package com.android.base.widget.recyclerview;
 
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class MarginDecoration extends RecyclerView.ItemDecoration {

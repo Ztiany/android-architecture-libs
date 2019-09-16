@@ -1,7 +1,7 @@
 package com.android.base.imageloader;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class ProgressInfo {
 

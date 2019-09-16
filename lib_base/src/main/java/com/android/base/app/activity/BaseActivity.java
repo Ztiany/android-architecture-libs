@@ -2,15 +2,15 @@ package com.android.base.app.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.android.base.utils.android.compat.AndroidVersion;
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**

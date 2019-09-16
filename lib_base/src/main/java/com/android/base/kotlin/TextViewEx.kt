@@ -1,12 +1,12 @@
 package com.android.base.kotlin
 
 import android.graphics.drawable.Drawable
-import android.support.annotation.DrawableRes
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import com.android.base.interfaces.adapter.TextWatcherAdapter
 
 inline fun TextView.textWatcher(init: KTextWatcher.() -> Unit) = addTextChangedListener(KTextWatcher().apply(init))

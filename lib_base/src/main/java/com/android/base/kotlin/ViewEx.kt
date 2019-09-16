@@ -1,17 +1,18 @@
 package com.android.base.kotlin
 
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
-import android.support.v4.widget.NestedScrollView
+
+import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.View.FOCUS_DOWN
 import android.view.View.FOCUS_UP
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ScrollView
+import androidx.annotation.*
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import com.android.base.rx.subscribeIgnoreError
 import com.android.base.utils.android.ViewUtils
 import com.android.base.utils.android.compat.AndroidVersion.atLeast

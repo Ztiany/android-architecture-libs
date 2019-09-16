@@ -5,8 +5,6 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 import android.view.View;
@@ -15,6 +13,9 @@ import android.view.WindowManager;
 
 import com.android.base.utils.BaseUtils;
 import com.android.base.utils.android.compat.SystemBarCompat;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * 窗口工具箱

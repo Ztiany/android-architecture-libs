@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    implementation androidLibraries.androidAnnotations
+    implementation androidLibraries.annotation
     implementation thirdLibraries.mmkv
     implementation thirdLibraries.gson
     implementation thirdLibraries.supportOptional

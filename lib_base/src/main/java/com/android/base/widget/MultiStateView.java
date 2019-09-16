@@ -2,8 +2,6 @@ package com.android.base.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -15,6 +13,9 @@ import android.widget.FrameLayout;
 import com.android.base.R;
 import com.android.base.app.ui.StateLayoutConfig;
 import com.android.base.app.ui.StateLayoutConfig.ViewState;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static com.android.base.app.ui.StateLayoutConfig.CONTENT;
 import static com.android.base.app.ui.StateLayoutConfig.EMPTY;

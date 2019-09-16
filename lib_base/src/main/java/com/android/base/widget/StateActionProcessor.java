@@ -2,9 +2,6 @@ package com.android.base.widget;
 
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -16,6 +13,10 @@ import com.android.base.R;
 import com.android.base.app.ui.CommonId;
 import com.android.base.app.ui.OnRetryActionListener;
 import com.android.base.app.ui.StateLayoutConfig;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import static com.android.base.app.ui.StateLayoutConfig.EMPTY;
 import static com.android.base.app.ui.StateLayoutConfig.ERROR;

@@ -1,6 +1,7 @@
 package com.android.base.app.ui;
 
-import android.support.v4.widget.SwipeRefreshLayout;
+
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 class SwipeRefreshView implements RefreshView {
 

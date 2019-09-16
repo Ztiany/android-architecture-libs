@@ -1,6 +1,7 @@
 package com.android.base.app.ui;
 
-import android.support.annotation.StringRes;
+
+import androidx.annotation.StringRes;
 
 /**
  * 显示通用的 LoadingDialog 和 Message

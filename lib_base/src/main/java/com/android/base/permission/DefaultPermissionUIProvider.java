@@ -3,12 +3,13 @@ package com.android.base.permission;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
 
 import com.android.base.R;
 import com.blankj.utilcode.util.ToastUtils;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.appcompat.app.AlertDialog;
 
 import static com.android.base.permission.PermissionUtils.createPermissionAskAgainText;
 import static com.android.base.permission.PermissionUtils.createPermissionDeniedTip;
