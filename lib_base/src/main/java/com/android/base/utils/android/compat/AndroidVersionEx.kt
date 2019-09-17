@@ -1,6 +1,4 @@
-package com.android.base.kotlin
-
-import com.android.base.utils.android.compat.AndroidVersion
+package com.android.base.utils.android.compat
 
 
 inline fun ifSDKAbove(sdkVersion: Int, block: () -> Unit) {
@@ -21,10 +19,8 @@ inline fun ifSDKAtLeast(sdkVersion: Int, block: () -> Unit) {
     }
 }
 
-inline fun ignoreCrash(code: () -> Unit) {
-    try {
-        code()
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
+fun isSDKAbove(sdkVersion: Int) = AndroidVersion.above(sdkVersion)
+
+fun isSDKAt(sdkVersion: Int) = AndroidVersion.at(sdkVersion)
+
+fun isSDKAtLeast(sdkVersion: Int) = AndroidVersion.atLeast(sdkVersion)

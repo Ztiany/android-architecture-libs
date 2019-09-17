@@ -2,9 +2,9 @@ package com.android.base.imageloader;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.android.base.utils.common.Checker;
-import com.android.base.utils.common.StringChecker;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -111,7 +111,7 @@ final class ProgressManager {
     @UiThread
     void addLoadListener(String url, ProgressListener listener) {
         //check
-        if (StringChecker.isEmpty(url)) {
+        if (TextUtils.isEmpty(url)) {
             throw new NullPointerException("url cannot be null");
         }
         if (listener == null) {
@@ -147,7 +147,7 @@ final class ProgressManager {
     @UiThread
     @SuppressWarnings("WeakerAccess")
     public void setListener(String url, ProgressListener progressListener) {
-        if (StringChecker.isEmpty(url)) {
+        if (TextUtils.isEmpty(url)) {
             throw new NullPointerException("url cannot be null");
         }
         if (progressListener == null) {

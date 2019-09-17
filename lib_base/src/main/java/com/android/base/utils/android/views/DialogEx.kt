@@ -1,4 +1,4 @@
-package com.android.base.kotlin
+package com.android.base.utils.android.views
 
 import android.app.Dialog
 

@@ -2,13 +2,13 @@ package com.android.base.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.android.base.R;
 import com.android.base.app.ui.StateLayout;
 import com.android.base.app.ui.StateLayoutConfig;
-import com.android.base.utils.common.StringChecker;
 
 import androidx.annotation.NonNull;
 import timber.log.Timber;
@@ -54,7 +54,7 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
     private void initProcessor(TypedArray typedArray) {
         String processorPath = typedArray.getString(R.styleable.SimpleMultiStateView_msv_state_processor);
 
-        if (!StringChecker.isEmpty(processorPath)) {
+        if (!TextUtils.isEmpty(processorPath)) {
             try {
                 Class<?> processorClass = Class.forName(processorPath);
                 mStateProcessor = (StateProcessor) processorClass.newInstance();

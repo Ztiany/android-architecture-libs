@@ -1,13 +1,18 @@
-package com.android.base.kotlin
+package com.android.base.utils.android.views
 
 import android.graphics.drawable.Drawable
 import android.text.Editable
+import android.text.InputFilter
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import com.android.base.interfaces.adapter.TextWatcherAdapter
+import com.google.android.material.textfield.TextInputLayout
 
 inline fun TextView.textWatcher(init: KTextWatcher.() -> Unit) = addTextChangedListener(KTextWatcher().apply(init))
 
@@ -55,24 +60,24 @@ class KTextWatcher : TextWatcher {
 
 }
 
-fun TextView.topDrawable(@DrawableRes id: Int) {
+fun TextView.setTopDrawable(@DrawableRes id: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, id, 0, 0)
 }
 
-fun TextView.leftDrawable(@DrawableRes id: Int) {
+fun TextView.setLeftDrawable(@DrawableRes id: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(id, 0, 0, 0)
 }
 
-fun TextView.rightDrawable(@DrawableRes id: Int) {
+fun TextView.setRightDrawable(@DrawableRes id: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, 0, id, 0)
 }
 
-fun TextView.bottomDrawable(@DrawableRes id: Int) {
+fun TextView.setBottomDrawable(@DrawableRes id: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, id)
 }
 
-fun TextView.topDrawable(drawable: Drawable, retain: Boolean = false) {
-    if (retain) {
+fun TextView.setTopDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+    if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], drawable, compoundDrawables[2], compoundDrawables[3])
     } else {
@@ -80,8 +85,8 @@ fun TextView.topDrawable(drawable: Drawable, retain: Boolean = false) {
     }
 }
 
-fun TextView.leftDrawable(drawable: Drawable, retain: Boolean = false) {
-    if (retain) {
+fun TextView.setLeftDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+    if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(drawable, compoundDrawables[1], compoundDrawables[2], compoundDrawables[3])
     } else {
@@ -89,8 +94,8 @@ fun TextView.leftDrawable(drawable: Drawable, retain: Boolean = false) {
     }
 }
 
-fun TextView.rightDrawable(drawable: Drawable, retain: Boolean = false) {
-    if (retain) {
+fun TextView.setRightDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+    if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], compoundDrawables[1], drawable, compoundDrawables[3])
     } else {
@@ -98,8 +103,8 @@ fun TextView.rightDrawable(drawable: Drawable, retain: Boolean = false) {
     }
 }
 
-fun TextView.bottomDrawable(drawable: Drawable, retain: Boolean = false) {
-    if (retain) {
+fun TextView.setBottomDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+    if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], compoundDrawables[1], compoundDrawables[2], drawable)
     } else {
@@ -118,4 +123,45 @@ fun Button.enableByEditText(et: EditText, checker: (s: CharSequence?) -> Boolean
             btn.isEnabled = checker(s)
         }
     })
+}
+
+fun TextInputLayout.textStr(): String {
+    val editText = this.editText
+    return editText?.text?.toString() ?: ""
+}
+
+fun EditText.textStr(): String {
+    return this.text?.toString() ?: ""
+}
+
+fun TextView.enableSpanClickable() {
+    // 响应点击事件的话必须设置以下属性
+    movementMethod = LinkMovementMethod.getInstance()
+    // 去掉点击事件后的高亮
+    highlightColor = ContextCompat.getColor(context, android.R.color.transparent)
+}
+
+fun EditText.disableEmojiEntering() {
+    val filter = EmojiExcludeFilter()
+    val oldFilters = filters
+    val oldFiltersLength = oldFilters.size
+    val newFilters = arrayOfNulls<InputFilter>(oldFiltersLength + 1)
+    if (oldFiltersLength > 0) {
+        System.arraycopy(oldFilters, 0, newFilters, 0, oldFiltersLength)
+    }
+    //添加新的过滤规则
+    newFilters[oldFiltersLength] = filter
+    filters = newFilters
+}
+
+private class EmojiExcludeFilter : InputFilter {
+    override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
+        for (i in start until end) {
+            val type = Character.getType(source[i])
+            if (type == Character.SURROGATE.toInt() || type == Character.OTHER_SYMBOL.toInt()) {
+                return ""
+            }
+        }
+        return null
+    }
 }

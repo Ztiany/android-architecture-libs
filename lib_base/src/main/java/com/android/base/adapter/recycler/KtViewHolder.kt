@@ -1,7 +1,6 @@
-package com.android.base.kotlin
+package com.android.base.adapter.recycler
 
 import android.view.View
-import com.android.base.adapter.recycler.ViewHolder
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.extensions.LayoutContainer

@@ -45,6 +45,13 @@ android {
         jvmTarget = "1.8"
     }
 
+    sourceSets {
+        main {
+            java.srcDirs += "src/github/java"
+            res.srcDirs += "src/github/res"
+        }
+    }
+    
 }
 
 dependencies {
@@ -118,5 +125,4 @@ dependencies {
     api thirdLibraries.utilcode
     api thirdLibraries.jOOR
     api thirdLibraries.supportOptional
-
 }

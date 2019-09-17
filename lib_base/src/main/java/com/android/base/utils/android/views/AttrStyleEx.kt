@@ -1,4 +1,4 @@
-package com.android.base.kotlin
+package com.android.base.utils.android.views
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -23,6 +23,7 @@ val Context.contextThemeWrapper: ContextThemeWrapper
 
 @StyleRes
 fun View.attrStyle(@AttrRes attrColor: Int): Int = contextThemeWrapper.attrStyle(attrColor)
+
 @StyleRes
 private fun ContextThemeWrapper.attrStyle(@AttrRes attrRes: Int): Int =
         attr(attrRes) {
@@ -31,7 +32,7 @@ private fun ContextThemeWrapper.attrStyle(@AttrRes attrRes: Int): Int =
 
 private fun <R> ContextThemeWrapper.attr(@AttrRes attrRes: Int, block: (TypedArray)->R): R {
     val typedValue = TypedValue()
-    if (!theme.resolveAttribute(attrRes, typedValue, true)) throw IllegalArgumentException("$attrRes is not resolvable")
+    require(theme.resolveAttribute(attrRes, typedValue, true)) { "$attrRes is not resolvable" }
     val a = obtainStyledAttributes(typedValue.data, intArrayOf(attrRes))
     val result = block(a)
     a.recycle()

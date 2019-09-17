@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.android.base.app.activity.ActivityDelegate
 import com.android.base.app.activity.ActivityDelegateOwner
 import com.android.base.app.activity.ActivityStatus
-import com.android.base.kotlin.javaClassName
+import com.android.base.utils.common.javaClassName
 import kotlin.reflect.KClass
 
 /**被此 annotation 标注的方法，表示需要使用 [Fragment] 的全类名作为 [FragmentTransaction] 中相关方法的 flag 参数的实参，比如 add/replace 等*/

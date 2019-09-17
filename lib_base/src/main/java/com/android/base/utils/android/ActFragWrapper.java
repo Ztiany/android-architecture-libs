@@ -55,7 +55,9 @@ public class ActFragWrapper {
             mActivity.startService(intent);
         } else {
             FragmentActivity activity = mFragment.getActivity();
-            activity.startService(intent);
+            if (activity != null) {
+                activity.startService(intent);
+            }
         }
     }
 
@@ -63,7 +65,11 @@ public class ActFragWrapper {
         if (mActivity != null) {
             mActivity.stopService(new Intent(mActivity, payPalServiceClass));
         } else {
-            mFragment.getActivity().stopService(new Intent(mFragment.getActivity(), payPalServiceClass));
+            FragmentActivity activity = mFragment.getActivity();
+            if (activity != null) {
+                activity.stopService(new Intent(activity, payPalServiceClass));
+            }
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package com.android.base.utils.android;
+package com.android.base.utils.android.cache;
 
 import android.content.Context;
 import android.content.SharedPreferences;

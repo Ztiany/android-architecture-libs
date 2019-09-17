@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.android.base.kotlin.KtViewHolder
 
 /**
  * A simple way to build a simple list. If you want to build a multi type list, perhaps you need to use [MultiTypeAdapter].

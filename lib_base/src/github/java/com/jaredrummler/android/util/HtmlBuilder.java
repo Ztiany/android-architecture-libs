@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.android.base.utils.android.text;
+package com.jaredrummler.android.util;
 
 import android.os.Build;
 import android.text.Html;

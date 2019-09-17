@@ -1,9 +1,15 @@
-package com.android.base.kotlin
+package com.android.base.utils.common
 
-import com.android.base.utils.common.CollectionUtils
+fun <E> List<E>?.toArrayList(copy: Boolean = false): ArrayList<E> {
 
-fun <E> List<E>?.toArrayList(): ArrayList<E> {
-    return CollectionUtils.toArrayList(this)
+    if (this == null) {
+        return ArrayList(0)
+    }
+
+    return if (!copy && this is java.util.ArrayList<E>) {
+        this
+    } else ArrayList(this)
+
 }
 
 fun <E> MutableList<E>.removeWhich(filter: (E) -> Boolean): Boolean {

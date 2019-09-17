@@ -3,12 +3,12 @@
 package com.android.base.app.ui
 
 import com.android.base.app.BaseKit
-import com.android.base.utils.common.Checker
+import com.android.base.utils.common.isEmpty
 import timber.log.Timber
 
 fun <T> RefreshListLayout<T>.processListResultWithStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore) {
-        if (!Checker.isEmpty(list)) {
+        if (!isEmpty(list)) {
             addData(list)
         }
     } else {
@@ -33,7 +33,7 @@ fun <T> RefreshListLayout<T>.processListResultWithStatus(list: List<T>?, onEmpty
 
 fun <T> RefreshListLayout<T>.processListResultWithoutStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore) {
-        if (!Checker.isEmpty(list)) {
+        if (!isEmpty(list)) {
             addData(list)
         }
     } else {

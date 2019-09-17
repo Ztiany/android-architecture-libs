@@ -9,8 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.webkit.MimeTypeMap;
 
-import com.android.base.utils.common.FileUtils;
-import com.android.base.utils.common.StringChecker;
+import com.android.base.utils.common.Strings;
+import com.blankj.utilcode.util.FileUtils;
 
 import java.io.File;
 import java.util.List;
@@ -45,7 +45,7 @@ public class XAppUtils {
             if (Build.VERSION.SDK_INT <= 23) {
                 context.startActivity(getInstallAppIntent23(file));
             } else {
-                Intent intent = getInstallAppIntent24(context, file, StringChecker.isEmpty(authority) ? (context.getPackageName() + ".fileProvider") : authority);
+                Intent intent = getInstallAppIntent24(context, file, Strings.isEmpty(authority) ? (context.getPackageName() + ".fileProvider") : authority);
                 context.startActivity(intent);
             }
             Timber.d("installApp open  activity successfully");
