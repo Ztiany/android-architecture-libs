@@ -1,12 +1,13 @@
 package com.android.base.adapter.recycler;
 
-import android.support.v7.widget.RecyclerView;
 
 import com.android.base.adapter.DataManager;
 import com.android.base.utils.common.Checker;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 
 final class RecyclerDataManagerImpl<T> implements DataManager<T> {

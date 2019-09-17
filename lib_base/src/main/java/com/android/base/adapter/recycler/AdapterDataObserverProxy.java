@@ -1,7 +1,8 @@
 package com.android.base.adapter.recycler;
 
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @see <a href='http://www.cezcb.com/2018/08/24/PagingWithHeader/'>PagingWithHeader</a>

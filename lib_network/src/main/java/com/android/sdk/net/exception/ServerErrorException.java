@@ -1,6 +1,5 @@
 package com.android.sdk.net.exception;
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * 表示服务器异常

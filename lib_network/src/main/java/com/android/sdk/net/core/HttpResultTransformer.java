@@ -1,7 +1,5 @@
 package com.android.sdk.net.core;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.android.sdk.net.NetContext;
 import com.android.sdk.net.exception.ApiErrorException;
@@ -12,6 +10,8 @@ import com.android.sdk.net.provider.PostTransformer;
 
 import org.reactivestreams.Publisher;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
 import io.reactivex.Observable;

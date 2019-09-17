@@ -1,6 +1,6 @@
 package com.android.sdk.net.kit;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * @author Ztiany

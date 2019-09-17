@@ -1,22 +1,21 @@
 package com.android.base.kotlin
 
 import android.graphics.drawable.Drawable
-
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.View.FOCUS_DOWN
 import android.view.View.FOCUS_UP
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ScrollView
-import androidx.annotation.*
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import com.android.base.rx.subscribeIgnoreError
 import com.android.base.utils.android.ViewUtils
 import com.android.base.utils.android.compat.AndroidVersion.atLeast
-import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
@@ -144,12 +143,12 @@ fun View.onDebouncedClick(milliseconds: Long, onClick: (View) -> Unit) {
             .subscribeIgnoreError { onClick(this) }
 }
 
-fun View.onClickObservable(): Observable<Any> {
+fun View.onClickObservable(): Observable<Unit> {
     return onClickObservable(500)
 }
 
-fun View.onClickObservable(milliseconds: Long): Observable<Any> {
-    return RxView.clicks(this)
+fun View.onClickObservable(milliseconds: Long): Observable<Unit> {
+    return clicks()
             .throttleFirst(milliseconds, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
 }

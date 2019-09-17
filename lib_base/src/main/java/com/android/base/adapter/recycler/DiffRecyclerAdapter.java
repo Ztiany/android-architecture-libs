@@ -1,13 +1,6 @@
 package com.android.base.adapter.recycler;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.recyclerview.extensions.AsyncDifferConfig;
-import android.support.v7.recyclerview.extensions.AsyncListDiffer;
-import android.support.v7.util.AdapterListUpdateCallback;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.android.base.adapter.DataManager;
@@ -16,6 +9,14 @@ import com.android.base.utils.common.Checker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.AdapterListUpdateCallback;
+import androidx.recyclerview.widget.AsyncDifferConfig;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * RecyclerView 的适配器，注意：  只有{@link #setDataSource(List, boolean)}才能替换原有数据源的引用。

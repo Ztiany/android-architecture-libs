@@ -1,7 +1,5 @@
 package com.android.sdk.net.kit;
 
-import android.support.annotation.NonNull;
-
 import com.android.sdk.net.NetContext;
 import com.android.sdk.net.exception.ApiErrorException;
 import com.android.sdk.net.exception.NetworkErrorException;
@@ -11,6 +9,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 import io.reactivex.flowables.ConnectableFlowable;
 import io.reactivex.functions.Function;

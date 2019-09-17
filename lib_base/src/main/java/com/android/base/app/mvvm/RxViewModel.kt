@@ -18,7 +18,7 @@ import io.reactivex.subjects.BehaviorSubject
  * Email: 1169654504@qq.com
  * Date : 2017-04-18 16:25
  */
-abstract class ArchViewModel : ViewModel(), AutoDisposeLifecycleScopeProviderEx<ArchViewModel.ViewModelEvent> {
+abstract class RxViewModel : ViewModel(), AutoDisposeLifecycleScopeProviderEx<RxViewModel.ViewModelEvent> {
 
     private val archLifecycleSubject = BehaviorSubject.createDefault(ViewModelEvent.CREATED)
 

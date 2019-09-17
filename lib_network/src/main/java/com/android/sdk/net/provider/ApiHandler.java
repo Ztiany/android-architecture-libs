@@ -1,8 +1,8 @@
 package com.android.sdk.net.provider;
 
-import android.support.annotation.NonNull;
-
 import com.android.sdk.net.core.Result;
+
+import androidx.annotation.NonNull;
 
 /**
  * @author Ztiany

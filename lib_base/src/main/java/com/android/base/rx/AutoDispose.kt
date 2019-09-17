@@ -21,23 +21,23 @@ import timber.log.Timber
 interface AutoDisposeLifecycleScopeProviderEx<T> : LifecycleScopeProvider<T> {
 
     fun <T> Flowable<T>.autoDispose(): FlowableSubscribeProxy<T> {
-        return this.`as`(autoDisposable(this@AutoDisposeLifecycleScopeProviderEx))
+        return autoDisposable(this@AutoDisposeLifecycleScopeProviderEx)
     }
 
     fun <T> Observable<T>.autoDispose(): ObservableSubscribeProxy<T> {
-        return this.`as`(autoDisposable(this@AutoDisposeLifecycleScopeProviderEx))
+        return autoDisposable(this@AutoDisposeLifecycleScopeProviderEx)
     }
 
     fun Completable.autoDispose(): CompletableSubscribeProxy {
-        return this.`as`(autoDisposable<Any>(this@AutoDisposeLifecycleScopeProviderEx))
+        return autoDisposable(this@AutoDisposeLifecycleScopeProviderEx)
     }
 
     fun <T> Maybe<T>.autoDispose(): MaybeSubscribeProxy<T> {
-        return this.`as`(autoDisposable(this@AutoDisposeLifecycleScopeProviderEx))
+        return autoDisposable(this@AutoDisposeLifecycleScopeProviderEx)
     }
 
     fun <T> Single<T>.autoDispose(): SingleSubscribeProxy<T> {
-        return this.`as`(autoDisposable(this@AutoDisposeLifecycleScopeProviderEx))
+        return autoDisposable(this@AutoDisposeLifecycleScopeProviderEx)
     }
 
 }
@@ -87,19 +87,19 @@ interface AutoDisposeLifecycleOwnerEx : LifecycleOwner {
 }
 
 fun <T> Flowable<T>.bindLifecycle(lifecycleOwner: LifecycleOwner): FlowableSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner))
 }
 
 fun <T> Flowable<T>.bindLifecycle(lifecycleOwner: LifecycleOwner, event: Lifecycle.Event): FlowableSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event))
 }
 
 fun <T> Observable<T>.bindLifecycle(lifecycleOwner: LifecycleOwner): ObservableSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner))
 }
 
 fun <T> Observable<T>.bindLifecycle(lifecycleOwner: LifecycleOwner, event: Lifecycle.Event): ObservableSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event))
 }
 
 fun Completable.bindLifecycle(lifecycleOwner: LifecycleOwner): CompletableSubscribeProxy {
@@ -111,19 +111,19 @@ fun Completable.bindLifecycle(lifecycleOwner: LifecycleOwner, event: Lifecycle.E
 }
 
 fun <T> Maybe<T>.bindLifecycle(lifecycleOwner: LifecycleOwner): MaybeSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner))
 }
 
 fun <T> Maybe<T>.bindLifecycle(lifecycleOwner: LifecycleOwner, event: Lifecycle.Event): MaybeSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event))
 }
 
 fun <T> Single<T>.bindLifecycle(lifecycleOwner: LifecycleOwner): SingleSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner))
 }
 
 fun <T> Single<T>.bindLifecycle(lifecycleOwner: LifecycleOwner, event: Lifecycle.Event): SingleSubscribeProxy<T> {
-    return this.`as`(autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event)))
+    return autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, event))
 }
 
 fun <T> ObservableSubscribeProxy<T>.subscribed(): Disposable = this.subscribe(RxKit.logResultHandler(), RxKit.logErrorHandler())

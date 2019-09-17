@@ -1,11 +1,11 @@
 package com.android.sdk.cache;
 
-import android.support.annotation.Nullable;
 
 import com.github.dmstocking.optional.java.util.Optional;
 
 import java.lang.reflect.Type;
 
+import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 
 /**

@@ -1,9 +1,9 @@
 package com.android.base.adapter.recycler
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.android.base.kotlin.KtViewHolder
 
 /**
@@ -11,7 +11,7 @@ import com.android.base.kotlin.KtViewHolder
  * Email: 1169654504@qq.com
  * Date : 2017-09-13 15:33
  */
-abstract class ItemViewBinder<T, VH : RecyclerView.ViewHolder> : me.drakeet.multitype.ItemViewBinder<T, VH>() {
+abstract class ItemViewBinder<T, VH : RecyclerView.ViewHolder> : com.drakeet.multitype.ItemViewBinder<T, VH>() {
 
     protected val dataManager: MultiTypeAdapter
         get() = adapter as MultiTypeAdapter

@@ -5,6 +5,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.style.ReplacementSpan;
 
+import androidx.annotation.NonNull;
+
 /**
  * 圆角背景Span
  */

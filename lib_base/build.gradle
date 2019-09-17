@@ -41,6 +41,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
 }
 
 dependencies {
@@ -52,25 +56,26 @@ dependencies {
     //AndroidSupport
     api androidLibraries.supportV4
     api androidLibraries.appcompat
-    api androidLibraries.recyclerview
+    api androidLibraries.recyclerView
     api androidLibraries.material
     api androidLibraries.percentLayout
     api androidLibraries.constraintLayout
     api androidLibraries.annotation
 
     //AAC
-   api androidLibraries. archRuntime
-   api androidLibraries. archCommon
-   api androidLibraries. lifecycleCommon
-   api androidLibraries. lifecycleCommonJava8
-   api androidLibraries. lifecycleRuntimeKtx
-   api androidLibraries. lifecycleLiveDataCore
-   api androidLibraries. lifecycleLiveData
-   api androidLibraries. lifecycleLiveKtx
-   api androidLibraries. lifecycleViewModel
-   api androidLibraries. lifecycleViewModelKtx
-   api androidLibraries. lifecycleExtensions
-   api androidLibraries. lifecycleReactiveStreams
+    api androidLibraries.archRuntime
+    api androidLibraries.archCommon
+    api androidLibraries.fragmentKtx
+    api androidLibraries.lifecycleCommon
+    api androidLibraries.lifecycleCommonJava8
+    api androidLibraries.lifecycleRuntimeKtx
+    api androidLibraries.lifecycleLiveDataCore
+    api androidLibraries.lifecycleLiveData
+    api androidLibraries.lifecycleLiveKtx
+    api androidLibraries.lifecycleViewModel
+    api androidLibraries.lifecycleViewModelKtx
+    api androidLibraries.lifecycleExtensions
+    api androidLibraries.lifecycleReactiveStreams
 
     //Kotlin
     api kotlinLibraries.kotlinStdlib
@@ -83,6 +88,8 @@ dependencies {
     api thirdLibraries.rxAndroid
     api thirdLibraries.rxBinding
     api thirdLibraries.autoDispose
+    api thirdLibraries.autoDisposeAndroid
+    api thirdLibraries.autoDisposeLifecycle
     api thirdLibraries.autoDisposeLifecycleArchcomponents
 
     /*Dagger2*/
@@ -98,7 +105,6 @@ dependencies {
 
     //Adapter
     api uiLibraries.multiType
-    api uiLibraries.multiTypeKotlin
 
     //Log
     api thirdLibraries.timber

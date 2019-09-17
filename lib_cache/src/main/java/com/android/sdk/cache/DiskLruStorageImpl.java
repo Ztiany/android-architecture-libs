@@ -1,7 +1,6 @@
 package com.android.sdk.cache;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.github.dmstocking.optional.java.util.Optional;
@@ -10,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 
 @SuppressWarnings("WeakerAccess,unused")

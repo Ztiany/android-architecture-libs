@@ -1,6 +1,5 @@
 package com.android.base.app.mvp
 
-import android.support.annotation.CallSuper
 import androidx.annotation.CallSuper
 import com.android.base.rx.AutoDisposeLifecycleScopeProviderEx
 import com.uber.autodispose.lifecycle.CorrespondingEventsFunction

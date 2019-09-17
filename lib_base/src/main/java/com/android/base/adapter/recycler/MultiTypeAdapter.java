@@ -1,19 +1,19 @@
 package com.android.base.adapter.recycler;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.android.base.adapter.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.drakeet.multitype.TypePool;
+import androidx.annotation.NonNull;
+
 
 /**
  * @see <a href='https://github.com/drakeet/MultiType'>drakeet/MultiTypeAdapter</a>
  */
-public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter implements DataManager<Object> {
+public class MultiTypeAdapter extends com.drakeet.multitype.MultiTypeAdapter implements DataManager<Object> {
 
     private final Context mContext;
 
@@ -37,14 +37,6 @@ public class MultiTypeAdapter extends me.drakeet.multitype.MultiTypeAdapter impl
 
     public MultiTypeAdapter(Context context, @NonNull List<?> items, int initialCapacity) {
         super(items, initialCapacity);
-        mContext = context;
-        ArrayList<Object> objects = new ArrayList<>(items);
-        mRecyclerDataManager = new RecyclerDataManagerImpl<>(objects, this);
-        super.setItems(objects);
-    }
-
-    public MultiTypeAdapter(Context context, @NonNull List<?> items, @NonNull TypePool pool) {
-        super(items, pool);
         mContext = context;
         ArrayList<Object> objects = new ArrayList<>(items);
         mRecyclerDataManager = new RecyclerDataManagerImpl<>(objects, this);

@@ -1,7 +1,5 @@
 package com.android.sdk.net;
 
-import android.support.annotation.NonNull;
-
 import com.android.sdk.net.core.ExceptionFactory;
 import com.android.sdk.net.provider.ApiHandler;
 import com.android.sdk.net.provider.ErrorDataAdapter;
@@ -12,6 +10,7 @@ import com.android.sdk.net.provider.PostTransformer;
 import com.android.sdk.net.service.ServiceFactory;
 import com.android.sdk.net.service.ServiceHelper;
 
+import androidx.annotation.NonNull;
 import okhttp3.OkHttpClient;
 
 /**

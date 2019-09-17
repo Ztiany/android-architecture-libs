@@ -1,7 +1,5 @@
 package com.android.sdk.net;
 
-import android.support.annotation.NonNull;
-
 import com.android.sdk.net.core.ExceptionFactory;
 import com.android.sdk.net.provider.ApiHandler;
 import com.android.sdk.net.provider.ErrorDataAdapter;
@@ -9,6 +7,8 @@ import com.android.sdk.net.provider.ErrorMessage;
 import com.android.sdk.net.provider.HttpConfig;
 import com.android.sdk.net.provider.NetworkChecker;
 import com.android.sdk.net.provider.PostTransformer;
+
+import androidx.annotation.NonNull;
 
 public interface NetProvider {
 
