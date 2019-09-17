@@ -5,7 +5,7 @@ import android.view.View;
 import dagger.MembersInjector;
 
 /**
- * how to use it? refer https://github.com/Ztiany/Programming-Notes-Code/blob/master/Android/Dagger2AndroidInjection-v2.19/README.md。
+ * how to use it? refer https://github.com/Ztiany/notes/blob/master/Android/00-Code/Dagger2AndroidInjection-v2.24/README.md.
  *
  * @param <A>
  */
