@@ -1,11 +1,9 @@
-package com.android.sdk.qrcode.zxing;
+package com.android.sdk.qrcode;
 
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 
-import com.android.sdk.qrcode.QRCodeView;
-import com.android.sdk.qrcode.Debug;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;

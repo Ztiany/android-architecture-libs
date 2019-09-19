@@ -1,4 +1,4 @@
-package com.android.sdk.qrcode.zxing;
+package com.android.sdk.qrcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

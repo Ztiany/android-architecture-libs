@@ -13,8 +13,7 @@ import java.util.List;
 
 import io.fotoapparat.parameter.Resolution;
 
-@SuppressWarnings("unused")
-final class CameraUtils {
+public class CameraUtils {
 
     private static final double MAX_ASPECT_DISTORTION = 0.15;//最大比例偏差
     private static final int MIN_PREVIEW_PIXELS = 480 * 800;//小于此预览尺寸直接移除
@@ -26,7 +25,7 @@ final class CameraUtils {
         }
     }
 
-    static Resolution findBestPictureSize(Context context, Collection<Resolution> collection) {
+    public static Resolution findBestPictureSize(Context context, Collection<Resolution> collection) {
         if (collection.isEmpty()) {
             return null;
         }
@@ -36,7 +35,7 @@ final class CameraUtils {
         return bestPictureResolution;
     }
 
-    static Resolution findBestPreviewSize(Context context, Collection<Resolution> collection) {
+    public static Resolution findBestPreviewSize(Context context, Collection<Resolution> collection) {
         if (collection.isEmpty()) {
             return null;
         }

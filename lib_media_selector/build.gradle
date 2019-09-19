@@ -22,11 +22,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    sourceSets {
+        main {
+            java.srcDirs += "src/github/java"
+            res.srcDirs += "src/github/res"
+        }
+    }
+
 }
 
 dependencies {
     //support
-    implementation androidLibraries.compat
+    implementation androidLibraries.appcompat
     implementation androidLibraries.material
 
     /*imageLoader*/
@@ -38,17 +46,11 @@ dependencies {
 
     implementation('com.bilibili:boxing-impl:1.0.4') {
         exclude group: 'com.android.support'
+        exclude group: 'com.chensl.rotatephotoview'
     }
 
-    implementation('com.chensl.rotatephotoview:rotatephotoview:1.0.5') {
-        exclude group: 'com.android.support', module: 'appcompat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude module: 'recyclerview-v7'
-    }
-
-    implementation('com.yalantis:ucrop:2.2.0') {
-        exclude group: 'com.android.support'
-        exclude group: 'com.squareup.okio'
+    implementation('com.github.yalantis:ucrop:2.2.4') {
         exclude group: 'com.squareup.okhttp3'
     }
+
 }

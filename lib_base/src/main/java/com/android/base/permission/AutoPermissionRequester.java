@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import timber.log.Timber;
 
@@ -128,11 +129,28 @@ public class AutoPermissionRequester {
         FragmentManager supportFragmentManager = mActivity.getSupportFragmentManager();
         AutoPermissionFragment fragment = (AutoPermissionFragment) supportFragmentManager.findFragmentByTag(AutoPermissionFragment.class.getName());
 
+        Lifecycle.State currentState = mActivity.getLifecycle().getCurrentState();
+
+        if (currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            startRequestInternal(supportFragmentManager, fragment);
+        } else {
+            DefaultLifecycleObserver lifecycleObserver = new DefaultLifecycleObserver() {
+                @Override
+                public void onResume(@NonNull LifecycleOwner owner) {
+                    mActivity.getLifecycle().removeObserver(this);
+                    startRequestInternal(supportFragmentManager, fragment);
+                }
+            };
+            mActivity.getLifecycle().addObserver(lifecycleObserver);
+        }
+    }
+
+    private void startRequestInternal(FragmentManager supportFragmentManager, AutoPermissionFragment fragment) {
         if (fragment == null) {
             fragment = AutoPermissionFragment.newInstance();
             supportFragmentManager.beginTransaction()
                     .add(fragment, AutoPermissionFragment.class.getName())
-                    .commitNowAllowingStateLoss();
+                    .commitAllowingStateLoss();
         }
 
         fragment.setRequester(getCallback());

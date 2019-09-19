@@ -78,5 +78,4 @@ public class CropOptions implements Serializable {
         return this;
     }
 
-
 }

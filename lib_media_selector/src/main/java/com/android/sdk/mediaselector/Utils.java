@@ -15,13 +15,14 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+
+import androidx.core.content.FileProvider;
 
 /**
  * See:
@@ -34,7 +35,6 @@ import java.util.List;
  *         Date : 2017-08-09 10:54
  */
 final class Utils {
-
 
     private Utils() {
         throw new UnsupportedOperationException("Utils");
@@ -365,4 +365,5 @@ final class Utils {
         // 最后通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + photoPath)));
     }
+
 }

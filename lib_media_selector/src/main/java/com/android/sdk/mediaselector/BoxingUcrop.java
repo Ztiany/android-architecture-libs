@@ -21,14 +21,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 
 import com.bilibili.boxing.loader.IBoxingCrop;
 import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.yalantis.ucrop.UCrop;
 import com.ztiany.mediaselector.R;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 /**
  * use Ucrop(https://github.com/Yalantis/uCrop) as the implement for {@link IBoxingCrop}
@@ -38,22 +39,24 @@ import com.ztiany.mediaselector.R;
 final class BoxingUcrop implements IBoxingCrop {
 
     @Override
-    public void onStartCrop(Context context, Fragment fragment, @NonNull BoxingCropOption cropConfig,
-                            @NonNull String path, int requestCode) {
+    public void onStartCrop(Context context, Fragment fragment, @NonNull BoxingCropOption cropConfig, @NonNull String path, int requestCode) {
 
         Uri uri = new Uri.Builder()
                 .scheme("file")
                 .appendPath(path)
                 .build();
+
         //参数
         UCrop.Options crop = new UCrop.Options();
         crop.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         crop.withMaxResultSize(cropConfig.getMaxWidth(), cropConfig.getMaxHeight());
         crop.withAspectRatio(cropConfig.getAspectRatioX(), cropConfig.getAspectRatioY());
+
         //颜色
         int color = ContextCompat.getColor(context, R.color.boxing_colorPrimaryDark);
         crop.setToolbarColor(color);
         crop.setStatusBarColor(color);
+
         //开始裁减
         UCrop.of(uri, cropConfig.getDestination())
                 .withOptions(crop)
@@ -71,4 +74,5 @@ final class BoxingUcrop implements IBoxingCrop {
         }
         return UCrop.getOutput(data);
     }
+
 }

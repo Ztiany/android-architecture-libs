@@ -18,14 +18,14 @@ abstract class QRCodeView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr), ProcessDataTask.Delegate {
 
-    private lateinit var mCameraView: CameraView
-    private lateinit var mFotoapparat: Fotoapparat
+    private lateinit var cameraView: CameraView
+    private lateinit var fotoapparat: Fotoapparat
 
-    private lateinit var mScanBoxView: ScanBoxView
-    protected var mDelegate: Delegate? = null
+    private lateinit var scanBoxView: ScanBoxView
+    private var delegate: Delegate? = null
 
-    private var mProcessDataTask: ProcessDataTask? = null
-    protected var mSpotAble = false
+    private var dataTask: ProcessDataTask? = null
+    protected var spotAble = false
 
     private val framingRect = Rect()
     private var framingRectInPreview: Rect? = null
@@ -35,16 +35,16 @@ abstract class QRCodeView @JvmOverloads constructor(
     }
 
     private fun initView(context: Context, attrs: AttributeSet?) {
-        mCameraView = CameraView(getContext())
-        mScanBoxView = ScanBoxView(getContext())
-        mScanBoxView.initCustomAttrs(context, attrs)
-        addView(mCameraView)
-        addView(mScanBoxView)
+        cameraView = CameraView(getContext())
+        scanBoxView = ScanBoxView(getContext())
+        scanBoxView.initCustomAttrs(context, attrs)
+        addView(cameraView)
+        addView(scanBoxView)
         try {
-            mFotoapparat = createFotoapparat()
+            fotoapparat = createFotoapparat()
         } catch (e: Exception) {
             e.printStackTrace()
-            mDelegate?.onScanQRCodeOpenCameraError(e)
+            delegate?.onScanQRCodeOpenCameraError(e)
         }
     }
 
@@ -65,27 +65,27 @@ abstract class QRCodeView @JvmOverloads constructor(
 
         return Fotoapparat(
                 context = this@QRCodeView.context,
-                view = mCameraView,
+                view = cameraView,
                 logger = logcat(),
                 lensPosition = back(),
                 cameraConfiguration = configuration,
                 cameraErrorCallback = {
-                    mDelegate?.onScanQRCodeOpenCameraError(it)
+                    delegate?.onScanQRCodeOpenCameraError(it)
                 }
         )
     }
 
     private fun processFrame(frame: Frame) {
-        val processDataTask = mProcessDataTask
-        if (mSpotAble && (processDataTask == null || processDataTask.isCancelled)) {
+        val processDataTask = dataTask
+        if (spotAble && (processDataTask == null || processDataTask.isCancelled)) {
 
-            mProcessDataTask = object : ProcessDataTask(frame.image, frame.size, frame.rotation, this) {
+            dataTask = object : ProcessDataTask(frame.image, frame.size, frame.rotation, this) {
                 override fun onPostExecute(result: String?) {
 
-                    if (mSpotAble) {
+                    if (spotAble) {
                         if (!result.isNullOrEmpty()) {
                             try {
-                                mDelegate?.onScanQRCodeSuccess(result)
+                                delegate?.onScanQRCodeSuccess(result)
                                 stopSpot()
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -105,21 +105,21 @@ abstract class QRCodeView @JvmOverloads constructor(
      * @param delegate 扫描二维码的代理
      */
     fun setDelegate(delegate: Delegate) {
-        mDelegate = delegate
+        this.delegate = delegate
     }
 
     /**
      * 显示扫描框
      */
     fun showScanRect() {
-        mScanBoxView.visibility = View.VISIBLE
+        scanBoxView.visibility = View.VISIBLE
     }
 
     /**
      * 隐藏扫描框
      */
     fun hiddenScanRect() {
-        mScanBoxView.visibility = View.GONE
+        scanBoxView.visibility = View.GONE
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class QRCodeView @JvmOverloads constructor(
      */
     fun startCamera() {
         try {
-            mFotoapparat.start()
+            fotoapparat.start()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
         }
@@ -140,7 +140,7 @@ abstract class QRCodeView @JvmOverloads constructor(
     fun stopCamera() {
         stopSpotAndHiddenRect()
         try {
-            mFotoapparat.stop()
+            fotoapparat.stop()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
         }
@@ -151,7 +151,7 @@ abstract class QRCodeView @JvmOverloads constructor(
      */
     fun startSpot() {
         postDelayed({
-            mSpotAble = true
+            spotAble = true
             startCamera()
         }, 100)
     }
@@ -161,7 +161,7 @@ abstract class QRCodeView @JvmOverloads constructor(
      */
     fun stopSpot() {
         cancelProcessDataTask()
-        mSpotAble = false
+        spotAble = false
     }
 
     /**
@@ -186,14 +186,14 @@ abstract class QRCodeView @JvmOverloads constructor(
      * @return
      */
     val isScanBarcodeStyle: Boolean
-        get() = mScanBoxView.isBarcode
+        get() = scanBoxView.isBarcode
 
     /**
      * 打开闪光灯
      */
     fun openFlashlight() {
         try {
-            mFotoapparat.updateConfiguration(UpdateConfiguration(flashMode = firstAvailable(torch(), off())))
+            fotoapparat.updateConfiguration(UpdateConfiguration(flashMode = firstAvailable(torch(), off())))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -205,7 +205,7 @@ abstract class QRCodeView @JvmOverloads constructor(
      */
     fun closeFlashlight() {
         try {
-            mFotoapparat.updateConfiguration(UpdateConfiguration(flashMode = firstAvailable(off())))
+            fotoapparat.updateConfiguration(UpdateConfiguration(flashMode = firstAvailable(off())))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -216,29 +216,29 @@ abstract class QRCodeView @JvmOverloads constructor(
      * 销毁二维码扫描控件
      */
     fun onDestroy() {
-        mDelegate = null
+        delegate = null
     }
 
     /**
      * 取消数据处理任务
      */
     protected fun cancelProcessDataTask() {
-        mProcessDataTask?.cancelTask()
-        mProcessDataTask = null
+        dataTask?.cancelTask()
+        dataTask = null
     }
 
     /**
      * 切换成扫描条码样式
      */
     fun changeToScanBarcodeStyle() {
-        mScanBoxView.isBarcode = true
+        scanBoxView.isBarcode = true
     }
 
     /**
      * 切换成扫描二维码样式
      */
     fun changeToScanQRCodeStyle() {
-        mScanBoxView.isBarcode = false
+        scanBoxView.isBarcode = false
     }
 
     fun setDebug(debug: Boolean) {
@@ -246,7 +246,7 @@ abstract class QRCodeView @JvmOverloads constructor(
     }
 
     protected fun getFramingRectInPreview(previewWidth: Int, previewHeight: Int): Rect? {
-        if (!mScanBoxView.getScanBoxAreaRect(framingRect)) {
+        if (!scanBoxView.getScanBoxAreaRect(framingRect)) {
             return null
         }
         if (framingRectInPreview == null) {
@@ -274,7 +274,7 @@ abstract class QRCodeView @JvmOverloads constructor(
         /**
          * 处理打开相机出错
          */
-        fun onScanQRCodeOpenCameraError(error: java.lang.Exception)
+        fun onScanQRCodeOpenCameraError(error: Exception)
 
     }
 

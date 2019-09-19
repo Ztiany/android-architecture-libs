@@ -1,6 +1,6 @@
 # 多媒体文件选择库
 
-    目前基于boxing修改
+目前基于boxing修改
 
 ## 1 AndroidN  在 FileProvider 的 xm l配置中加入：
 
@@ -9,16 +9,9 @@
     <external-path name="external" path="DCIM/bili/boxing" />
 ```
 
-## 2 So库
+## 2 RotatePhotoView
 
-```
-                defaultConfig {
-                       ......
-                      ndk {//只打包armeabi架构的so库
-                          abiFilters 'armeabi'
-                      }
-                }
-```
+[RotatePhotoView](https://github.com/ChenSiLiang/RotatePhotoView)
 
 ## 3 其他备选参考
 
@@ -29,4 +22,4 @@
 -  [Album](https://github.com/yanzhenjie/Album)
 -  [uCrop](https://github.com/Yalantis/uCrop)
 -  [smartCropper](https://github.com/pqpo/SmartCropper)
--  [simpleCropper](https:github.com/igreenwood/SimpleCropView)
+-  [simpleCropper](https://github.com/igreenwood/SimpleCropView)

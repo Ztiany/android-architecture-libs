@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.bilibili.boxing.Boxing;
@@ -21,6 +20,8 @@ import com.ztiany.mediaselector.R;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * 基于 Boxing 的多媒体文件选择器
@@ -110,12 +111,10 @@ public class MediaSelector {
 
     private void start(BoxingConfig boxingConfig, int requestCode) {
         if (mFragment != null) {
-            Boxing boxing = Boxing.of(boxingConfig)
-                    .withIntent(mFragment.getContext(), BoxingActivity.class);
+            Boxing boxing = Boxing.of(boxingConfig).withIntent(mFragment.getContext(), BoxingActivity.class);
             boxing.start(mFragment, requestCode);
         } else if (mActivity != null) {
-            Boxing boxing = Boxing.of(boxingConfig)
-                    .withIntent(mActivity, BoxingActivity.class);
+            Boxing boxing = Boxing.of(boxingConfig).withIntent(mActivity, BoxingActivity.class);
             boxing.start(mActivity, requestCode);
         }
     }

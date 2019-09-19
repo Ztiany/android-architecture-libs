@@ -18,8 +18,6 @@
 package com.android.sdk.mediaselector;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.bilibili.boxing.loader.IBoxingCallback;
@@ -30,6 +28,9 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * use https://github.com/bumptech/glide as media loader.
