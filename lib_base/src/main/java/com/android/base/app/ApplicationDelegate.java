@@ -103,7 +103,7 @@ public final class ApplicationDelegate {
         return mAppStatus;
     }
 
-    void setCrashProcessor(BaseKit.CrashProcessor crashProcessor) {
+    void setCrashProcessor(Sword.CrashProcessor crashProcessor) {
         if (mCrashHandler != null) {
             mCrashHandler.setCrashProcessor(crashProcessor);
         }

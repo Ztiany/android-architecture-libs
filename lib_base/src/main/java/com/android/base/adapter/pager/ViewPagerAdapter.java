@@ -4,7 +4,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.base.R;
-import com.android.base.adapter.pager.recycler.RecyclingPagerAdapter;
 import com.android.base.utils.common.Checker;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * 如果使用可缩放的 View 作为 pager，可能不适合使用此Adapter
+ * 如果使用可缩放的 View 作为 pager，可能不适合使用此 Adapter
  *
  * @param <T>  数据
  * @param <VH> View Holder类型

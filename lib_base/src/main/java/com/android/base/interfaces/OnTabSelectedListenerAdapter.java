@@ -1,4 +1,4 @@
-package com.android.base.interfaces.adapter;
+package com.android.base.interfaces;
 
 
 import com.google.android.material.tabs.TabLayout;

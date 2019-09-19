@@ -7,8 +7,7 @@ import com.android.base.adapter.ItemHelper;
 
 public class SmartViewHolder extends ViewHolder {
 
-    @SuppressWarnings("all")
-    protected final ItemHelper mHelper;
+    private final ItemHelper mHelper;
 
     public SmartViewHolder(View itemView) {
         super(itemView);

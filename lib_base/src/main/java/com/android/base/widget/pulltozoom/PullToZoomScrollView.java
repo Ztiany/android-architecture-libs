@@ -128,7 +128,6 @@ public class PullToZoomScrollView extends NestedScrollView {
         return mContainerView != null && mZoomView != null;
     }
 
-
     @Override
     protected boolean overScrollByCompat(int deltaX, int deltaY,
                                          int scrollX, int scrollY,

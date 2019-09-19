@@ -83,7 +83,7 @@ class PageNumberView @JvmOverloads constructor(
         invalidate()
     }
 
-    override fun setViewPager(viewPager: ZViewPager) {
+    override fun setViewPager(viewPager: BannerViewPager) {
         //no op
     }
 

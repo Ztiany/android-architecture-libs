@@ -8,6 +8,8 @@ import com.android.base.utils.common.Checker;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+
 
 final class ListDataManagerImpl<T> implements DataManager<T> {
 
@@ -137,6 +139,7 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     }
 
     @Override
+    @Nullable
     public T getItem(int position) {
         if (mData != null && mData.size() > position) {
             return mData.get(position);
@@ -168,7 +171,7 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     }
 
     @Override
-    public int getItemPosition(T t) {
+    public int indexItem(T t) {
         List<T> items = getItems();
         if (items == null) {
             return -1;

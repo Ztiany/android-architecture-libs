@@ -7,6 +7,8 @@ import android.view.View;
 import com.android.base.utils.android.compat.AndroidVersion;
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
+import org.jetbrains.annotations.NotNull;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -121,7 +123,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Activity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mActivityDelegates.callOnSaveInstanceState(outState);
     }

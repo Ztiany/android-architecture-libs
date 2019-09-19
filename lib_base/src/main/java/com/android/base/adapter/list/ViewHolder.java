@@ -4,7 +4,6 @@ import android.view.View;
 
 public class ViewHolder {
 
-    @SuppressWarnings("all")
     protected final View mItemView;
     private int mPosition;
     private int mType;
@@ -32,4 +31,5 @@ public class ViewHolder {
     public View getItemView() {
         return mItemView;
     }
+
 }

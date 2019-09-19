@@ -2,7 +2,7 @@
 
 package com.android.base.app.ui
 
-import com.android.base.app.BaseKit
+import com.android.base.app.Sword
 import com.android.base.utils.common.isEmpty
 import timber.log.Timber
 
@@ -91,7 +91,7 @@ fun RefreshListLayout<*>.processListErrorWithStatus(throwable: Throwable) {
         loadMoreFailed()
     }
     if (isEmpty) {
-        val errorTypeClassifier = BaseKit.get().errorClassifier()
+        val errorTypeClassifier = Sword.get().errorClassifier()
         if (errorTypeClassifier != null) {
             when {
                 errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
@@ -145,7 +145,7 @@ fun RefreshStateLayout.processErrorWithStatus(throwable: Throwable?) {
     if (isRefreshing) {
         refreshCompleted()
     }
-    val errorTypeClassifier = BaseKit.get().errorClassifier()
+    val errorTypeClassifier = Sword.get().errorClassifier()
     if (errorTypeClassifier != null) {
         when {
             errorTypeClassifier.isNetworkError(throwable) -> {

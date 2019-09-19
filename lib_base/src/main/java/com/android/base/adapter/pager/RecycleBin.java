@@ -1,4 +1,4 @@
-package com.android.base.adapter.pager.recycler;
+package com.android.base.adapter.pager;
 
 import android.os.Build;
 import android.util.SparseArray;
@@ -15,6 +15,7 @@ import android.view.View;
  * is copyrighted 2006 The Android Open Source Project.
  */
 public class RecycleBin {
+
   /**
    * Views that were on screen at the start of layout. This array is populated at the start of
    * layout, and at the end of layout all view in activeViews are moved to scrapViews.
@@ -149,4 +150,5 @@ public class RecycleBin {
       return null;
     }
   }
+
 }

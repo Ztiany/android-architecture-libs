@@ -1,8 +1,10 @@
-package com.android.base.adapter.pager.recycler;
+package com.android.base.adapter.pager;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
+import org.jetbrains.annotations.NotNull;
 
 import androidx.viewpager.widget.PagerAdapter;
 
@@ -33,7 +35,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public final Object instantiateItem(ViewGroup container, int position) {
+    public final Object instantiateItem(@NotNull ViewGroup container, int position) {
         int viewType = getItemViewType(position);
         View view = null;
         if (viewType != IGNORE_ITEM_VIEW_TYPE) {
@@ -45,7 +47,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public final void destroyItem(ViewGroup container, int position, Object object) {
+    public final void destroyItem(ViewGroup container, int position, @NotNull Object object) {
         View view = (View) object;
         container.removeView(view);
         int viewType = getItemViewType(position);
@@ -55,7 +57,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public final boolean isViewFromObject(View view, Object object) {
+    public final boolean isViewFromObject(@NotNull View view, @NotNull Object object) {
         return view == object;
     }
 
@@ -108,8 +110,9 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
      *                    Heterogeneous lists can specify their number of view types, so that this View is
      *                    always of the right type (see {@link #getViewTypeCount()} and
      *                    {@link #getItemViewType(int)}).
-     * @param parent      The parent that this view will eventually be attached to
+     * @param container   The parent that this view will eventually be attached to
      * @return A View corresponding to the data at the specified position.
      */
     public abstract View getView(int position, View convertView, ViewGroup container);
+
 }

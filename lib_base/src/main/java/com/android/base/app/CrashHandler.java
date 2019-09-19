@@ -22,7 +22,7 @@ import timber.log.Timber;
 final class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private Context mContext;
-    private BaseKit.CrashProcessor mCrashProcessor;
+    private Sword.CrashProcessor mCrashProcessor;
 
     public static CrashHandler register(Application application) {
         CrashHandler crashHandler = new CrashHandler(application);
@@ -30,7 +30,7 @@ final class CrashHandler implements Thread.UncaughtExceptionHandler {
         return crashHandler;
     }
 
-    void setCrashProcessor(BaseKit.CrashProcessor crashProcessor) {
+    void setCrashProcessor(Sword.CrashProcessor crashProcessor) {
         mCrashProcessor = crashProcessor;
     }
 

@@ -34,8 +34,6 @@ public final class WindowUtils {
      */
     public static int getDisplayRotation(Activity activity) {
         switch (activity.getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_0:
-                return 0;
             case Surface.ROTATION_90:
                 return 90;
             case Surface.ROTATION_180:
@@ -153,6 +151,5 @@ public final class WindowUtils {
         KeyguardManager km = (KeyguardManager) BaseUtils.getAppContext().getSystemService(Context.KEYGUARD_SERVICE);
         return km != null && km.inKeyguardRestrictedInputMode();
     }
-
 
 }

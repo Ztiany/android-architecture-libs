@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends RecyclerView.Adapter<VH> implements DataManager<T> {
 
     @NonNull
-    protected Context mContext;
+    private Context mContext;
 
     private AsyncListDiffer<T> mAsyncListDiffer;
 
@@ -67,6 +67,11 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
         }
     }
 
+    @NonNull
+    public Context getContext() {
+        return mContext;
+    }
+
     @Override
     public int getItemCount() {
         return getDataSize();
@@ -85,7 +90,7 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
     public abstract void onBindViewHolder(@NonNull VH viewHolder, int position);
 
     public void notifyEntryChanged(T t) {
-        int itemPosition = getItemPosition(t);
+        int itemPosition = indexItem(t);
         if (itemPosition != -1) {
             notifyItemChanged(itemPosition);
         }
@@ -246,7 +251,7 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
     }
 
     @Override
-    public int getItemPosition(T t) {
+    public int indexItem(T t) {
         return isEmpty() ? -1 : getItems().indexOf(t);
     }
 

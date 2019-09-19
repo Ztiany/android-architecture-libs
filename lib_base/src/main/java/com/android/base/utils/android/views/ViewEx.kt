@@ -131,59 +131,83 @@ fun View.setPaddingBottom(padding: Int) {
     this.setPadding(paddingLeft, paddingTop, paddingRight, padding)
 }
 
-fun newLayoutParams(width: Int = ViewGroup.MarginLayoutParams.WRAP_CONTENT, height: Int = ViewGroup.MarginLayoutParams.WRAP_CONTENT): ViewGroup.LayoutParams {
-    return ViewGroup.LayoutParams(width, height)
+fun newWWLayoutParams(): ViewGroup.LayoutParams {
+    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
 }
 
-fun newMarginLayoutParams(width: Int = ViewGroup.MarginLayoutParams.WRAP_CONTENT, height: Int = ViewGroup.MarginLayoutParams.WRAP_CONTENT): ViewGroup.MarginLayoutParams {
-    return ViewGroup.MarginLayoutParams(width, height)
+fun newWMLayoutParams(): ViewGroup.LayoutParams {
+    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
 }
 
-fun View.setTopMargin(topMargin: Int) {
+fun newMWLayoutParams(): ViewGroup.LayoutParams {
+    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+}
+
+fun newMMLayoutParams(): ViewGroup.LayoutParams {
+    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+}
+
+fun newWWMarginLayoutParams(): ViewGroup.MarginLayoutParams {
+    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+}
+
+fun newWMMarginLayoutParams(): ViewGroup.MarginLayoutParams {
+    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+}
+
+fun newMWMarginLayoutParams(): ViewGroup.MarginLayoutParams {
+    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+}
+
+fun newMMMarginLayoutParams(): ViewGroup.MarginLayoutParams {
+    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+}
+
+fun View.setTopMargin(topMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.topMargin = topMargin
     } else {
-        layoutParams = newMarginLayoutParams().apply {
+        layoutParams = layoutParamsCreator?.invoke() ?: newWWMarginLayoutParams().apply {
             this.topMargin = topMargin
         }
     }
 }
 
-fun View.setBottomMargin(bottomMargin: Int) {
+fun View.setBottomMargin(bottomMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.bottomMargin = bottomMargin
     } else {
-        layoutParams = newMarginLayoutParams().apply {
+        layoutParams = layoutParamsCreator?.invoke() ?: newWWMarginLayoutParams().apply {
             this.bottomMargin = bottomMargin
         }
     }
 }
 
-fun View.setLeftMargin(leftMargin: Int) {
+fun View.setLeftMargin(leftMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.leftMargin = leftMargin
     } else {
-        layoutParams = newMarginLayoutParams().apply {
+        layoutParams = layoutParamsCreator?.invoke() ?: newWWMarginLayoutParams().apply {
             this.leftMargin = leftMargin
         }
     }
 }
 
-fun View.setRightMargin(rightMargin: Int) {
+fun View.setRightMargin(rightMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.rightMargin = rightMargin
     } else {
-        layoutParams = newMarginLayoutParams().apply {
+        layoutParams = layoutParamsCreator?.invoke() ?: newWWMarginLayoutParams().apply {
             this.rightMargin = rightMargin
         }
     }
 }
 
-fun View.setRightMargins(leftMargin: Int, topMargin: Int, rightMargin: Int, bottomMargin: Int) {
+fun View.setMargins(leftMargin: Int, topMargin: Int, rightMargin: Int, bottomMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.rightMargin = rightMargin
@@ -191,7 +215,7 @@ fun View.setRightMargins(leftMargin: Int, topMargin: Int, rightMargin: Int, bott
         params.bottomMargin = bottomMargin
         params.topMargin = topMargin
     } else {
-        layoutParams = newMarginLayoutParams().apply {
+        layoutParams = layoutParamsCreator?.invoke() ?: newWWMarginLayoutParams().apply {
             this.rightMargin = rightMargin
             this.leftMargin = leftMargin
             this.bottomMargin = bottomMargin

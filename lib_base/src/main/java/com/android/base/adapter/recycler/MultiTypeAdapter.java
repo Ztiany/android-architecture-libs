@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 /**
@@ -45,7 +46,7 @@ public class MultiTypeAdapter extends com.drakeet.multitype.MultiTypeAdapter imp
 
     @SuppressWarnings("unused")
     public void notifyEntryChanged(Object entry) {
-        int itemPosition = getItemPosition(entry);
+        int itemPosition = indexItem(entry);
         if (itemPosition != -1) {
             notifyItemChanged(itemPosition);
         }
@@ -117,6 +118,7 @@ public class MultiTypeAdapter extends com.drakeet.multitype.MultiTypeAdapter imp
         mRecyclerDataManager.removeItems(elements, isSuccessive);
     }
 
+    @Nullable
     @Override
     public Object getItem(int position) {
         return mRecyclerDataManager.getItem(position);
@@ -149,8 +151,8 @@ public class MultiTypeAdapter extends com.drakeet.multitype.MultiTypeAdapter imp
     }
 
     @Override
-    public int getItemPosition(Object o) {
-        return mRecyclerDataManager.getItemPosition(o);
+    public int indexItem(Object o) {
+        return mRecyclerDataManager.indexItem(o);
     }
 
     @Override

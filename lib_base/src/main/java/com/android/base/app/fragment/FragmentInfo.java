@@ -2,9 +2,10 @@ package com.android.base.app.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 
 import java.lang.ref.WeakReference;
+
+import androidx.fragment.app.Fragment;
 
 @SuppressWarnings("WeakerAccess,unused")
 public class FragmentInfo {

@@ -12,6 +12,7 @@ import com.android.base.adapter.DataManager;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * absListView通用的Adapter,注意：只有setDataSource才能替换原有数据源的引用。
@@ -22,7 +23,7 @@ import androidx.annotation.NonNull;
 @SuppressWarnings("unused")
 public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdapter implements DataManager<T> {
 
-    protected final Context mContext;
+    private final Context mContext;
     private final static int ITEM_ID = R.id.base_item_tag_view_id;
     private DataManager<T> mDataManager;
     private final LayoutInflater mLayoutInflater;
@@ -36,6 +37,10 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
         this.mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mDataManager = new ListDataManagerImpl<>(data, this);
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
     @Override
@@ -66,7 +71,6 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
         return viewHolder.mItemView;
     }
 
-    @SuppressWarnings("all")
     protected abstract void onBindData(@NonNull VH viewHolder, T item);
 
     @NonNull
@@ -81,11 +85,6 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
     public int getViewTypeCount() {
         return super.getViewTypeCount();
     }
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // DataManager
-    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public void add(T elem) {
@@ -147,6 +146,7 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
         mDataManager.removeAt(index);
     }
 
+    @Nullable
     @Override
     public T getItem(int position) {
         return mDataManager.getItem(position);
@@ -168,8 +168,8 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
     }
 
     @Override
-    public int getItemPosition(T t) {
-        return mDataManager.getItemPosition(t);
+    public int indexItem(T t) {
+        return mDataManager.indexItem(t);
     }
 
     @Override
@@ -181,4 +181,5 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
     public List<T> getItems() {
         return mDataManager.getItems();
     }
+
 }

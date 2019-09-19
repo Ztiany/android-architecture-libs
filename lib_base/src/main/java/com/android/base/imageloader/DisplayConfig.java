@@ -30,7 +30,6 @@ public class DisplayConfig {
     public static final int ANIM_NONE = 1;
 
     private DisplayConfig() {
-
     }
 
     public static DisplayConfig create() {

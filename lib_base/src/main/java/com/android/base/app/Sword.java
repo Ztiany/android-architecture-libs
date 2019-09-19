@@ -11,7 +11,7 @@ import com.android.base.app.fragment.LoadingViewFactory;
 import com.android.base.app.ui.PageNumber;
 import com.android.base.app.ui.RefreshLoadViewFactory;
 import com.android.base.app.ui.RefreshViewFactory;
-import com.android.base.interfaces.adapter.ActivityLifecycleCallbacksAdapter;
+import com.android.base.interfaces.ActivityLifecycleCallbacksAdapter;
 import com.android.base.receiver.NetworkState;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
@@ -27,22 +27,23 @@ import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Flowable;
 
 /**
- * 基础库工具
+ * useful tools for android development, just like a sword.
  *
  * @author Ztiany
  * Email: ztiany3@gmail.com
  * Date : 2018-04-16 17:12
  */
+@SuppressWarnings("unused")
 @UiThread
-public final class BaseKit {
+public final class Sword {
 
-    private static final BaseKit ONLY_BASE = new BaseKit();
+    private static final Sword ONLY_BASE = new Sword();
 
-    private BaseKit() {
+    private Sword() {
         mApplicationDelegate = new ApplicationDelegate();
     }
 
-    public static BaseKit get() {
+    public static Sword get() {
         return ONLY_BASE;
     }
 
@@ -64,12 +65,11 @@ public final class BaseKit {
     /**
      * 获取 Application 代理
      */
-    @SuppressWarnings("WeakerAccess")
     public ApplicationDelegate getApplicationDelegate() {
         return mApplicationDelegate;
     }
 
-    public BaseKit registerLoadingFactory(LoadingViewFactory loadingViewFactory) {
+    public Sword registerLoadingFactory(LoadingViewFactory loadingViewFactory) {
         if (mLoadingViewFactory != null) {
             throw new UnsupportedOperationException("LoadingViewFactory had already set");
         }
@@ -93,17 +93,17 @@ public final class BaseKit {
         void uncaughtException(Thread thread, Throwable ex);
     }
 
-    public BaseKit setCrashProcessor(CrashProcessor crashProcessor) {
+    public Sword setCrashProcessor(CrashProcessor crashProcessor) {
         mApplicationDelegate.setCrashProcessor(crashProcessor);
         return this;
     }
 
-    public BaseKit setDefaultPageStart(int pageStart) {
+    public Sword setDefaultPageStart(int pageStart) {
         PageNumber.setDefaultPageStart(pageStart);
         return this;
     }
 
-    public BaseKit setDefaultPageSize(int defaultPageSize) {
+    public Sword setDefaultPageSize(int defaultPageSize) {
         PageNumber.setDefaultPageSize(defaultPageSize);
         return this;
     }
@@ -113,12 +113,12 @@ public final class BaseKit {
      *
      * @param defaultContainerId 容器id
      */
-    public BaseKit setDefaultFragmentContainerId(int defaultContainerId) {
+    public Sword setDefaultFragmentContainerId(int defaultContainerId) {
         FragmentConfig.setDefaultContainerId(defaultContainerId);
         return this;
     }
 
-    public BaseKit enableAutoInject() {
+    public Sword enableAutoInject() {
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacksAdapter() {
 
             @Override
@@ -182,8 +182,7 @@ public final class BaseKit {
         boolean isServerError(Throwable throwable);
     }
 
-    @SuppressWarnings("all")
-    public BaseKit setErrorClassifier(ErrorClassifier errorClassifier) {
+    public Sword setErrorClassifier(ErrorClassifier errorClassifier) {
         if (mErrorClassifier != null) {
             throw new UnsupportedOperationException("ErrorClassifier had already set");
         }
@@ -195,12 +194,12 @@ public final class BaseKit {
         return mErrorClassifier;
     }
 
-    public BaseKit registerRefreshLoadViewFactory(RefreshLoadViewFactory.Factory factory) {
+    public Sword registerRefreshLoadViewFactory(RefreshLoadViewFactory.Factory factory) {
         RefreshLoadViewFactory.registerFactory(factory);
         return this;
     }
 
-    public BaseKit registerRefreshViewFactory(RefreshViewFactory.Factory factory) {
+    public Sword registerRefreshViewFactory(RefreshViewFactory.Factory factory) {
         RefreshViewFactory.registerFactory(factory);
         return this;
     }

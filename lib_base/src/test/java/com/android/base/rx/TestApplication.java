@@ -3,7 +3,7 @@ package com.android.base.rx;
 import android.app.Application;
 import android.content.Context;
 
-import com.android.base.app.BaseKit;
+import com.android.base.app.Sword;
 
 /**
  * @author Ztiany
@@ -15,7 +15,7 @@ public class TestApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        BaseKit.get().getApplicationDelegate().attachBaseContext(base);
+        Sword.get().getApplicationDelegate().attachBaseContext(base);
     }
 
 }

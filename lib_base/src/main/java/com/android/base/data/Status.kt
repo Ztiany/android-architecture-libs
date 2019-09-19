@@ -1,4 +1,4 @@
-package com.android.base.data;
+package com.android.base.data
 
 /**
  * 用于表示各种状态
@@ -7,9 +7,9 @@ package com.android.base.data;
  * Email: ztiany3@gmail.com
  * Date : 2019-02-18 11:49
  */
-public enum Status {
+enum class Status {
     LOADING,
     ERROR,
     SUCCESS,
-    NOT_CHANGED,
+    NOT_CHANGED
 }

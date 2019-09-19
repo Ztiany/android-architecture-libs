@@ -8,6 +8,7 @@ import com.android.base.adapter.DataManager;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -24,7 +25,7 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
     private RecyclerDataManagerImpl<T> mDataManager;
 
     @NonNull
-    protected final Context mContext;
+    private final Context mContext;
 
     public RecyclerAdapter(@NonNull Context context, List<T> data) {
         mDataManager = new RecyclerDataManagerImpl<>(data, this);
@@ -33,6 +34,11 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
 
     public RecyclerAdapter(@NonNull Context context) {
         this(context, null);
+    }
+
+    @NonNull
+    public Context getContext() {
+        return mContext;
     }
 
     @Override
@@ -53,7 +59,7 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
     public abstract void onBindViewHolder(@NonNull VH viewHolder, int position);
 
     public void notifyEntryChanged(T t) {
-        int itemPosition = getItemPosition(t);
+        int itemPosition = indexItem(t);
         if (itemPosition != -1) {
             notifyItemChanged(itemPosition);
         }
@@ -123,6 +129,7 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
         mDataManager.removeAt(index);
     }
 
+    @Nullable
     @Override
     public T getItem(int position) {
         return mDataManager.getItem(position);
@@ -163,8 +170,8 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
     }
 
     @Override
-    public int getItemPosition(T t) {
-        return mDataManager.getItemPosition(t);
+    public int indexItem(T t) {
+        return mDataManager.indexItem(t);
     }
 
 }

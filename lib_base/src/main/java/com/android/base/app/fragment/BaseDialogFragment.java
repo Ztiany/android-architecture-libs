@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.base.app.BaseKit;
+import com.android.base.app.Sword;
 import com.android.base.app.activity.BackHandlerHelper;
 import com.android.base.app.activity.OnBackPressListener;
 import com.android.base.app.ui.LoadingView;
 import com.github.dmstocking.optional.java.util.function.Predicate;
+
+import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,7 +51,7 @@ public class BaseDialogFragment extends AppCompatDialogFragment implements Loadi
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         Timber.tag(tag()).d("onAttach() called with: context = [" + context + "]");
         mFragmentDelegates.onAttach(context);
@@ -235,7 +237,7 @@ public class BaseDialogFragment extends AppCompatDialogFragment implements Loadi
 
     private LoadingView getLoadingViewImpl() {
         if (mLoadingViewImpl == null) {
-            mLoadingViewImpl = BaseKit.get().getLoadingViewFactory().createLoadingDelegate(getContext());
+            mLoadingViewImpl = Sword.get().getLoadingViewFactory().createLoadingDelegate(getContext());
         }
         return mLoadingViewImpl;
     }

@@ -218,7 +218,7 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
     }
 
     @Override
-    public int getItemPosition(T t) {
+    public int indexItem(T t) {
         List<T> items = getItems();
         if (items == null) {
             return -1;

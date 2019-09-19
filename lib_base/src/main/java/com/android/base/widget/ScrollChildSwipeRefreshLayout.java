@@ -45,7 +45,7 @@ public class ScrollChildSwipeRefreshLayout extends SwipeRefreshLayout {
         TypedArray colorsTypeArray = getResources().obtainTypedArray(colorSchemeArrayId);
         int indexCount = colorsTypeArray.length();
         if (indexCount != 0) {
-            int colors[] = new int[indexCount];
+            int[] colors = new int[indexCount];
             for (int i = 0; i < indexCount; i++) {
                 colors[i] = colorsTypeArray.getColor(i, Color.BLACK);
             }

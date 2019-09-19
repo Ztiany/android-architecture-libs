@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="ZViewPager">
-        <attr name="zvp_scale" format="boolean"/>
+    <declare-styleable name="BannerViewPager">
+        <!--if pager is scalable, set it to true.-->
+        <attr name="zvp_scale_enable" format="boolean"/>
         <attr name="zvp_pager_number_id" format="reference"/>
         <attr name="zvp_item_transition_name" format="string|reference"/>
     </declare-styleable>

@@ -173,7 +173,7 @@ fun <T> T.inSafelyFragmentTransaction(
 
     var delegate = findDelegate {
         it is SafelyFragmentTransactionActivityDelegate
-    }as? SafelyFragmentTransactionActivityDelegate
+    } as? SafelyFragmentTransactionActivityDelegate
 
     if (delegate == null) {
         delegate = SafelyFragmentTransactionActivityDelegate()
@@ -241,22 +241,22 @@ private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<Fragm
 
 private class SafelyFragmentTransactionFragmentDelegate : FragmentDelegate<Fragment> {
 
-    private val mPendingTransactions = mutableListOf<FragmentTransaction>()
+    private val pendingTransactions = mutableListOf<FragmentTransaction>()
 
     fun safeCommit(@NonNull fragment: Fragment, @NonNull transaction: FragmentTransaction): Boolean {
         return if (fragment.isResumed) {
             transaction.commit()
             false
         } else {
-            mPendingTransactions.add(transaction)
+            pendingTransactions.add(transaction)
             true
         }
     }
 
     override fun onResume() {
-        if (mPendingTransactions.isNotEmpty()) {
-            mPendingTransactions.forEach { it.commit() }
-            mPendingTransactions.clear()
+        if (pendingTransactions.isNotEmpty()) {
+            pendingTransactions.forEach { it.commit() }
+            pendingTransactions.clear()
         }
     }
 
@@ -273,7 +273,7 @@ class EnhanceFragmentTransaction constructor(
 
     /**
      * 把 [fragment] 添加到回退栈中，并 hide 其他 fragment，
-     * 如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [containerId]==0，则使用 [com.android.base.app.Sword.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
     fun addWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
@@ -292,7 +292,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * replace 方式把 [fragment] 添加到回退栈中，如果 [containerId]==0，则使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，
+     * replace 方式把 [fragment] 添加到回退栈中，如果 [containerId]==0，则使用 [com.android.base.app.Sword.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
     fun replaceWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
@@ -317,17 +317,17 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * 添加 [fragment]，默认使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类。
+     * 添加 [fragment]，默认使用 [com.android.base.app.Sword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类。
      */
-    fun addWithDefaultContainer(fragment: Fragment, tag: String? = null): FragmentTransaction {
+    fun addFragment(fragment: Fragment, tag: String? = null): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
         return fragmentTransaction.add(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
     }
 
     /**
-     * 替换为 [fragment]，id 使用 [com.android.base.app.BaseKit.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
+     * 替换为 [fragment]，id 使用 [com.android.base.app.Sword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
-    fun replaceWithDefaultContainer(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
+    fun replaceFragment(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
         if (transition) {
             setOpeningTransition()

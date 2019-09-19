@@ -19,7 +19,6 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     private final List<WeakReference<ObserverWrapper<? super T>>> mWrapperObserverList = new ArrayList<>();
 
-
     @Override
     public void setValue(T value) {
         mVersion++;

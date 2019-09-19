@@ -19,7 +19,7 @@ import androidx.viewpager.widget.ViewPager;
  *
  * @author Ztiany
  */
-public class ZViewPager extends FrameLayout {
+public class BannerViewPager extends FrameLayout {
 
     private final ViewPager mViewPager;
     private IPagerNumberView mPageNumberView;
@@ -32,24 +32,24 @@ public class ZViewPager extends FrameLayout {
     private String mTransitionName;
     private OnPageClickListener mOnPageClickListener;
 
-    public ZViewPager(Context context) {
+    public BannerViewPager(Context context) {
         this(context, null);
     }
 
-    public ZViewPager(Context context, AttributeSet attrs) {
+    public BannerViewPager(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ZViewPager(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BannerViewPager(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ZViewPager);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BannerViewPager);
 
         /*是否可以缩放*/
-        mScalable = typedArray.getBoolean(R.styleable.ZViewPager_zvp_scale, false);
+        mScalable = typedArray.getBoolean(R.styleable.BannerViewPager_zvp_scale_enable, false);
         /*用于支持5.0的transition动画*/
-        mTransitionName = typedArray.getString(R.styleable.ZViewPager_zvp_item_transition_name);
-        int pageId = typedArray.getResourceId(R.styleable.ZViewPager_zvp_pager_number_id, -1);
+        mTransitionName = typedArray.getString(R.styleable.BannerViewPager_zvp_item_transition_name);
+        int pageId = typedArray.getResourceId(R.styleable.BannerViewPager_zvp_pager_number_id, -1);
 
         typedArray.recycle();
 

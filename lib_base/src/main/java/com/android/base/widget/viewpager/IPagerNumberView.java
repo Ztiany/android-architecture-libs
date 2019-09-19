@@ -7,7 +7,7 @@ package com.android.base.widget.viewpager;
  */
 public interface IPagerNumberView {
 
-    void setViewPager(ZViewPager viewPager);
+    void setViewPager(BannerViewPager viewPager);
 
     void setPageSize(int i);
 

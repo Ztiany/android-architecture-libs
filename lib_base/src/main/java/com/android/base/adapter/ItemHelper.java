@@ -11,8 +11,8 @@ import androidx.annotation.StringRes;
 
 /**
  * @author Ztiany
- *         Email ：1169654504@qq.com
- *         Date ：015-12-29 20:47
+ * Email ：1169654504@qq.com
+ * Date ：015-12-29 20:47
  */
 public class ItemHelper {
 
@@ -24,7 +24,7 @@ public class ItemHelper {
         views = new SparseArray<>();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked,WeakerAccess")
     public <T extends View> T getView(int viewId) {
         View view = views.get(viewId);
         if (view == null) {

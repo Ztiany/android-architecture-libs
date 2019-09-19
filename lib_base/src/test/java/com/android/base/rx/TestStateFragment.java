@@ -8,6 +8,8 @@ import android.view.View;
 
 import com.android.base.app.fragment.BaseStateFragment;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Ztiany
  * Email: 1169654504@qq.com
@@ -16,7 +18,7 @@ import com.android.base.app.fragment.BaseStateFragment;
 public class TestStateFragment extends BaseStateFragment {
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -26,7 +28,7 @@ public class TestStateFragment extends BaseStateFragment {
     }
 
     @Override
-    protected void onViewPrepared(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    protected void onViewPrepared(@NotNull @NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewPrepared(view, savedInstanceState);
         getStateLayoutConfig();
     }

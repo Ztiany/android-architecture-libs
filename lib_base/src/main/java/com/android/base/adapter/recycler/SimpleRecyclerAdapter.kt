@@ -14,7 +14,7 @@ import android.view.ViewGroup
  */
 abstract class SimpleRecyclerAdapter<T>(context: Context, data: List<T>? = null) : RecyclerAdapter<T, KtViewHolder>(context, data) {
 
-    private var layoutInflater: LayoutInflater = LayoutInflater.from(mContext)
+    private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KtViewHolder {
         val layout = provideLayout(parent, viewType)
@@ -33,7 +33,7 @@ abstract class SimpleRecyclerAdapter<T>(context: Context, data: List<T>? = null)
     abstract fun provideLayout(parent: ViewGroup, viewType: Int): Any
 
     override fun onBindViewHolder(viewHolder: KtViewHolder, position: Int) {
-        bind(viewHolder, getItem(position))
+        bind(viewHolder, getItem(position) ?: throw NullPointerException("SimpleRecyclerAdapter onBindViewHolder getItem return null"))
     }
 
     protected abstract fun bind(viewHolder: KtViewHolder, item: T)

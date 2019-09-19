@@ -9,6 +9,8 @@ import com.android.base.adapter.recycler.MultiTypeAdapter;
 import com.android.base.app.fragment.BaseListFragment;
 import com.android.base.app.ui.AutoPageNumber;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Ztiany
  * Email: ztiany3@gmail.com
@@ -17,7 +19,7 @@ import com.android.base.app.ui.AutoPageNumber;
 public class TestListFragment extends BaseListFragment<String> {
 
     @Override
-    protected void onViewPrepared(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    protected void onViewPrepared(@NotNull @NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewPrepared(view, savedInstanceState);
         MultiTypeAdapter recyclerAdapter = new MultiTypeAdapter(getContext());
         setupLoadMore(recyclerAdapter, new AutoPageNumber(this,recyclerAdapter));
