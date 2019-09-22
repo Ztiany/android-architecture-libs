@@ -42,11 +42,20 @@ dependencies {
 
     implementation('com.bilibili:boxing:1.0.4') {
         exclude group: 'com.android.support'
+        exclude group: 'com.chensl.rotatephotoview'
+        exclude group: 'com.android.support.test.espresso'
+        exclude group: 'com.android.support.test'
+        exclude group: 'org.powermock'
+        exclude group: 'org.robolectric'
     }
 
     implementation('com.bilibili:boxing-impl:1.0.4') {
         exclude group: 'com.android.support'
         exclude group: 'com.chensl.rotatephotoview'
+        exclude group: 'com.android.support.test.espresso'
+        exclude group: 'com.android.support.test'
+        exclude group: 'org.powermock'
+        exclude group: 'org.robolectric'
     }
 
     implementation('com.github.yalantis:ucrop:2.2.4') {

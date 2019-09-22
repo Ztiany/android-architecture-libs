@@ -83,7 +83,6 @@ dependencies {
     api androidLibraries.lifecycleViewModelKtx
     api androidLibraries.lifecycleExtensions
     api androidLibraries.lifecycleReactiveStreams
-    api androidLibraries.ktx
 
     //Kotlin
     api kotlinLibraries.kotlinStdlib
