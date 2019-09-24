@@ -76,7 +76,7 @@ fun TextView.setBottomDrawable(@DrawableRes id: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, id)
 }
 
-fun TextView.setTopDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+fun TextView.setTopDrawable(drawable: Drawable?, retainOthers: Boolean = false) {
     if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], drawable, compoundDrawables[2], compoundDrawables[3])
@@ -85,7 +85,7 @@ fun TextView.setTopDrawable(drawable: Drawable, retainOthers: Boolean = false) {
     }
 }
 
-fun TextView.setLeftDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+fun TextView.setLeftDrawable(drawable: Drawable?, retainOthers: Boolean = false) {
     if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(drawable, compoundDrawables[1], compoundDrawables[2], compoundDrawables[3])
@@ -94,7 +94,7 @@ fun TextView.setLeftDrawable(drawable: Drawable, retainOthers: Boolean = false) 
     }
 }
 
-fun TextView.setRightDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+fun TextView.setRightDrawable(drawable: Drawable?, retainOthers: Boolean = false) {
     if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], compoundDrawables[1], drawable, compoundDrawables[3])
@@ -103,7 +103,7 @@ fun TextView.setRightDrawable(drawable: Drawable, retainOthers: Boolean = false)
     }
 }
 
-fun TextView.setBottomDrawable(drawable: Drawable, retainOthers: Boolean = false) {
+fun TextView.setBottomDrawable(drawable: Drawable?, retainOthers: Boolean = false) {
     if (retainOthers) {
         val compoundDrawables = this.compoundDrawables
         this.setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], compoundDrawables[1], compoundDrawables[2], drawable)
