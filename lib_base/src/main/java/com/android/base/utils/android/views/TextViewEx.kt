@@ -125,12 +125,12 @@ fun Button.enableByEditText(et: EditText, checker: (s: CharSequence?) -> Boolean
     })
 }
 
-fun TextInputLayout.textStr(): String {
+fun TextInputLayout.textString(): String {
     val editText = this.editText
     return editText?.text?.toString() ?: ""
 }
 
-fun EditText.textStr(): String {
+fun EditText.textString(): String {
     return this.text?.toString() ?: ""
 }
 
