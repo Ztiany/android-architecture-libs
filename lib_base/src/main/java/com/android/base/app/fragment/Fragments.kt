@@ -351,7 +351,6 @@ class EnhanceFragmentTransaction constructor(
         }
     }
 
-    @Suppress
     fun setOpeningTransition(): FragmentTransaction {
         return fragmentTransaction.setTransition(TRANSIT_FRAGMENT_OPEN)
     }
