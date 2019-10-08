@@ -9,6 +9,7 @@ public class FragmentConfig {
 
     private static final int INVALIDATE_ID = -1;
     private static int sDefaultContainerId = INVALIDATE_ID;
+    private static FragmentAnimator sFragmentAnimator = null;
 
     public static void setDefaultContainerId(int defaultContainerId) {
         sDefaultContainerId = defaultContainerId;
@@ -19,6 +20,14 @@ public class FragmentConfig {
             throw new IllegalStateException("sDefaultContainerId has not set");
         }
         return sDefaultContainerId;
+    }
+
+    public static void setDefaultFragmentAnimator(FragmentAnimator animator) {
+        sFragmentAnimator = animator;
+    }
+
+    static FragmentAnimator defaultFragmentAnimator() {
+        return sFragmentAnimator;
     }
 
 }

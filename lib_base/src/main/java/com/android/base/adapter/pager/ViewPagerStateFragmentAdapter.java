@@ -2,28 +2,29 @@ package com.android.base.adapter.pager;
 
 import android.content.Context;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
-@SuppressWarnings("unused")
-public class ViewPageFragmentAdapter extends FragmentPagerAdapter {
+public class ViewPagerStateFragmentAdapter extends FragmentStatePagerAdapter {
 
-    private final List<ViewPageInfo> mTabs;
+    private final List<ViewPagerInfo> mTabs;
     private Context mContext;
 
-    public ViewPageFragmentAdapter(FragmentManager fragmentManager, Context context) {
+    public ViewPagerStateFragmentAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
         mContext = context;
         mTabs = new ArrayList<>();
     }
 
-    public void setDataSource(List<ViewPageInfo> viewPageInfoList) {
+    public void setDataSource(List<ViewPagerInfo> viewPagerInfoList) {
         mTabs.clear();
-        mTabs.addAll(viewPageInfoList);
+        mTabs.addAll(viewPagerInfoList);
     }
 
     @Override
@@ -31,10 +32,11 @@ public class ViewPageFragmentAdapter extends FragmentPagerAdapter {
         return mTabs.size();
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
-        ViewPageInfo viewPageInfo = mTabs.get(position);
-        return Fragment.instantiate(mContext, viewPageInfo.clazz.getName(), viewPageInfo.args);
+        ViewPagerInfo viewPagerInfo = mTabs.get(position);
+        return Fragment.instantiate(mContext, viewPagerInfo.clazz.getName(), viewPagerInfo.args);
     }
 
     @Override
@@ -42,7 +44,8 @@ public class ViewPageFragmentAdapter extends FragmentPagerAdapter {
         return mTabs.get(position).title;
     }
 
-    public List<ViewPageInfo> getTabs() {
+    protected List<ViewPagerInfo> getTabs() {
         return mTabs;
     }
+
 }

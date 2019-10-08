@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.Animation;
 
 import com.android.base.app.Sword;
 import com.android.base.app.activity.BackHandlerHelper;
@@ -44,6 +45,8 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
 
     /* just for cache*/
     private View mCachedView;
+
+    private AnimatorHelper mAnimatorHelper;
 
     private final FragmentDelegates mFragmentDelegates = new FragmentDelegates(this);
 
@@ -293,6 +296,15 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
     @Override
     public void showMessage(@StringRes int messageId) {
         getLoadingViewImpl().showMessage(messageId);
+    }
+
+    @Nullable
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if (mAnimatorHelper == null) {
+            mAnimatorHelper = new AnimatorHelper(getContext(), FragmentConfig.defaultFragmentAnimator());
+        }
+        return mAnimatorHelper.onCreateAnimation(this, transit, enter, nextAnim);
     }
 
 }

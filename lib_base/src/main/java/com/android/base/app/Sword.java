@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.android.base.app.dagger.Injectable;
+import com.android.base.app.fragment.FragmentAnimator;
 import com.android.base.app.fragment.FragmentConfig;
 import com.android.base.app.fragment.LoadingViewFactory;
 import com.android.base.app.ui.PageNumber;
@@ -115,6 +116,11 @@ public final class Sword {
      */
     public Sword setDefaultFragmentContainerId(int defaultContainerId) {
         FragmentConfig.setDefaultContainerId(defaultContainerId);
+        return this;
+    }
+
+    public Sword setDefaultFragmentAnimator(FragmentAnimator animator) {
+        FragmentConfig.setDefaultFragmentAnimator(animator);
         return this;
     }
 

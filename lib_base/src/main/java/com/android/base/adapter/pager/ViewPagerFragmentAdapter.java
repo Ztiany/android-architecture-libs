@@ -2,29 +2,28 @@ package com.android.base.adapter.pager;
 
 import android.content.Context;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
 
-public class ViewPageStateFragmentAdapter extends FragmentStatePagerAdapter {
+@SuppressWarnings("unused")
+public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
 
-    private final List<ViewPageInfo> mTabs;
+    private final List<ViewPagerInfo> mTabs;
     private Context mContext;
 
-    public ViewPageStateFragmentAdapter(FragmentManager fragmentManager, Context context) {
+    public ViewPagerFragmentAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
         mContext = context;
         mTabs = new ArrayList<>();
     }
 
-    public void setDataSource(List<ViewPageInfo> viewPageInfoList) {
+    public void setDataSource(List<ViewPagerInfo> viewPagerInfoList) {
         mTabs.clear();
-        mTabs.addAll(viewPageInfoList);
+        mTabs.addAll(viewPagerInfoList);
     }
 
     @Override
@@ -32,11 +31,10 @@ public class ViewPageStateFragmentAdapter extends FragmentStatePagerAdapter {
         return mTabs.size();
     }
 
-    @NotNull
     @Override
     public Fragment getItem(int position) {
-        ViewPageInfo viewPageInfo = mTabs.get(position);
-        return Fragment.instantiate(mContext, viewPageInfo.clazz.getName(), viewPageInfo.args);
+        ViewPagerInfo viewPagerInfo = mTabs.get(position);
+        return Fragment.instantiate(mContext, viewPagerInfo.clazz.getName(), viewPagerInfo.args);
     }
 
     @Override
@@ -44,8 +42,7 @@ public class ViewPageStateFragmentAdapter extends FragmentStatePagerAdapter {
         return mTabs.get(position).title;
     }
 
-    protected List<ViewPageInfo> getTabs() {
+    public List<ViewPagerInfo> getTabs() {
         return mTabs;
     }
-
 }
