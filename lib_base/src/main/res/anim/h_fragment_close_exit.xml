@@ -10,11 +10,11 @@
 
     <alpha
         android:fromAlpha="1.0"
-        android:toAlpha="0.9"
+        android:toAlpha="0.5"
         android:fillEnabled="true"
         android:fillBefore="false"
         android:fillAfter="true"
-        android:interpolator="@android:anim/decelerate_interpolator"
+        android:interpolator="@android:anim/accelerate_interpolator"
         android:duration="300" />
 
 </set>

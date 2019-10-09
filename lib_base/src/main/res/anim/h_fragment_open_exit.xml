@@ -5,11 +5,11 @@
 
     <translate
         android:fromXDelta="0%p"
-        android:toXDelta="-26%p" />
+        android:toXDelta="-50%p" />
 
     <alpha
         android:fromAlpha="1.0"
-        android:toAlpha="0.3"
+        android:toAlpha="0"
         android:fillEnabled="true"
         android:fillBefore="false"
         android:fillAfter="true"
