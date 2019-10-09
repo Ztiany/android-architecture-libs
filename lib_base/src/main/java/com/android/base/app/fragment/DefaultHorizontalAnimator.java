@@ -1,44 +1,32 @@
 package com.android.base.app.fragment;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.android.base.R;
+import com.android.base.utils.BaseUtils;
 
 
-public class DefaultHorizontalAnimator extends FragmentAnimator implements Parcelable {
+public class DefaultHorizontalAnimator implements FragmentAnimator {
 
-    public DefaultHorizontalAnimator() {
-        enter = R.anim.h_fragment_enter;
-        exit = R.anim.h_fragment_exit;
-        popEnter = R.anim.h_fragment_pop_enter;
-        popExit = R.anim.h_fragment_pop_exit;
-    }
-
-    protected DefaultHorizontalAnimator(Parcel in) {
-        super(in);
+    @Override
+    public Animation makeOpenEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.h_fragment_open_enter);
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
+    public Animation makeOpenExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.h_fragment_open_exit);
     }
 
     @Override
-    public int describeContents() {
-        return 0;
+    public Animation makeCloseEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.h_fragment_close_enter);
     }
 
-    public static final Creator<DefaultHorizontalAnimator> CREATOR = new Creator<DefaultHorizontalAnimator>() {
-        @Override
-        public DefaultHorizontalAnimator createFromParcel(Parcel in) {
-            return new DefaultHorizontalAnimator(in);
-        }
-
-        @Override
-        public DefaultHorizontalAnimator[] newArray(int size) {
-            return new DefaultHorizontalAnimator[size];
-        }
-    };
+    @Override
+    public Animation makeCloseExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.h_fragment_close_exit);
+    }
 
 }

@@ -46,7 +46,7 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
     /* just for cache*/
     private View mCachedView;
 
-    private AnimatorHelper mAnimatorHelper;
+    private FragmentAnimatorHelper mFragmentAnimatorHelper;
 
     private final FragmentDelegates mFragmentDelegates = new FragmentDelegates(this);
 
@@ -301,10 +301,10 @@ public class BaseFragment extends Fragment implements LoadingView, OnBackPressLi
     @Nullable
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        if (mAnimatorHelper == null) {
-            mAnimatorHelper = new AnimatorHelper(getContext(), FragmentConfig.defaultFragmentAnimator());
+        if (mFragmentAnimatorHelper == null) {
+            mFragmentAnimatorHelper = new FragmentAnimatorHelper(getContext(), FragmentConfig.defaultFragmentAnimator());
         }
-        return mAnimatorHelper.onCreateAnimation(this, transit, enter, nextAnim);
+        return mFragmentAnimatorHelper.onCreateAnimation(transit, enter);
     }
 
 }

@@ -1,42 +1,32 @@
 package com.android.base.app.fragment;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
-public class DefaultNoAnimator extends FragmentAnimator implements Parcelable {
+import com.android.base.R;
+import com.android.base.utils.BaseUtils;
 
-    public DefaultNoAnimator() {
-        enter = 0;
-        exit = 0;
-        popEnter = 0;
-        popExit = 0;
-    }
+public class DefaultNoAnimator implements FragmentAnimator {
 
-    protected DefaultNoAnimator(Parcel in) {
-        super(in);
+    @Override
+    public Animation makeOpenEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.base_no_anim);
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
+    public Animation makeOpenExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.base_no_anim);
     }
 
     @Override
-    public int describeContents() {
-        return 0;
+    public Animation makeCloseEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.base_no_anim);
     }
 
-    public static final Creator<DefaultNoAnimator> CREATOR = new Creator<DefaultNoAnimator>() {
-        @Override
-        public DefaultNoAnimator createFromParcel(Parcel in) {
-            return new DefaultNoAnimator(in);
-        }
-
-        @Override
-        public DefaultNoAnimator[] newArray(int size) {
-            return new DefaultNoAnimator[size];
-        }
-    };
+    @Override
+    public Animation makeCloseExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.base_no_anim);
+    }
 
 }

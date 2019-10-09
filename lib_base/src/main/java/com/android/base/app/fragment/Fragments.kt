@@ -277,13 +277,13 @@ class EnhanceFragmentTransaction constructor(
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
     fun addWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
-        //hide top
-        hideTopFragment()
         //set add to stack
         val nonnullTag = (tag ?: fragment.javaClassName())
         addToBackStack(nonnullTag)
         //add
         fragmentTransaction.add(confirmLayoutId(containerId), fragment, nonnullTag)
+        //hide top
+        hideTopFragment()
         if (transition) {
             //set a transition
             setOpeningTransition()

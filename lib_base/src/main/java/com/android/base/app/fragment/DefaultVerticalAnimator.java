@@ -1,43 +1,31 @@
 package com.android.base.app.fragment;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.android.base.R;
+import com.android.base.utils.BaseUtils;
 
-public class DefaultVerticalAnimator extends FragmentAnimator implements Parcelable {
+public class DefaultVerticalAnimator implements FragmentAnimator {
 
-    public DefaultVerticalAnimator() {
-        enter = R.anim.v_fragment_enter;
-        exit = R.anim.v_fragment_exit;
-        popEnter = R.anim.v_fragment_pop_enter;
-        popExit = R.anim.v_fragment_pop_exit;
-    }
-
-    protected DefaultVerticalAnimator(Parcel in) {
-        super(in);
+    @Override
+    public Animation makeOpenEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.v_fragment_open_enter);
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
+    public Animation makeOpenExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.v_fragment_open_exit);
     }
 
     @Override
-    public int describeContents() {
-        return 0;
+    public Animation makeCloseEnter() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.v_fragment_close_enter);
     }
 
-    public static final Creator<DefaultVerticalAnimator> CREATOR = new Creator<DefaultVerticalAnimator>() {
-        @Override
-        public DefaultVerticalAnimator createFromParcel(Parcel in) {
-            return new DefaultVerticalAnimator(in);
-        }
-
-        @Override
-        public DefaultVerticalAnimator[] newArray(int size) {
-            return new DefaultVerticalAnimator[size];
-        }
-    };
+    @Override
+    public Animation makeCloseExit() {
+        return AnimationUtils.loadAnimation(BaseUtils.getAppContext(), R.anim.v_fragment_close_exit);
+    }
 
 }

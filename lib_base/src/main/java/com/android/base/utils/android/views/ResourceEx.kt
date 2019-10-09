@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.TypedValue
 import android.view.View
 import androidx.annotation.*
 
@@ -66,8 +67,22 @@ fun Context.drawableFromId(@DrawableRes id: Int): Drawable? {
  *
  * 返回资源 id
  */
-fun getResource(name: String, defType: String, defPackage: String): Int {
+fun getResourceId(name: String, defType: String, defPackage: String): Int {
     return BaseUtils.getResources().getIdentifier(name, defType, defPackage)
+}
+
+/**
+ * - attr, like [android.R.attr.selectableItemBackground] or other attr id.
+ */
+fun getResourceId(context: Context, attr: Int): Int {
+    return try {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(attr, outValue, true)
+        outValue.resourceId
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
+    }
 }
 
 fun getText(@StringRes id: Int): CharSequence {
