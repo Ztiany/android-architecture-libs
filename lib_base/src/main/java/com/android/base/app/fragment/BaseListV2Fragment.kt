@@ -19,19 +19,11 @@ import com.android.base.app.ui.StateLayoutConfig
  */
 abstract class BaseListV2Fragment<T> : BaseFragment(), RefreshListLayout<T> {
 
-    companion object {
-        protected const val CONTENT = StateLayoutConfig.CONTENT
-        protected const val LOADING = StateLayoutConfig.LOADING
-        protected const val ERROR = StateLayoutConfig.ERROR
-        protected const val EMPTY = StateLayoutConfig.EMPTY
-        protected const val NET_ERROR = StateLayoutConfig.NET_ERROR
-        protected const val SERVER_ERROR = StateLayoutConfig.SERVER_ERROR
-    }
-
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
+
     protected open lateinit var dataManager: DataManager<T>
 
-    internal override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
+    override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
         stateLayout = RefreshLoadMoreStateLayoutImpl.init(view)
         stateLayout.refreshView.setRefreshHandler {
             onRefresh()
@@ -52,9 +44,7 @@ abstract class BaseListV2Fragment<T> : BaseFragment(), RefreshListLayout<T> {
 
     protected open fun onLoadMore() = onStartLoad()
 
-    /**
-     * call by [onRefresh] or [onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore].
-     */
+    /** call by [onRefresh] or [onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore]. */
     protected open fun onStartLoad() {}
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -99,5 +89,14 @@ abstract class BaseListV2Fragment<T> : BaseFragment(), RefreshListLayout<T> {
     override fun showServerErrorLayout() = stateLayout.showServerErrorLayout()
     override fun isLoadingMore() = stateLayout.refreshView.isLoadingMore
     override fun currentStatus() = stateLayout.currentStatus()
+
+    companion object {
+        const val CONTENT = StateLayoutConfig.CONTENT
+        const val LOADING = StateLayoutConfig.LOADING
+        const val ERROR = StateLayoutConfig.ERROR
+        const val EMPTY = StateLayoutConfig.EMPTY
+        const val NET_ERROR = StateLayoutConfig.NET_ERROR
+        const val SERVER_ERROR = StateLayoutConfig.SERVER_ERROR
+    }
 
 }
