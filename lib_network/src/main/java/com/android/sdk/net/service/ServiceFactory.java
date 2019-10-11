@@ -29,9 +29,8 @@ public class ServiceFactory {
         mBaseUrl = httpConfig.baseUrl();
 
         Retrofit.Builder builder = new Retrofit.Builder();
-        boolean abort = httpConfig.configRetrofit(builder);
 
-        if (!abort) {
+        if (!httpConfig.configRetrofit(mOkHttpClient, builder)) {
             builder.baseUrl(mBaseUrl)
                     .client(okHttpClient)
                     .addConverterFactory(new ErrorJsonLenientConverterFactory(GsonConverterFactory.create(GsonUtils.gson())))

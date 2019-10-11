@@ -26,4 +26,5 @@ public @interface AutoGson {
      * @return the annotated class's real type.
      */
     Class autoClass();
+
 }

@@ -24,7 +24,7 @@ class JsonDeserializers {
             try {
                 return json.getAsDouble();
             } catch (Exception e) {
-                Timber.e(e, "DoubleJsonDeserializer-deserialize-error:" + (json != null ? json.toString() : ""));
+                Timber.e(e, "DoubleJsonDeserializer-deserialize-error:%s", (json != null ? json.toString() : ""));
                 return 0D;
             }
         }
@@ -38,7 +38,7 @@ class JsonDeserializers {
             try {
                 return json.getAsInt();
             } catch (Exception e) {
-                Timber.e(e, "IntegerJsonDeserializer-deserialize-error:" + (json != null ? json.toString() : ""));
+                Timber.e(e, "IntegerJsonDeserializer-deserialize-error:%s", (json != null ? json.toString() : ""));
                 return 0;
             }
         }
@@ -52,7 +52,7 @@ class JsonDeserializers {
             try {
                 return json.getAsString();
             } catch (Exception e) {
-                Timber.e(e, "StringJsonDeserializer-deserialize-error:" + (json != null ? json.toString() : ""));
+                Timber.e(e, "StringJsonDeserializer-deserialize-error:%s", (json != null ? json.toString() : ""));
                 return null;
             }
         }
@@ -74,7 +74,7 @@ class JsonDeserializers {
             try {
                 return json.getAsFloat();
             } catch (Exception e) {
-                Timber.e(e, "FloatJsonDeserializer-deserialize-error:" + (json != null ? json.toString() : ""));
+                Timber.e(e, "FloatJsonDeserializer-deserialize-error:%s", (json != null ? json.toString() : ""));
                 return 0F;
             }
         }

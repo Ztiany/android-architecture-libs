@@ -10,7 +10,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 /**
@@ -21,9 +20,9 @@ import timber.log.Timber;
  */
 public class ErrorJsonLenientConverterFactory extends Converter.Factory {
 
-    private final GsonConverterFactory mGsonConverterFactory;
+    private final Converter.Factory mGsonConverterFactory;
 
-    public ErrorJsonLenientConverterFactory(GsonConverterFactory gsonConverterFactory) {
+    public ErrorJsonLenientConverterFactory(Converter.Factory gsonConverterFactory) {
         mGsonConverterFactory = gsonConverterFactory;
     }
 
@@ -32,22 +31,23 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
                                                           Annotation[] parameterAnnotations,
                                                           Annotation[] methodAnnotations,
                                                           Retrofit retrofit) {
+
         return mGsonConverterFactory.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
     }
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type,
-                                                            Annotation[] annotations,
-                                                            Retrofit retrofit) {
+    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
 
         final Converter<ResponseBody, ?> delegateConverter = mGsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
+        assert delegateConverter != null;
 
         return (Converter<ResponseBody, Object>) value -> {
             try {
                 return delegateConverter.convert(value);
             } catch (Exception e/*防止闪退：JsonSyntaxException、IOException or MalformedJsonException*/) {
                 Timber.e(e, "Json covert error -->error ");
-                return NetContext.get().netProvider().errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);//服务器数据格式错误
+                //服务器数据格式错误
+                return NetContext.get().netProvider().errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
             }
         };
 
