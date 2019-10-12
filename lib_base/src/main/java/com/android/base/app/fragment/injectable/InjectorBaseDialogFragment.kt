@@ -11,7 +11,7 @@ import javax.inject.Inject
  *      Email: ztiany3@gmail.com
  *      Date : 2019-01-15 12:57
  */
-open class InjectorBaseDialogFragment : BaseDialogFragment(), Injectable, InjectableEx {
+open class InjectorBaseDialogFragment : BaseDialogFragment(), Injectable, InjectableExtension {
 
     @Inject override lateinit var viewModelFactory: ViewModelProvider.Factory
 
