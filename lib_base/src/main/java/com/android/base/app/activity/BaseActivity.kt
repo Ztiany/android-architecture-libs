@@ -1,0 +1,190 @@
+package com.android.base.app.activity
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.android.base.rx.AutoDisposeLifecycleOwnerEx
+import com.android.base.utils.android.compat.AndroidVersion
+import com.github.dmstocking.optional.java.util.function.Predicate
+import timber.log.Timber
+
+/**
+ * 基础 BaseActivity 封装：
+ *
+ * 1. 封装通用流程。
+ * 2. [onBackPressed] 事件分发，优先交给 [Fragment] 处理。
+ * 3. 提供 RxJava 的生命周期绑定。
+ *
+ * @author Ztiany
+ * Date : 2016-05-04 15:40
+ * Email: 1169654504@qq.com
+ */
+abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDisposeLifecycleOwnerEx {
+
+    @Suppress("LeakingThis")
+    private val activityDelegates = ActivityDelegates(this)
+
+    private var activityState = ActivityState.INITIALIZED
+
+    private fun tag() = this.javaClass.simpleName
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.tag(tag()).d("---->onCreate before call super")
+        initialize(savedInstanceState)
+        activityDelegates.callOnCreateBeforeSetContentView(savedInstanceState)
+        super.onCreate(savedInstanceState)
+        Timber.tag(tag()).d("---->onCreate after call super  bundle = $savedInstanceState")
+
+        when (val layout = layout()) {
+            is View -> setContentView(layout)
+            is Int -> setContentView(layout)
+            null -> Timber.d("layout() return null layout")
+            else -> throw IllegalArgumentException("layout() return type no support, layout = $layout")
+        }
+
+        activityState = ActivityState.CREATE
+        activityDelegates.callOnCreateAfterSetContentView(savedInstanceState)
+        setupView(savedInstanceState)
+    }
+
+    override fun onRestart() {
+        Timber.tag(tag()).d("---->onRestart before call super")
+        super.onRestart()
+        Timber.tag(tag()).d("---->onRestart after call super  ")
+        activityDelegates.callOnRestart()
+    }
+
+    override fun onStart() {
+        Timber.tag(tag()).d("---->onStart before call super")
+        super.onStart()
+        Timber.tag(tag()).d("---->onStart after call super")
+        activityState = ActivityState.START
+        activityDelegates.callOnStart()
+    }
+
+    override fun onResume() {
+        Timber.tag(tag()).d("---->onResume before call super")
+        super.onResume()
+        Timber.tag(tag()).d("---->onResume after call super")
+        activityState = ActivityState.RESUME
+        activityDelegates.callOnResume()
+    }
+
+    override fun onPause() {
+        Timber.tag(tag()).d("---->onPause before call super")
+        activityState = ActivityState.PAUSE
+        activityDelegates.callOnPause()
+        super.onPause()
+        Timber.tag(tag()).d("---->onPause after call super  ")
+    }
+
+    override fun onStop() {
+        Timber.tag(tag()).d("---->onStop before call super")
+        activityState = ActivityState.STOP
+        activityDelegates.callOnStop()
+        super.onStop()
+        Timber.tag(tag()).d("---->onStop after call super")
+    }
+
+    override fun onDestroy() {
+        Timber.tag(tag()).d("---->onDestroy before call super")
+        activityState = ActivityState.DESTROY
+        activityDelegates.callOnDestroy()
+        super.onDestroy()
+        Timber.tag(tag()).d("---->onDestroy after call super")
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        activityDelegates.callOnPostCreate(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        activityDelegates.callOnSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        activityDelegates.callOnRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        activityDelegates.callOnActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        activityDelegates.callOnRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        activityDelegates.callOnResumeFragments()
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // interface impl
+    ///////////////////////////////////////////////////////////////////////////
+    @UiThread
+    override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
+        activityDelegates.addActivityDelegate(activityDelegate)
+    }
+
+    @UiThread
+    override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
+        return activityDelegates.removeActivityDelegate(activityDelegate)
+    }
+
+    override fun findDelegate(predicate: Predicate<ActivityDelegate<*>?>?): ActivityDelegate<*>? {
+        return activityDelegates.findDelegate(predicate)
+    }
+
+    override fun getStatus(): ActivityState {
+        return activityState
+    }
+
+    /**
+     * Before call super.onCreate and setContentView
+     *
+     * @param savedInstanceState state
+     */
+    protected open fun initialize(savedInstanceState: Bundle?) {}
+
+    /**
+     * provide a layoutId (int) or layout (View)
+     *
+     * @return layoutId
+     */
+    protected abstract fun layout(): Any?
+
+    /**
+     * after setContentView
+     */
+    protected abstract fun setupView(savedInstanceState: Bundle?)
+
+    override fun onBackPressed() {
+        if (BackHandlerHelper.handleBackPress(this)) {
+            Timber.d("onBackPressed() called but child fragment handle it")
+        } else {
+            superOnBackPressed()
+        }
+    }
+
+    protected open fun superOnBackPressed() {
+        super.onBackPressed()
+    }
+
+    override fun isDestroyed(): Boolean {
+        return if (AndroidVersion.atLeast(17)) {
+            super.isDestroyed()
+        } else {
+            status === ActivityState.DESTROY
+        }
+    }
+
+}

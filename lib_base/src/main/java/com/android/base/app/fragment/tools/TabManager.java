@@ -1,4 +1,4 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.tools;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -35,7 +35,6 @@ public abstract class TabManager {
     /**
      * @param operationType {@link #ATTACH_DETACH} or {@link #SHOW_HIDE}
      */
-    @SuppressWarnings("WeakerAccess")
     public TabManager(Context context, FragmentManager fragmentManager, Tabs tabs, int containerId, int operationType) {
         if (operationType != ATTACH_DETACH && operationType != SHOW_HIDE) {
             throw new IllegalArgumentException("the operationType must be ATTACH_DETACH or SHOW_HIDE");

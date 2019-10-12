@@ -1,4 +1,4 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.delegates;
 
 
 import com.github.dmstocking.optional.java.util.function.Predicate;

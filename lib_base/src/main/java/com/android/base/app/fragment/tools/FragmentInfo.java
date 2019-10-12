@@ -1,4 +1,4 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.tools;
 
 import android.content.Context;
 import android.os.Bundle;

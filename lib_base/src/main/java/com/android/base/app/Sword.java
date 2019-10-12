@@ -6,9 +6,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.android.base.app.dagger.Injectable;
-import com.android.base.app.fragment.FragmentAnimator;
-import com.android.base.app.fragment.FragmentConfig;
-import com.android.base.app.fragment.LoadingViewFactory;
+import com.android.base.app.fragment.animator.FragmentAnimator;
+import com.android.base.app.fragment.tools.FragmentConfig;
+import com.android.base.app.ui.LoadingViewFactory;
 import com.android.base.app.ui.PageNumber;
 import com.android.base.app.ui.RefreshLoadViewFactory;
 import com.android.base.app.ui.RefreshViewFactory;

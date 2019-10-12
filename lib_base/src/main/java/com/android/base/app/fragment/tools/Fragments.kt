@@ -1,6 +1,6 @@
 @file:JvmName("Fragments")
 
-package com.android.base.app.fragment
+package com.android.base.app.fragment.tools
 
 
 import android.view.View
@@ -11,7 +11,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.android.base.app.activity.ActivityDelegate
 import com.android.base.app.activity.ActivityDelegateOwner
-import com.android.base.app.activity.ActivityStatus
+import com.android.base.app.activity.ActivityState
+import com.android.base.app.fragment.delegates.FragmentDelegate
+import com.android.base.app.fragment.delegates.FragmentDelegateOwner
 import com.android.base.utils.common.javaClassName
 import kotlin.reflect.KClass
 
@@ -219,7 +221,7 @@ private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<Fragm
 
     fun safeCommit(@NonNull activityDelegateOwner: ActivityDelegateOwner, @NonNull transaction: FragmentTransaction): Boolean {
         val status = activityDelegateOwner.status
-        val isCommitterResumed = (status == ActivityStatus.CREATE || status == ActivityStatus.START || status == ActivityStatus.RESUME)
+        val isCommitterResumed = (status == ActivityState.CREATE || status == ActivityState.START || status == ActivityState.RESUME)
 
         return if (isCommitterResumed) {
             transaction.commit()

@@ -1,4 +1,4 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.animator;
 
 import android.content.Context;
 import android.view.animation.Animation;
@@ -7,15 +7,17 @@ import android.view.animation.AnimationUtils;
 import com.android.base.R;
 
 import androidx.fragment.app.FragmentTransaction;
+import timber.log.Timber;
 
 public final class FragmentAnimatorHelper {
 
     private Context context;
     private FragmentAnimator fragmentAnimator;
 
-    FragmentAnimatorHelper(Context context, FragmentAnimator fragmentAnimator) {
+    public FragmentAnimatorHelper(Context context, FragmentAnimator fragmentAnimator) {
         this.context = context;
         this.fragmentAnimator = fragmentAnimator;
+        Timber.d("context %s, animator %s", context.toString(), fragmentAnimator.toString());
     }
 
     public void changeAnimation(FragmentAnimator fragmentAnimator) {
@@ -83,7 +85,7 @@ public final class FragmentAnimatorHelper {
         }
     }
 
-    Animation onCreateAnimation(int transit, boolean enter) {
+    public Animation onCreateAnimation(int transit, boolean enter) {
         if (transit == FragmentTransaction.TRANSIT_FRAGMENT_OPEN) {
             if (enter) {
                 return initEnterAnim();

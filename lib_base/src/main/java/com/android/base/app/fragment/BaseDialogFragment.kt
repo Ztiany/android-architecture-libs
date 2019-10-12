@@ -6,35 +6,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatDialogFragment
 import com.android.base.app.Sword
 import com.android.base.app.activity.BackHandlerHelper
 import com.android.base.app.activity.OnBackPressListener
-import com.android.base.app.fragment.animator.FragmentAnimatorHelper
 import com.android.base.app.fragment.delegates.FragmentDelegate
 import com.android.base.app.fragment.delegates.FragmentDelegateOwner
-import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
 import com.android.base.rx.AutoDisposeLifecycleOwnerEx
 import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber
 
 /**
- *基础 BaseFragment 封装：
- *
- * 1. RxJava 生命周期绑定。
- * 2. 返回键监听。
- * 3. 显示 LoadingDialog 和 Message。
- * 4. 可以添加生命周期代理。
- *
  * @author Ztiany
  * date :   2016-03-19 23:09
  * email:    1169654504@qq.com
+ * @see [BaseFragment]
  */
-open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
+open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
 
     private var loadingView: LoadingView? = null
 
@@ -42,8 +33,6 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
 
     /** just for cache*/
     private var cachedView: View? = null
-
-    private var fragmentAnimatorHelper: FragmentAnimatorHelper? = null
 
     @Suppress("LeakingThis")
     private val fragmentDelegates = FragmentDelegates(this)
@@ -256,13 +245,6 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
 
     override fun showMessage(@StringRes messageId: Int) {
         loadingView()?.showMessage(messageId)
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (fragmentAnimatorHelper == null) {
-            fragmentAnimatorHelper = FragmentAnimatorHelper(requireContext(), FragmentConfig.defaultFragmentAnimator())
-        }
-        return fragmentAnimatorHelper?.onCreateAnimation(transit, enter)
     }
 
 }

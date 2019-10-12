@@ -1,4 +1,6 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.tools;
+
+import com.android.base.app.fragment.animator.FragmentAnimator;
 
 /**
  * @author Ztiany
@@ -26,7 +28,7 @@ public class FragmentConfig {
         sFragmentAnimator = animator;
     }
 
-    static FragmentAnimator defaultFragmentAnimator() {
+    public static FragmentAnimator defaultFragmentAnimator() {
         return sFragmentAnimator;
     }
 

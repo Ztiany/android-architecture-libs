@@ -49,4 +49,5 @@ class SwipeRefreshView implements RefreshView {
     public void setRefreshEnable(boolean enable) {
         mSwipeRefreshLayout.setEnabled(enable);
     }
+
 }

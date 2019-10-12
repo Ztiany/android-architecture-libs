@@ -15,6 +15,6 @@ public interface ActivityDelegateOwner {
 
     ActivityDelegate findDelegate(Predicate<ActivityDelegate> predicate);
 
-    ActivityStatus getStatus();
+    ActivityState getStatus();
 
 }

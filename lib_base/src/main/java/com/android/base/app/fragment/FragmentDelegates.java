@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.android.base.app.fragment.delegates.FragmentDelegate;
+import com.android.base.app.fragment.delegates.FragmentDelegateOwner;
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
 import java.util.ArrayList;

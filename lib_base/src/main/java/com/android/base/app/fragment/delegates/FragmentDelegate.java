@@ -1,4 +1,4 @@
-package com.android.base.app.fragment;
+package com.android.base.app.fragment.delegates;
 
 import android.content.Context;
 import android.content.Intent;

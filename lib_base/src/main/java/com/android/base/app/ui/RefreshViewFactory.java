@@ -16,7 +16,6 @@ public class RefreshViewFactory {
     private static Factory sFactory;
 
     public static RefreshView createRefreshView(View view) {
-
         if (sFactory != null) {
             return sFactory.createRefreshView(view);
         }

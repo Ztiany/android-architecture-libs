@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager;
  *        3.在Fragment中嵌套使用Fragment时，请使用getSupportChildFragmentManager
  * </pre>
  */
+@SuppressWarnings("WeakerAccess")
 public class BackHandlerHelper {
 
     /**

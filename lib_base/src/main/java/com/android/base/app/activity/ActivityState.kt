@@ -1,6 +1,6 @@
 package com.android.base.app.activity
 
-enum class ActivityStatus {
+enum class ActivityState {
     INITIALIZED,
     CREATE,
     START,
