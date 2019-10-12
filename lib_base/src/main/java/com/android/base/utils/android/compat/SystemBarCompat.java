@@ -201,7 +201,7 @@ public class SystemBarCompat {
     }
 
     /**
-     * 获取NavigationBar高度
+     * 获取NavigationBar高度(在某些机型上可能不准确)
      *
      * @param context 上下文
      */
@@ -217,7 +217,7 @@ public class SystemBarCompat {
     }
 
     /**
-     * 获取是否存在 NavigationBar
+     * 获取是否存在 NavigationBar(在某些机型上可能不准确)
      *
      * @see <a href='https://stackoverflow.com/questions/28983621/detect-soft-navigation-bar-availability-in-android-device-progmatically'>detect-soft-navigation-bar-availability-in-android-device-progmatically</a>, <a href='https://windysha.github.io/2018/02/07/Android-APP%E9%80%82%E9%85%8D%E5%85%A8%E9%9D%A2%E5%B1%8F%E6%89%8B%E6%9C%BA%E7%9A%84%E6%8A%80%E6%9C%AF%E8%A6%81%E7%82%B9/'>Android APP适配全面屏手机的技术要点</>
      */
