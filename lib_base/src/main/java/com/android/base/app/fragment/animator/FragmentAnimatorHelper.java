@@ -7,7 +7,6 @@ import android.view.animation.AnimationUtils;
 import com.android.base.R;
 
 import androidx.fragment.app.FragmentTransaction;
-import timber.log.Timber;
 
 public final class FragmentAnimatorHelper {
 
@@ -17,7 +16,6 @@ public final class FragmentAnimatorHelper {
     public FragmentAnimatorHelper(Context context, FragmentAnimator fragmentAnimator) {
         this.context = context;
         this.fragmentAnimator = fragmentAnimator;
-        Timber.d("context %s, animator %s", context.toString(), fragmentAnimator.toString());
     }
 
     public void changeAnimation(FragmentAnimator fragmentAnimator) {

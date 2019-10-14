@@ -44,7 +44,7 @@ abstract class BaseStateDialogFragment : BaseDialogFragment(), RefreshStateLayou
 
     protected open fun onRetry(@StateLayoutConfig.RetryableState state: Int) {
         refreshView.ifNonNull {
-            if (this.isRefreshing) {
+            if (!this.isRefreshing) {
                 autoRefresh()
             }
         } otherwise {

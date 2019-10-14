@@ -50,19 +50,23 @@ fun <H, T> H.handleLiveResourceWithData(
         force: Boolean = true,
         onSuccess: (T) -> Unit
 ) where H : InjectableExtension, H : LoadingView, H : LifecycleOwner {
-
     liveData.observe(this, Observer {
         when {
             it.isError -> {
+                Timber.d("handleLiveResourceWithData -> isError")
                 dismissLoadingDialog()
                 errorHandler.handleError(it.error())
             }
             it.isLoading -> {
+                Timber.d("handleLiveResourceWithData -> isLoading")
                 showLoadingDialog(!force)
             }
-            it.isSuccess && it.hasData() -> {
+            it.isSuccess -> {
+                Timber.d("handleLiveResourceWithData -> isSuccess")
                 dismissLoadingDialog()
-                onSuccess(it.data())
+                if (it.hasData()) {
+                    onSuccess(it.data())
+                }
             }
         }
     })

@@ -204,15 +204,16 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
         return false
     }
 
-    private fun loadingView(): LoadingView? {
+    private fun loadingView(): LoadingView {
         val loadingViewImpl = loadingView
-        if (loadingViewImpl == null) {
+        return if (loadingViewImpl != null) {
+            loadingViewImpl
+        } else {
             loadingView = onCreateLoadingView()
+                    ?: Sword.get().loadingViewFactory.createLoadingDelegate(requireContext())
+            loadingView
+                    ?: throw NullPointerException("you need to config LoadingViewFactory")
         }
-        if (loadingViewImpl == null) {
-            loadingView = Sword.get().loadingViewFactory.createLoadingDelegate(requireContext())
-        }
-        return loadingViewImpl
     }
 
     protected open fun onCreateLoadingView(): LoadingView? {
@@ -220,31 +221,31 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
     }
 
     override fun showLoadingDialog() {
-        loadingView()?.showLoadingDialog(true)
+        loadingView().showLoadingDialog(true)
     }
 
     override fun showLoadingDialog(cancelable: Boolean) {
-        loadingView()?.showLoadingDialog(cancelable)
+        loadingView().showLoadingDialog(cancelable)
     }
 
     override fun showLoadingDialog(message: CharSequence, cancelable: Boolean) {
-        loadingView()?.showLoadingDialog(message, cancelable)
+        loadingView().showLoadingDialog(message, cancelable)
     }
 
     override fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean) {
-        loadingView()?.showLoadingDialog(messageId, cancelable)
+        loadingView().showLoadingDialog(messageId, cancelable)
     }
 
     override fun dismissLoadingDialog() {
-        loadingView()?.dismissLoadingDialog()
+        loadingView().dismissLoadingDialog()
     }
 
     override fun showMessage(message: CharSequence) {
-        loadingView()?.showMessage(message)
+        loadingView().showMessage(message)
     }
 
     override fun showMessage(@StringRes messageId: Int) {
-        loadingView()?.showMessage(messageId)
+        loadingView().showMessage(messageId)
     }
 
 }

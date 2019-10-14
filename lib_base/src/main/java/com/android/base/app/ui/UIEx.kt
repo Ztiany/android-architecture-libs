@@ -6,7 +6,7 @@ import com.android.base.app.Sword
 import com.android.base.utils.common.isEmpty
 import timber.log.Timber
 
-fun <T> RefreshListLayout<T>.processListResultWithStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
+fun <T> RefreshListLayout<T>.handleListResultWithStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore) {
         if (!isEmpty(list)) {
             addData(list)
@@ -31,7 +31,7 @@ fun <T> RefreshListLayout<T>.processListResultWithStatus(list: List<T>?, onEmpty
     }
 }
 
-fun <T> RefreshListLayout<T>.processListResultWithoutStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
+fun <T> RefreshListLayout<T>.handleListResultWithoutStatus(list: List<T>?, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore) {
         if (!isEmpty(list)) {
             addData(list)
@@ -83,7 +83,7 @@ fun <T> RefreshListLayout<T>.submitListResultWithoutStatus(list: List<T>?, hasMo
     }
 }
 
-fun RefreshListLayout<*>.processListErrorWithStatus(throwable: Throwable) {
+fun RefreshListLayout<*>.handleListErrorWithStatus(throwable: Throwable) {
     if (isRefreshing) {
         refreshCompleted()
     }
@@ -106,7 +106,7 @@ fun RefreshListLayout<*>.processListErrorWithStatus(throwable: Throwable) {
     }
 }
 
-fun RefreshListLayout<*>.processListErrorWithoutStatus() {
+fun RefreshListLayout<*>.handleListErrorWithoutStatus() {
     if (isRefreshing) {
         refreshCompleted()
     }
@@ -125,7 +125,7 @@ fun RefreshListLayout<*>.showLoadingIfEmpty() {
     }
 }
 
-fun <T> RefreshStateLayout.processResultWithStatus(t: T?, onResult: ((T) -> Unit)) {
+fun <T> RefreshStateLayout.handleResultWithStatus(t: T?, onResult: ((T) -> Unit)) {
     if (isRefreshing) {
         refreshCompleted()
     }
@@ -137,7 +137,7 @@ fun <T> RefreshStateLayout.processResultWithStatus(t: T?, onResult: ((T) -> Unit
     }
 }
 
-fun RefreshStateLayout.processErrorWithStatus(throwable: Throwable?) {
+fun RefreshStateLayout.handleErrorWithStatus(throwable: Throwable?) {
     if (throwable == null) {
         Timber.d("processErrorWithStatus called, but throwable is null")
         return

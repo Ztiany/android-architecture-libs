@@ -41,6 +41,7 @@
             <enum name="net_error" value="5"/>
             <enum name="server_error" value="6"/>
             <enum name="requesting" value="7"/>
+            <enum name="blank" value="8"/>
         </attr>
     </declare-styleable>
 

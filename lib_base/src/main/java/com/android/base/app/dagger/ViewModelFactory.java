@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 /**
+ * {@link androidx.lifecycle.AbstractSavedStateViewModelFactory} is not supported.
+ *
  * @author Ztiany
  * Email: ztiany3@gmail.com
  * Date : 2018-11-05 14:31

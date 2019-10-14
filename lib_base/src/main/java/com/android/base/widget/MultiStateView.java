@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.base.R;
-import com.android.base.app.ui.StateLayoutConfig;
 import com.android.base.app.ui.StateLayoutConfig.ViewState;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static com.android.base.app.ui.StateLayoutConfig.BLANK;
 import static com.android.base.app.ui.StateLayoutConfig.CONTENT;
 import static com.android.base.app.ui.StateLayoutConfig.EMPTY;
 import static com.android.base.app.ui.StateLayoutConfig.ERROR;
@@ -83,13 +83,14 @@ public class MultiStateView extends FrameLayout {
 
     private void ensureInitState(int viewState) {
         /*
-             <enum name="content" value="1"/>
+            <enum name="content" value="1"/>
             <enum name="loading" value="2"/>
             <enum name="empty" value="3"/>
             <enum name="error" value="4"/>
             <enum name="net_error" value="5"/>
             <enum name="server_error" value="6"/>
             <enum name="requesting" value="7"/>
+            <enum name="blank" value="8"/>
         */
         switch (viewState) {
             case 2:
@@ -109,6 +110,9 @@ public class MultiStateView extends FrameLayout {
                 break;
             case 7:
                 mViewState = REQUESTING;
+                break;
+            case 8:
+                mViewState = BLANK;
                 break;
             case 1:
             default:
@@ -194,7 +198,7 @@ public class MultiStateView extends FrameLayout {
     @Nullable
     @SuppressWarnings("unused")
     public View getView(@ViewState int state) {
-        if (state == StateLayoutConfig.BLANK) {
+        if (state == BLANK) {
             return null;
         }
         return ensureStateView(state);
@@ -259,7 +263,7 @@ public class MultiStateView extends FrameLayout {
      * Shows the {@link View} based on the {@link ViewState}
      */
     private void setView() {
-        if (mViewState == StateLayoutConfig.BLANK) {
+        if (mViewState == BLANK) {
             int size = mChildren.size();
             View view;
             for (int i = 0; i < size; i++) {

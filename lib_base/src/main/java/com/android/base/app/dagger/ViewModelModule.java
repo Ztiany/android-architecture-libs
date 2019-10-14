@@ -5,7 +5,7 @@ import dagger.Binds;
 import dagger.Module;
 
 /**
- * 使用 ViewModelModule 情况下，所有的 ViewModule 都由 Activity 界别容器提供，因此 Fragment 级容器无法为其 ViewModule 提供依赖。这是仅有的局限性。
+ * {@link androidx.lifecycle.AbstractSavedStateViewModelFactory} is not supported.
  *
  * @author Ztiany
  * Email: ztiany3@gmail.com

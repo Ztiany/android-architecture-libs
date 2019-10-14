@@ -51,7 +51,7 @@ abstract class BaseStateFragment : BaseFragment(), RefreshStateLayout {
 
     protected open fun onRetry(@RetryableState state: Int) {
         refreshView.ifNonNull {
-            if (this.isRefreshing) {
+            if (!this.isRefreshing) {
                 autoRefresh()
             }
         } otherwise {
