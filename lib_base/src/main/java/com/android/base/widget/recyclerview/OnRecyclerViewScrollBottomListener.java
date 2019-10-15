@@ -85,16 +85,13 @@ public abstract class OnRecyclerViewScrollBottomListener extends RecyclerView.On
         return max;
     }
 
-
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
     }
 
-
     protected abstract void onBottom();
 
     protected abstract void onLeaveBottom();
-
 
 }
