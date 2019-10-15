@@ -2,22 +2,20 @@
 
 package com.android.base.rx
 
+import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.uber.autodispose.*
 import com.uber.autodispose.AutoDispose.autoDisposable
+import com.uber.autodispose.android.ViewScopeProvider
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.lifecycle.LifecycleScopeProvider
 import io.reactivex.*
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
+fun View.newScopeProvider() = ViewScopeProvider.from(this)
 
-/**
- *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2019-05-10 14:41
- */
 interface AutoDisposeLifecycleScopeProviderEx<T> : LifecycleScopeProvider<T> {
 
     fun <T> Flowable<T>.autoDispose(): FlowableSubscribeProxy<T> {

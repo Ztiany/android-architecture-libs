@@ -16,6 +16,8 @@ import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
@@ -94,7 +96,7 @@ class GlideImageLoader implements ImageLoader {
         }
 
         @Override
-        public void onResourceReady(Drawable resource, @Nullable Transition<? super Drawable> transition) {
+        public void onResourceReady(@NotNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
             super.onResourceReady(resource, transition);
             mLoadListener.onLoadSuccess(resource);
         }
@@ -270,7 +272,7 @@ class GlideImageLoader implements ImageLoader {
         requestBuilder = setToRequest(requestBuilder, source);
         requestBuilder.into(new SimpleTarget<Bitmap>() {
             @Override
-            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+            public void onResourceReady(@NotNull Bitmap resource, Transition<? super Bitmap> transition) {
                 bitmapLoadListener.onLoadSuccess(resource);
             }
 
@@ -368,7 +370,9 @@ class GlideImageLoader implements ImageLoader {
             return requestManager.load(source.mResource);
         } else if (source.mUri != null) {
             return requestManager.load(source.mUri);
-        } else {
+        } else if (source.mBytes != null) {
+            return requestManager.load(source.mBytes);
+        }  else {
             throw new IllegalArgumentException("UnSupport source");
         }
     }
@@ -382,6 +386,8 @@ class GlideImageLoader implements ImageLoader {
             return requestBuilder.load(source.mResource);
         } else if (source.mUri != null) {
             return requestBuilder.load(source.mUri);
+        } else if (source.mBytes != null) {
+            return requestBuilder.load(source.mBytes);
         } else {
             throw new IllegalArgumentException("UnSupport source");
         }

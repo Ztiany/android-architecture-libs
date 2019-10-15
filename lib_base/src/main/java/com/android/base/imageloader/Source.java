@@ -11,6 +11,7 @@ public class Source {
     File mFile;
     int mResource;
     Uri mUri;
+    byte[] mBytes;
 
     public static Source create(String url) {
         Source source = new Source();
@@ -31,6 +32,12 @@ public class Source {
     public static Source create(File file) {
         Source source = new Source();
         source.mFile = file;
+        return source;
+    }
+
+    public static Source create(byte[] bytes) {
+        Source source = new Source();
+        source.mBytes = bytes;
         return source;
     }
 
