@@ -35,7 +35,7 @@ public class ObservableRetryDelay implements Function<Observable<Throwable>, Obs
                 return Observable.error(throwable);
             }
             mRetryCount++;
-            Timber.i(new Date() + " 自动重试" + (mRetryCount + 1) + "次，在" + Thread.currentThread() + "线程");
+            Timber.i(new Date().toLocaleString() + " 自动重试" + (mRetryCount) + "次，在" + Thread.currentThread() + "线程");
             if (mRetryCount <= mMaxRetries) {
                 return Observable.timer(mRetryDelayMillis, TimeUnit.MILLISECONDS);
             }
