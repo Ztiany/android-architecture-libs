@@ -3,6 +3,7 @@ package com.android.base.app.aac
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import com.android.base.app.Sword
 import com.android.base.app.ui.LoadingView
 import com.android.base.data.Resource
 import timber.log.Timber
@@ -34,8 +35,17 @@ fun <H, T> H.handleLiveResource(
             }
             it.isSuccess -> {
                 Timber.d("handleLiveResource -> isSuccess")
-                dismissLoadingDialog()
-                onSuccess(it.get())
+                val minimumShowingDialogMills = Sword.get().minimumShowingDialogMills()
+
+                if (minimumShowingDialogMills == 0L) {
+                    dismissLoadingDialog()
+                    onSuccess(it.get())
+                } else {
+                    dismissLoadingDialog(minimumShowingDialogMills) {
+                        onSuccess(it.get())
+                    }
+                }
+
             }
         }
     })
@@ -62,11 +72,24 @@ fun <H, T> H.handleLiveResourceWithData(
             }
             it.isSuccess -> {
                 Timber.d("handleLiveResourceWithData -> isSuccess")
-                dismissLoadingDialog()
-                if (it.hasData()) {
-                    onSuccess(it.data())
+
+                val minimumShowingDialogMills = Sword.get().minimumShowingDialogMills()
+
+                if (minimumShowingDialogMills == 0L) {
+                    dismissLoadingDialog()
+                    if (it.hasData()) {
+                        onSuccess(it.data())
+                    } else {
+                        onEmpty?.invoke()
+                    }
                 } else {
-                    onEmpty?.invoke()
+                    dismissLoadingDialog(minimumShowingDialogMills) {
+                        if (it.hasData()) {
+                            onSuccess(it.data())
+                        } else {
+                            onEmpty?.invoke()
+                        }
+                    }
                 }
             }
         }

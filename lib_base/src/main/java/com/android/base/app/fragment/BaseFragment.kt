@@ -48,6 +48,8 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
     @Suppress("LeakingThis")
     private val fragmentDelegates = FragmentDelegates(this)
 
+    private var recentShowingDialogTime: Long = 0
+
     private fun tag() = this.javaClass.simpleName
 
     override fun onAttach(context: Context) {
@@ -232,23 +234,35 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
     }
 
     override fun showLoadingDialog() {
+        recentShowingDialogTime = System.currentTimeMillis()
         loadingView().showLoadingDialog(true)
     }
 
     override fun showLoadingDialog(cancelable: Boolean) {
+        recentShowingDialogTime = System.currentTimeMillis()
         loadingView().showLoadingDialog(cancelable)
     }
 
     override fun showLoadingDialog(message: CharSequence, cancelable: Boolean) {
+        recentShowingDialogTime = System.currentTimeMillis()
         loadingView().showLoadingDialog(message, cancelable)
     }
 
     override fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean) {
+        recentShowingDialogTime = System.currentTimeMillis()
         loadingView().showLoadingDialog(messageId, cancelable)
     }
 
     override fun dismissLoadingDialog() {
         loadingView().dismissLoadingDialog()
+    }
+
+    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: () -> Unit) {
+        dismissDialog(recentShowingDialogTime, minimumMills, onDismiss)
+    }
+
+    override fun isLoadingDialogShowing(): Boolean {
+        return loadingView().isLoadingDialogShowing()
     }
 
     override fun showMessage(message: CharSequence) {

@@ -64,6 +64,11 @@ public final class Sword {
     private ErrorClassifier mErrorClassifier;
 
     /**
+     * dialog 最小展示时间
+     */
+    private long minimumShowingDialogMills;
+
+    /**
      * 获取 Application 代理
      */
     public ApplicationDelegate getApplicationDelegate() {
@@ -110,12 +115,20 @@ public final class Sword {
     }
 
     /**
-     * 给 {@link com.android.base.app.fragment.Fragments } 设置一个默认的容器 id，在使用 其相关方法而没有传入特定的容器 id 时，则使用默认的容器 id。
+     * 给 {@link com.android.base.app.fragment.tools.Fragments } 设置一个默认的容器 id，在使用 其相关方法而没有传入特定的容器 id 时，则使用默认的容器 id。
      *
      * @param defaultContainerId 容器id
      */
     public Sword setDefaultFragmentContainerId(int defaultContainerId) {
         FragmentConfig.setDefaultContainerId(defaultContainerId);
+        return this;
+    }
+
+    /**
+     * 设置 dialog 最小展示时间，建议不超过 1 秒
+     */
+    public Sword setMinimumShowingDialogMills(long minimumShowingDialogMills) {
+        this.minimumShowingDialogMills = minimumShowingDialogMills;
         return this;
     }
 
@@ -208,6 +221,10 @@ public final class Sword {
     public Sword registerRefreshViewFactory(RefreshViewFactory.Factory factory) {
         RefreshViewFactory.registerFactory(factory);
         return this;
+    }
+
+    public long minimumShowingDialogMills() {
+        return minimumShowingDialogMills;
     }
 
 }
