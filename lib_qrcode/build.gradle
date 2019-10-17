@@ -34,7 +34,6 @@ android {
 
 dependencies {
     implementation 'com.google.zxing:core:3.3.3'
-    api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation uiLibraries.fotoapparat
     implementation kotlinLibraries.kotlinStdlib
 }

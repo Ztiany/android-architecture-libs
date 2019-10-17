@@ -1,10 +1,11 @@
 @file:JvmName("AutoDisposeUtils")
 
-package com.android.base.rx
+package com.android.base.rx.autodispose
 
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.android.base.rx.RxKit
 import com.uber.autodispose.*
 import com.uber.autodispose.AutoDispose.autoDisposable
 import com.uber.autodispose.android.ViewScopeProvider
@@ -14,7 +15,7 @@ import io.reactivex.*
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
-fun View.newScopeProvider() = ViewScopeProvider.from(this)
+fun View.newScopeProvider(): ScopeProvider = ViewScopeProvider.from(this)
 
 interface AutoDisposeLifecycleScopeProviderEx<T> : LifecycleScopeProvider<T> {
 

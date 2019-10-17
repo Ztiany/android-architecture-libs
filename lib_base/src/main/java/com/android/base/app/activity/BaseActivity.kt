@@ -6,7 +6,7 @@ import android.view.View
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.base.rx.AutoDisposeLifecycleOwnerEx
+import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
 import com.android.base.utils.android.compat.AndroidVersion
 import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber

@@ -18,7 +18,7 @@ import com.android.base.app.fragment.delegates.FragmentDelegate
 import com.android.base.app.fragment.delegates.FragmentDelegateOwner
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
-import com.android.base.rx.AutoDisposeLifecycleOwnerEx
+import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
 import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber
 
