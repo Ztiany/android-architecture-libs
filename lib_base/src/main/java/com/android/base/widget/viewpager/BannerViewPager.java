@@ -11,7 +11,8 @@ import com.android.base.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.viewpager.widget.PagerAdapter;
+import javax.annotation.Nullable;
+
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -28,7 +29,6 @@ public class BannerViewPager extends FrameLayout {
 
     private OnBannerPositionChangedListener mOnBannerPositionChangedListener;
 
-    private boolean mScalable;
     private String mTransitionName;
     private OnPageClickListener mOnPageClickListener;
 
@@ -45,8 +45,6 @@ public class BannerViewPager extends FrameLayout {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BannerViewPager);
 
-        /*是否可以缩放*/
-        mScalable = typedArray.getBoolean(R.styleable.BannerViewPager_zvp_scale_enable, false);
         /*用于支持5.0的transition动画*/
         mTransitionName = typedArray.getString(R.styleable.BannerViewPager_zvp_item_transition_name);
         int pageId = typedArray.getResourceId(R.styleable.BannerViewPager_zvp_pager_number_id, -1);
@@ -74,7 +72,7 @@ public class BannerViewPager extends FrameLayout {
         mPageNumberView = pageNumberView;
     }
 
-    public void setImages(List<String> entities) {
+    public void setImages(List<String> entities, @Nullable BannerPagerAdapter adapter) {
         if (entities == null || entities.isEmpty()) {
             mImageUrlList.clear();
             mViewPager.setAdapter(null);
@@ -83,14 +81,19 @@ public class BannerViewPager extends FrameLayout {
         }
         mImageUrlList.clear();
         setPageSize(entities.size());
+
         if (entities.size() > 1) {
             addExtraPage(entities);
-            showBanner();
+            showBanner(adapter);
             setLooper();
         } else {
             mImageUrlList.addAll(entities);
-            showBanner();
+            showBanner(adapter);
         }
+    }
+
+    public void setImages(List<String> entities) {
+        setImages(entities, null);
     }
 
     private void setPageSize(int pageSize) {
@@ -169,18 +172,18 @@ public class BannerViewPager extends FrameLayout {
         mImageUrlList.add(entities.get(0));
     }
 
-    private void showBanner() {
-        PagerAdapter adapter;
-        if (mScalable) {
-            BannerPagerAdapter bannerPagerAdapter = new BannerPagerAdapter(getContext(), mImageUrlList, mTransitionName);
-            bannerPagerAdapter.setOnBannerClickListener(mOnPageClickListener);
-            adapter = bannerPagerAdapter;
+    private void showBanner(BannerPagerAdapter adapter) {
+        if (adapter != null) {
+            adapter.setContext(getContext());
+            adapter.setEntities(mImageUrlList);
+            adapter.setTransitionName(mTransitionName);
+            adapter.setOnBannerClickListener(mOnPageClickListener);
+            mViewPager.setAdapter(adapter);
         } else {
             OptimizeBannerPagerAdapter optimizeBannerPagerAdapter = new OptimizeBannerPagerAdapter(getContext(), mImageUrlList, mTransitionName);
             optimizeBannerPagerAdapter.setOnBannerClickListener(mOnPageClickListener);
-            adapter = optimizeBannerPagerAdapter;
+            mViewPager.setAdapter(optimizeBannerPagerAdapter);
         }
-        mViewPager.setAdapter(adapter);
     }
 
     public void setOnPageClickListener(OnPageClickListener onPageClickListener) {
@@ -197,10 +200,6 @@ public class BannerViewPager extends FrameLayout {
 
     public interface OnBannerPositionChangedListener {
         void onPagePositionChanged(int position);
-    }
-
-    public static void setScalableBannerPagerFactory(ScalableBannerPagerFactory scalableBannerPagerFactory) {
-        BannerPagerAdapter.sBannerPagerFactory = scalableBannerPagerFactory;
     }
 
 }

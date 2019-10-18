@@ -131,16 +131,17 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
     // interface impl
     ///////////////////////////////////////////////////////////////////////////
     @UiThread
-    override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
+    final override fun addDelegate(activityDelegate: ActivityDelegate<*>) {
         activityDelegates.addActivityDelegate(activityDelegate)
     }
 
     @UiThread
-    override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
+    final override fun removeDelegate(activityDelegate: ActivityDelegate<*>): Boolean {
         return activityDelegates.removeActivityDelegate(activityDelegate)
     }
 
-    override fun findDelegate(predicate: Predicate<ActivityDelegate<*>?>?): ActivityDelegate<*>? {
+    @UiThread
+    final override fun findDelegate(predicate: Predicate<ActivityDelegate<*>?>?): ActivityDelegate<*>? {
         return activityDelegates.findDelegate(predicate)
     }
 

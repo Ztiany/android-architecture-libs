@@ -17,6 +17,6 @@ public abstract class OnItemClickListener<T> implements View.OnClickListener {
         onClick(v, (T) tag);
     }
 
-    public abstract void onClick(@NonNull View view, @NonNull T t);
+    public abstract void onClick(@NonNull View view, @NonNull T item);
 
 }

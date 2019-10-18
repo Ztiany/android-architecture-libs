@@ -19,15 +19,13 @@ private const val CONTAINS_UPPERCASE_LETTERS_REG = "^.*[A-Z]+.*$"
 
 /**
  * 验证中国的手机号
- *
- * @return 验证成功返回 true，验证失败返回 false
  */
 fun isChinaPhoneNumber(mobile: String?): Boolean {
     return !isEmpty(mobile) && Pattern.matches(CHINA_PHONE_REG, mobile)
 }
 
 /**
- * 只包含 [1-9][a-z][A-Z]
+ * 是否只包含 [1-9][a-z][A-Z]
  */
 fun containsDigitalLetterOnly(text: String?): Boolean {
     return !isEmpty(text) && Pattern.matches(DIGITAL_LETTER_ONLY_REG, text)
@@ -90,7 +88,7 @@ fun isDecimals(decimals: String?): Boolean {
 /**
  * 是否为纯中文
  */
-fun isChinese(chinese: String?): Boolean {
+fun isJustChineseCharacter(chinese: String?): Boolean {
     return !isEmpty(chinese) && Pattern.matches(CHINESE_REGEX, chinese)
 }
 

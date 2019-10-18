@@ -15,6 +15,6 @@ public abstract class OnItemLongClickListener<T> implements View.OnLongClickList
         return onClick(v, (T) tag);
     }
 
-    public abstract boolean onClick(View view, T t);
+    public abstract boolean onClick(View view, T item);
 
 }

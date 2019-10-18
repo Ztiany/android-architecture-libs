@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -131,7 +132,7 @@ public class MediaSelector {
 
     private void processSingle(Intent data) {
         final ArrayList<BaseMedia> medias = Boxing.getResult(data);
-        if (medias != null) {
+        if (medias != null && !medias.isEmpty()) {
             mCallback.onTakePictureSuccess(medias.get(0).getPath());
         }
     }
@@ -143,15 +144,17 @@ public class MediaSelector {
             for (BaseMedia media : medias) {
                 strings.add(media.getPath());
             }
-            mCallback.onTakeMultiPictureSuccess(strings);
+            if (!strings.isEmpty()) {
+                mCallback.onTakeMultiPictureSuccess(strings);
+            }
         }
     }
 
     public interface Callback {
-        default void onTakeMultiPictureSuccess(List<String> pictures) {
+        default void onTakeMultiPictureSuccess(@NonNull List<String> pictures) {
         }
 
-        default void onTakePictureSuccess(String picture) {
+        default void onTakePictureSuccess(@NonNull String picture) {
         }
     }
 
