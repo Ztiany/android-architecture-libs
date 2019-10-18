@@ -34,6 +34,6 @@ fun Activity.setTransition(type: Transition) {
 }
 
 fun AppCompatActivity.finishWithAnimation(@AnimRes enterAnim: Int, @AnimRes exitAnim: Int) {
-    supportFinishAfterTransition()
+    finish()
     overridePendingTransition(enterAnim, exitAnim)
 }
