@@ -35,7 +35,7 @@ public interface FragmentDelegate<T extends Fragment> {
     default void onSaveInstanceState(Bundle savedInstanceState) {
     }
 
-    default void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    default void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     }
 
     default void onStart() {

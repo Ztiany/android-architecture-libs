@@ -3,9 +3,6 @@ package com.android.base.app.fragment.delegates
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.android.base.app.fragment.BaseFragment
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * 用于在ViewPager中实现懒加载的Fragment：
@@ -19,12 +16,12 @@ import kotlin.reflect.KProperty
 open class LazyDelegate private constructor() : FragmentDelegate<Fragment?> {
 
     /** View是否准备好，如果不需要绑定view数据，只是加载网络数据，那么该字段可以去掉 */
-    private var mIsViewPrepared = false
+    private var isViewPrepared = false
 
     /** 滑动过来后，View是否可见 */
-    private var mIsViewVisible = false
+    private var isViewVisible = false
 
-    private var mOnPreparedListener: (() -> Unit)? = null
+    private var preparedListener: (() -> Unit)? = null
 
     /**
      * 在这里实现Fragment数据的缓加载.
@@ -33,16 +30,16 @@ open class LazyDelegate private constructor() : FragmentDelegate<Fragment?> {
      */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         if (isVisibleToUser) {
-            mIsViewVisible = true
+            isViewVisible = true
             onVisible()
         } else {
-            mIsViewVisible = false
+            isViewVisible = false
             onInvisible()
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
-        mIsViewPrepared = true
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        isViewPrepared = true
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -62,7 +59,7 @@ open class LazyDelegate private constructor() : FragmentDelegate<Fragment?> {
     protected fun onInvisible() {}
 
     private fun lazyLoad() {
-        if (mIsViewPrepared && mIsViewVisible) {
+        if (isViewPrepared && isViewVisible) {
             notifyLazyLoad()
         }
     }
@@ -71,13 +68,13 @@ open class LazyDelegate private constructor() : FragmentDelegate<Fragment?> {
      * 懒加载数据，并在此绑定View数据
      */
     private fun notifyLazyLoad() {
-        mOnPreparedListener?.invoke()
+        preparedListener?.invoke()
     }
 
     companion object {
         fun attach(delegateFragment: FragmentDelegateOwner, onPreparedListener: () -> Unit): LazyDelegate {
             val delegate = LazyDelegate()
-            delegate.mOnPreparedListener = onPreparedListener
+            delegate.preparedListener = onPreparedListener
             delegateFragment.addDelegate(delegate)
             return delegate
         }
@@ -87,38 +84,13 @@ open class LazyDelegate private constructor() : FragmentDelegate<Fragment?> {
 
 class SimpleLazyLoadListener(private val onFirstLoad: () -> Unit) : (() -> Unit) {
 
-    private var mIsCalled = false
+    private var isCalled = false
 
     override fun invoke() {
-        if (!mIsCalled) {
+        if (!isCalled) {
             onFirstLoad()
-            mIsCalled = true
+            isCalled = true
         }
-    }
-
-}
-
-
-/**
- * 懒加载代理
- *
- *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2019-03-08 12:50
- */
-class LazyLoad(private val once: Boolean = true, private val onPrepared: (() -> Unit)) : ReadOnlyProperty<BaseFragment, LazyDelegate> {
-
-    private lateinit var lazyDelegate: LazyDelegate
-
-    override fun getValue(thisRef: BaseFragment, property: KProperty<*>): LazyDelegate {
-        if (!::lazyDelegate.isInitialized) {
-            lazyDelegate = if (once) {
-                LazyDelegate.attach(thisRef, SimpleLazyLoadListener(onPrepared))
-            } else {
-                LazyDelegate.attach(thisRef, onPrepared)
-            }
-        }
-        return lazyDelegate
     }
 
 }

@@ -138,11 +138,7 @@ fun <T> RefreshStateLayout.handleResultWithStatus(t: T?, onResult: ((T) -> Unit)
     }
 }
 
-fun RefreshStateLayout.handleErrorWithStatus(throwable: Throwable?) {
-    if (throwable == null) {
-        Timber.d("processErrorWithStatus called, but throwable is null")
-        return
-    }
+fun RefreshStateLayout.handleErrorWithStatus(throwable: Throwable) {
     if (isRefreshing) {
         refreshCompleted()
     }
