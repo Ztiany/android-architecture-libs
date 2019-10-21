@@ -229,8 +229,10 @@ public class PullToZoomScrollView extends NestedScrollView {
         mZoomView.setPivotY(mOriginContainerViewHeight / 3F);
         float addOffset = (height - mOriginContainerViewHeight) * mZoomFactory / mOriginContainerViewHeight;
         float scale = height * 1.0F / mOriginContainerViewHeight + addOffset;
-        mZoomView.setScaleX(scale);
-        mZoomView.setScaleY(scale);
+        if (!Float.isInfinite(scale)) {
+            mZoomView.setScaleX(scale);
+            mZoomView.setScaleY(scale);
+        }
     }
 
     private void getInnerViewHeight() {

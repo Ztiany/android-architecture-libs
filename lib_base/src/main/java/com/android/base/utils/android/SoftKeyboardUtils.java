@@ -42,7 +42,7 @@ public class SoftKeyboardUtils {
     }
 
     public static boolean hideSoftInput(Activity activity) {
-        if (activity.getCurrentFocus() != null) {
+        if (activity != null && activity.getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             return imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
@@ -53,7 +53,7 @@ public class SoftKeyboardUtils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         return imm.isActive();
     }
-    
+
     @SuppressWarnings("all")
     public static void showErrorImmediately(String error, TextView editText) {
         editText.setError(error);
