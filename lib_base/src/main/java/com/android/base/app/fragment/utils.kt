@@ -22,6 +22,7 @@ internal fun <T> T.dismissDialog(recentShowingDialogTime: Long, minimumMills: Lo
     val dialogShowingTime = System.currentTimeMillis() - recentShowingDialogTime
 
     if (dialogShowingTime >= minimumMills) {
+        dismissLoadingDialog()
         onDismiss()
     } else {
         lifecycleScope.launch {
