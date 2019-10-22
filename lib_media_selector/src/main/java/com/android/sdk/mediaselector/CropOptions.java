@@ -7,6 +7,7 @@ import java.io.Serializable;
  * Author: JPH
  * Date: 2016/7/27 13:19
  */
+@SuppressWarnings("WeakerAccess")
 public class CropOptions implements Serializable {
 
     private int aspectX = 1;
@@ -24,9 +25,6 @@ public class CropOptions implements Serializable {
 
     /**
      * 裁剪宽度比例 与aspectY组合，如16:9
-     *
-     * @param aspectX
-     * @return
      */
     public CropOptions setAspectX(int aspectX) {
         this.aspectX = aspectX;
@@ -38,10 +36,7 @@ public class CropOptions implements Serializable {
     }
 
     /**
-     * 高度比例 与aspectX组合，如16:9
-     *
-     * @param aspectY
-     * @return
+     * 高度比例与aspectX组合，如16:9
      */
     public CropOptions setAspectY(int aspectY) {
         this.aspectY = aspectY;
@@ -54,9 +49,6 @@ public class CropOptions implements Serializable {
 
     /**
      * 输出图片的宽度
-     *
-     * @param outputX
-     * @return
      */
     public CropOptions setOutputX(int outputX) {
         this.outputX = outputX;
@@ -69,9 +61,6 @@ public class CropOptions implements Serializable {
 
     /**
      * 输入图片的高度
-     *
-     * @param outputY
-     * @return
      */
     public CropOptions setOutputY(int outputY) {
         this.outputY = outputY;
