@@ -1,9 +1,13 @@
 @file:JvmName("SchedulerProviders")
+
 package com.android.base.rx
 
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 
 
 /**
@@ -19,6 +23,12 @@ interface SchedulerProvider {
 
     fun database(): Scheduler
 
+    fun ioDispatcher(): CoroutineDispatcher
+
+    fun defaultDispatcher(): CoroutineDispatcher
+
+    fun uiDispatcher(): CoroutineDispatcher
+
 }
 
 fun newDefaultSchedulerProvider(): SchedulerProvider {
@@ -26,6 +36,26 @@ fun newDefaultSchedulerProvider(): SchedulerProvider {
 }
 
 private class DefaultSchedulerProvider : SchedulerProvider {
+
+    private val ioDispatcher by lazy {
+        io().asCoroutineDispatcher()
+    }
+
+    private val defaultDispatcher by lazy {
+        io().asCoroutineDispatcher()
+    }
+
+    override fun ioDispatcher(): CoroutineDispatcher {
+        return ioDispatcher
+    }
+
+    override fun defaultDispatcher(): CoroutineDispatcher {
+        return defaultDispatcher
+    }
+
+    override fun uiDispatcher(): CoroutineDispatcher {
+        return Dispatchers.Main
+    }
 
     override fun computation(): Scheduler {
         return Schedulers.computation()

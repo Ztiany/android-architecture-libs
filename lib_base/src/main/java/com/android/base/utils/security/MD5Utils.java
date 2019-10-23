@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import androidx.annotation.Nullable;
+
+@SuppressWarnings("unused")
 public class MD5Utils {
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -22,6 +25,7 @@ public class MD5Utils {
     /**
      * 文件加密
      */
+    @Nullable
     public static String md5file(String filename) {
         InputStream fis;
         byte[] buffer = new byte[1024];

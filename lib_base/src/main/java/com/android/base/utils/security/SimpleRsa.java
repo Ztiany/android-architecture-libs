@@ -16,6 +16,8 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
+import androidx.annotation.Nullable;
+
 
 public class SimpleRsa {
 
@@ -49,6 +51,7 @@ public class SimpleRsa {
      * @param content 加密字符串
      * @return 加密后的字符串
      */
+    @Nullable
     public static String encryptByPublic(String content, String RSA_PUBLIC_KEY) {
         try {
             PublicKey pubKey = getPublicKeyFromX509(ALGORITHM, RSA_PUBLIC_KEY);
@@ -68,6 +71,7 @@ public class SimpleRsa {
      * @param content 密文
      * @return 解密后的字符串
      */
+    @Nullable
     public static String decryptByPublic(String content, String RSA_PUBLIC_KEY) {
         try {
             PublicKey pubkey = getPublicKeyFromX509(ALGORITHM, RSA_PUBLIC_KEY);

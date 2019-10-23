@@ -85,7 +85,7 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
      */
     protected open fun provideLayout(): Any? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.tag(tag()).d("-->onViewCreated  savedInstanceState = %s", savedInstanceState)
         if (layoutView !== view) {

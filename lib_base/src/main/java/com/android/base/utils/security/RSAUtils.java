@@ -1,19 +1,3 @@
-/*
- * Copyright 2015 Rocko (http://rocko.xyz) <rocko.zxp@gmail.com>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.android.base.utils.security;
 
 import android.util.Base64;
@@ -36,10 +20,9 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
+import androidx.annotation.Nullable;
 
-/**
- * @author Mr.Zheng
- */
+@SuppressWarnings("WeakerAccess,unused")
 public final class RSAUtils {
 
     private final static String KEY_PAIR = "RSA";
@@ -69,13 +52,13 @@ public final class RSAUtils {
     }
 
     /**
-     * 用公钥加密 <br>
-     * 每次加密的字节数，不能超过密钥的长度值减去11
+     * 用公钥加密，每次加密的字节数，不能超过密钥的长度值减去11
      *
      * @param data      需加密数据的byte数据
      * @param publicKey 公钥
      * @return 加密后的byte型数据
      */
+    @Nullable
     public static byte[] encryptData(byte[] data, PublicKey publicKey) {
         try {
             Cipher cipher = Cipher.getInstance(CIPHER);
@@ -95,6 +78,7 @@ public final class RSAUtils {
      * @param encryptedData 经过encryptedData()加密返回的byte数据
      * @param privateKey    私钥
      */
+    @Nullable
     public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) {
         try {
             Cipher cipher = Cipher.getInstance(CIPHER);
@@ -108,11 +92,10 @@ public final class RSAUtils {
     /**
      * 通过公钥byte[](publicKey.getEncoded())将公钥还原，适用于RSA算法
      *
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithm
+     * @throws InvalidKeySpecException  InvalidKeySpec
      */
-    public static PublicKey getPublicKey(byte[] keyBytes) throws NoSuchAlgorithmException,
-            InvalidKeySpecException {
+    public static PublicKey getPublicKey(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
         return keyFactory.generatePublic(keySpec);
@@ -121,11 +104,10 @@ public final class RSAUtils {
     /**
      * 通过私钥byte[]将公钥还原，适用于RSA算法
      *
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithm
+     * @throws InvalidKeySpecException  InvalidKeySpec
      */
-    public static PrivateKey getPrivateKey(byte[] keyBytes) throws NoSuchAlgorithmException,
-            InvalidKeySpecException {
+    public static PrivateKey getPrivateKey(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_PAIR);
         return keyFactory.generatePrivate(keySpec);
@@ -134,11 +116,10 @@ public final class RSAUtils {
     /**
      * 使用N、e值还原公钥
      *
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithm
+     * @throws InvalidKeySpecException  InvalidKeySpec
      */
-    public static PublicKey getPublicKey(String modulus, String publicExponent)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PublicKey getPublicKey(String modulus, String publicExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         BigInteger bigIntModulus = new BigInteger(modulus);
         BigInteger bigIntPrivateExponent = new BigInteger(publicExponent);
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(bigIntModulus, bigIntPrivateExponent);
@@ -149,8 +130,8 @@ public final class RSAUtils {
     /**
      * 使用N、d值还原私钥
      *
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithm
+     * @throws InvalidKeySpecException  InvalidKeySpec
      */
     public static PrivateKey getPrivateKey(String modulus, String privateExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
         BigInteger bigIntModulus = new BigInteger(modulus);

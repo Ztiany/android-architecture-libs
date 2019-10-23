@@ -89,6 +89,7 @@ dependencies {
     api kotlinLibraries.kotlinReflect
     api kotlinLibraries.kotlinCoroutines
     api kotlinLibraries.kotlinAndroidCoroutines
+    api kotlinLibraries.kotlinxCoroutinesRx2
 
     //RxJava
     api thirdLibraries.rxJava

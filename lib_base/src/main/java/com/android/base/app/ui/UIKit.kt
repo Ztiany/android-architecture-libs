@@ -23,6 +23,7 @@ interface UIErrorHandler {
 fun <H, T> H.handleLiveState(
         liveData: LiveData<State<T>>,
         forceLoading: Boolean = true,
+        onError: ((Throwable) -> Unit)? = null,
         onSuccess: (T?) -> Unit
 ) where H : UIErrorHandler, H : LoadingView, H : LifecycleOwner {
 
@@ -30,8 +31,13 @@ fun <H, T> H.handleLiveState(
         when {
             state.isError -> {
                 Timber.d("handleLiveState -> isError")
-                dismissLoadingDialog()
-                handleError(state.error())
+                dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+                    if (onError != null) {
+                        onError(state.error())
+                    } else {
+                        handleError(state.error())
+                    }
+                }
             }
             state.isLoading -> {
                 Timber.d("handleLiveState -> isLoading")
@@ -39,12 +45,23 @@ fun <H, T> H.handleLiveState(
             }
             state.isSuccess -> {
                 Timber.d("handleLiveState -> isSuccess")
-                val minimumShowingDialogMills = Sword.get().minimumShowingDialogMills()
-                dismissLoadingDialog(minimumShowingDialogMills) {
+                dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
                     onSuccess(state.get())
                 }
             }//success end
         }
+    })
+
+}
+
+fun <H, T> H.handleLiveState2(
+        liveData: LiveData<State<T>>,
+        forceLoading: Boolean = true,
+        handler: StateHandler<T>.() -> Unit
+) where H : UIErrorHandler, H : LoadingView, H : LifecycleOwner {
+
+    liveData.observe(this, Observer { state ->
+        handleState(state, forceLoading, handler)
     })
 
 }
@@ -61,8 +78,9 @@ fun <T> LoadingView.handleState(
     when {
         state.isError -> {
             Timber.d("handleState -> isError")
-            dismissLoadingDialog()
-            stateHandler.onError?.invoke(state.error())
+            dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+                stateHandler.onError?.invoke(state.error())
+            }
         }
         state.isLoading -> {
             Timber.d("handleState -> isLoading")
@@ -70,8 +88,7 @@ fun <T> LoadingView.handleState(
         }
         state.isSuccess -> {
             Timber.d("handleState -> isSuccess")
-            val minimumShowingDialogMills = Sword.get().minimumShowingDialogMills()
-            dismissLoadingDialog(minimumShowingDialogMills) {
+            dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
                 stateHandler.onSuccess?.invoke(state.get())
                 if (state.hasData()) {
                     stateHandler.onSuccessWithData?.invoke(state.data())
