@@ -197,7 +197,6 @@ abstract class QRCodeView @JvmOverloads constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     /**
@@ -209,7 +208,6 @@ abstract class QRCodeView @JvmOverloads constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     /**

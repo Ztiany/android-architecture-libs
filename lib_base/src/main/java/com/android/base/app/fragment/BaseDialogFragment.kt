@@ -39,6 +39,18 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
 
     private var recentShowingDialogTime: Long = 0
 
+    private var _state: Bundle? = null
+
+    protected val state: Bundle
+        get() {
+            var state = _state
+            if (state == null) {
+                state = Bundle()
+                _state = state
+            }
+            return state
+        }
+
     private fun tag() = this.javaClass.simpleName
 
     override fun onAttach(context: Context) {
@@ -49,6 +61,7 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        _state = getInstanceState(savedInstanceState)
         Timber.tag(tag()).d("-->onCreate  savedInstanceState   =   $savedInstanceState")
         fragmentDelegates.onCreate(savedInstanceState)
     }
@@ -156,6 +169,7 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
 
     override fun onSaveInstanceState(outState: Bundle) {
         fragmentDelegates.onSaveInstanceState(outState)
+        saveInstanceState(outState, _state)
         super.onSaveInstanceState(outState)
     }
 

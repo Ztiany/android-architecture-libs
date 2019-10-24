@@ -6,20 +6,17 @@ import com.blankj.utilcode.util.FileUtils
 import timber.log.Timber
 import java.io.File
 
-fun File?.makeFilePath(): Boolean {
-    if (this == null) {
-        return false
-    }
-    val parent = this.parentFile
-    return parent.exists() || makeDir(parent)
+fun File.makeParentPath(): Boolean {
+    val path = this.parentFile
+    return path.exists() || makeDir(path)
 }
 
 private fun makeDir(file: File?): Boolean {
     return file != null && (file.exists() || file.mkdirs())
 }
 
-fun File?.sizeOf(): Long {
-    if (this == null || !this.exists()) {
+fun File.sizeOf(): Long {
+    if (!this.exists()) {
         return 0
     }
     return if (this.isDirectory) {
@@ -44,8 +41,8 @@ fun File.deleteSelf() {
     }
 }
 
-fun File?.isFileExists(): Boolean {
-    return this != null && this.isFile && this.exists()
+fun File.isFileExists(): Boolean {
+    return this.isFile && this.exists()
 }
 
 /**
@@ -53,16 +50,6 @@ fun File?.isFileExists(): Boolean {
  *
  * @return 文件拓展名
  */
-fun File?.getFileExtension(): String? {
-    return if (this == null) null else getFileExtension(this.path)
-}
-
-/**
- * 获取全路径中的文件拓展名
- *
- * @param filePath 文件路径
- * @return 文件拓展名
- */
-fun getFileExtension(filePath: String): String {
-    return FileUtils.getFileExtension(filePath)
+fun File.getFileExtension(): String {
+    return FileUtils.getFileExtension(this.absolutePath)
 }

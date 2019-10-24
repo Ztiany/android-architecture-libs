@@ -13,6 +13,9 @@ public class Source {
     Uri mUri;
     byte[] mBytes;
 
+    private Source() {
+    }
+
     public static Source create(String url) {
         Source source = new Source();
         source.mUrl = url;

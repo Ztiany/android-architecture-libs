@@ -1,5 +1,6 @@
 package com.android.base.app.fragment
 
+import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.android.base.app.ui.LoadingView
@@ -36,4 +37,16 @@ internal fun <T> T.dismissDialog(recentShowingDialogTime: Long, minimumMills: Lo
         }
     }
 
+}
+
+private const val FRAGMENT_STATE_KEY = "fragment_state_key"
+
+internal fun saveInstanceState(outState: Bundle, _state: Bundle?) {
+    _state?.let {
+        outState.putBundle(FRAGMENT_STATE_KEY, it)
+    }
+}
+
+internal fun getInstanceState(state: Bundle?): Bundle? {
+    return state?.getBundle(FRAGMENT_STATE_KEY)
 }

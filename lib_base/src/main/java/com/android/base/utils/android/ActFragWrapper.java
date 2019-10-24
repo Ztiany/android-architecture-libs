@@ -24,6 +24,12 @@ public class ActFragWrapper {
         return context;
     }
 
+    public static ActFragWrapper create(Fragment fragment) {
+        ActFragWrapper context = new ActFragWrapper();
+        context.mFragment = fragment;
+        return context;
+    }
+
     public Context getContext() {
         if (mActivity != null) {
             return mActivity;
@@ -42,12 +48,6 @@ public class ActFragWrapper {
         } else {
             mFragment.startActivityForResult(intent, requestCode, options);
         }
-    }
-
-    public static ActFragWrapper create(Fragment fragment) {
-        ActFragWrapper context = new ActFragWrapper();
-        context.mFragment = fragment;
-        return context;
     }
 
     public void startService(Intent intent) {

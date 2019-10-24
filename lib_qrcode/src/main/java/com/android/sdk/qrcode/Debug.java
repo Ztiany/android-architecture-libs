@@ -7,16 +7,16 @@ import android.util.Log;
  * Email: ztiany3@gmail.com
  * Date : 2019-04-02 12:55
  */
-public class Debug {
+class Debug {
 
     private static final String TAG = "QRCODE";
     private static boolean debug = BuildConfig.DEBUG;
 
-    public static void setDebug(boolean debug) {
+    static void setDebug(boolean debug) {
         Debug.debug = debug;
     }
 
-    public static void log(String msg) {
+    static void log(String msg) {
         if (debug && msg != null) {
             Log.d(TAG, msg);
         }
