@@ -268,7 +268,7 @@ fun <T> RefreshStateLayout.handleResult(t: T?, onEmpty: (() -> Unit)? = null, on
     if (isRefreshing) {
         refreshCompleted()
     }
-    if (t == null || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())) {
+    if (t == null || (t is CharSequence && (t.isEmpty() || t.isBlank())) || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())) {
         if (onEmpty != null) {
             onEmpty()
         } else {
