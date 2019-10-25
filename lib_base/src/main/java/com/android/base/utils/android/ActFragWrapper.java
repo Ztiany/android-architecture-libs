@@ -18,6 +18,9 @@ public class ActFragWrapper {
     private Fragment mFragment;
     private Activity mActivity;
 
+    private ActFragWrapper() {
+    }
+
     public static ActFragWrapper create(Activity activity) {
         ActFragWrapper context = new ActFragWrapper();
         context.mActivity = activity;

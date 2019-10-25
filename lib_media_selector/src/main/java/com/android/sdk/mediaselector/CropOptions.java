@@ -16,7 +16,6 @@ public class CropOptions implements Serializable {
     private int outputY;
 
     public CropOptions() {
-
     }
 
     int getAspectX() {

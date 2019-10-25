@@ -109,11 +109,21 @@ public class BannerViewPager extends FrameLayout {
     }
 
     public void setCurrentPosition(int position) {
+        if (position < 0) {
+            return;
+        }
         if (mImageUrlList.size() > 1) {
-            if (position <= mImageUrlList.size() - 2) {
-                position++;
-            } else {
-                position = mImageUrlList.size() - 2;
+            int realSize = mImageUrlList.size() - 2;
+            if (position >= realSize) {
+                position = realSize - 1;
+            }
+            if (mOnBannerPositionChangedListener != null) {
+                mOnBannerPositionChangedListener.onPagePositionChanged(position);
+            }
+            position++;
+        } else {
+            if (mOnBannerPositionChangedListener != null) {
+                mOnBannerPositionChangedListener.onPagePositionChanged(0);
             }
         }
         mViewPager.setCurrentItem(position);
