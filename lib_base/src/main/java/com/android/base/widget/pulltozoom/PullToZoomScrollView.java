@@ -13,6 +13,8 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.android.base.R;
 
+import timber.log.Timber;
+
 
 /**
  * <pre>
@@ -229,9 +231,13 @@ public class PullToZoomScrollView extends NestedScrollView {
         mZoomView.setPivotY(mOriginContainerViewHeight / 3F);
         float addOffset = (height - mOriginContainerViewHeight) * mZoomFactory / mOriginContainerViewHeight;
         float scale = height * 1.0F / mOriginContainerViewHeight + addOffset;
+        Timber.d("scale = %f", scale);
         if (!Float.isInfinite(scale)) {
             mZoomView.setScaleX(scale);
             mZoomView.setScaleY(scale);
+        } else {
+            mZoomView.setScaleX(1);
+            mZoomView.setScaleY(1);
         }
     }
 

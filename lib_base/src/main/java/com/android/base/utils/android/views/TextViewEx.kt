@@ -1,10 +1,7 @@
 package com.android.base.utils.android.views
 
 import android.graphics.drawable.Drawable
-import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
-import android.text.TextWatcher
+import android.text.*
 import android.text.method.LinkMovementMethod
 import android.widget.Button
 import android.widget.EditText
@@ -140,6 +137,12 @@ fun TextView.enableSpanClickable() {
     movementMethod = LinkMovementMethod.getInstance()
     // 去掉点击事件后的高亮
     highlightColor = ContextCompat.getColor(context, android.R.color.transparent)
+}
+
+fun EditText.disableEdit() {
+    isFocusable = false
+    isFocusableInTouchMode = false
+    inputType = InputType.TYPE_NULL
 }
 
 fun EditText.disableEmojiEntering() {
