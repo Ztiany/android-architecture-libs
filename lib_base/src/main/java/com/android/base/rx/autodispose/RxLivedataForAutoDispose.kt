@@ -1,12 +1,12 @@
-package com.android.base.rx
+package com.android.base.rx.autodispose
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.android.base.data.State
 import com.github.dmstocking.optional.java.util.Optional
-import io.reactivex.*
+import com.uber.autodispose.*
 
-fun <T> Observable<T>.toResourceLiveData(): LiveData<State<T>> {
+fun <T> ObservableSubscribeProxy<T>.toResourceLiveData(): LiveData<State<T>> {
     val mutableLiveData = MutableLiveData<State<T>>()
     mutableLiveData.value = State.loading()
     subscribe(
@@ -20,7 +20,7 @@ fun <T> Observable<T>.toResourceLiveData(): LiveData<State<T>> {
     return mutableLiveData
 }
 
-fun <T> Observable<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>> {
+fun <T> ObservableSubscribeProxy<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>> {
     val mutableLiveData = MutableLiveData<State<T>>()
     mutableLiveData.value = State.loading()
     subscribe(
@@ -34,7 +34,7 @@ fun <T> Observable<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>>
     return mutableLiveData
 }
 
-fun <T> Flowable<T>.toResourceLiveData(): LiveData<State<T>> {
+fun <T> FlowableSubscribeProxy<T>.toResourceLiveData(): LiveData<State<T>> {
     val mutableLiveData = MutableLiveData<State<T>>()
     mutableLiveData.value = State.loading()
     subscribe(
@@ -48,7 +48,7 @@ fun <T> Flowable<T>.toResourceLiveData(): LiveData<State<T>> {
     return mutableLiveData
 }
 
-fun <T> Flowable<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>> {
+fun <T> FlowableSubscribeProxy<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>> {
     val mutableLiveData = MutableLiveData<State<T>>()
     mutableLiveData.value = State.loading()
     subscribe(
@@ -62,7 +62,7 @@ fun <T> Flowable<Optional<T>>.optionalToResourceLiveData(): LiveData<State<T>> {
     return mutableLiveData
 }
 
-fun Completable.toResourceLiveData(): LiveData<State<Any>> {
+fun CompletableSubscribeProxy.toResourceLiveData(): LiveData<State<Any>> {
     val mutableLiveData = MutableLiveData<State<Any>>()
     mutableLiveData.value = State.loading()
     subscribe(
@@ -76,7 +76,7 @@ fun Completable.toResourceLiveData(): LiveData<State<Any>> {
     return mutableLiveData
 }
 
-fun <T> Observable<T>.toLiveData(): LiveData<T> {
+fun <T> ObservableSubscribeProxy<T>.toLiveData(): LiveData<T> {
     val liveData = MutableLiveData<T>()
     this.subscribeIgnoreError {
         liveData.postValue(it)
@@ -84,7 +84,7 @@ fun <T> Observable<T>.toLiveData(): LiveData<T> {
     return liveData
 }
 
-fun <T> Flowable<T>.toLiveData(): LiveData<T> {
+fun <T> FlowableSubscribeProxy<T>.toLiveData(): LiveData<T> {
     val liveData = MutableLiveData<T>()
     this.subscribeIgnoreError {
         liveData.postValue(it)
@@ -92,7 +92,7 @@ fun <T> Flowable<T>.toLiveData(): LiveData<T> {
     return liveData
 }
 
-fun <T> Single<T>.toLiveData(): LiveData<T> {
+fun <T> SingleSubscribeProxy<T>.toLiveData(): LiveData<T> {
     val liveData = MutableLiveData<T>()
     this.subscribeIgnoreError {
         liveData.postValue(it)
@@ -100,7 +100,7 @@ fun <T> Single<T>.toLiveData(): LiveData<T> {
     return liveData
 }
 
-fun <T> Maybe<T>.toLiveData(): LiveData<T> {
+fun <T> MaybeSubscribeProxy<T>.toLiveData(): LiveData<T> {
     val liveData = MutableLiveData<T>()
     this.subscribeIgnoreError {
         liveData.postValue(it)

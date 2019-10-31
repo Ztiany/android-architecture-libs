@@ -56,9 +56,13 @@ public abstract class BannerPagerAdapter extends PagerAdapter {
         setTransitionName(imageView);
         callImageClicked(position, imageView);
         String url = mEntities.get(position);
-        ImageLoaderFactory.getImageLoader().display(imageView, url);
+        displayImage(imageView, url);
         container.addView(imageView, 0);
         return imageView;
+    }
+
+    protected void displayImage(@NonNull ImageView imageView, @NonNull String url) {
+        ImageLoaderFactory.getImageLoader().display(imageView, url);
     }
 
     protected final void callImageClicked(int position, ImageView imageView) {

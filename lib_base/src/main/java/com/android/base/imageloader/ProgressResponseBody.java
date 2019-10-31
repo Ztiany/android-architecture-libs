@@ -47,6 +47,7 @@ abstract class ProgressResponseBody extends ResponseBody {
 
     private Source source(Source source) {
         return new ForwardingSource(source) {
+
             private long mContentLength;
             private long totalBytesRead = 0L;
             private long lastRefreshTime = 0L;  //最后一次刷新的时间
@@ -54,6 +55,7 @@ abstract class ProgressResponseBody extends ResponseBody {
             @Override
             public long read(@NonNull Buffer sink, long byteCount) throws IOException {
                 long bytesRead;
+
                 try {
                     bytesRead = super.read(sink, byteCount);
                 } catch (IOException e) {
@@ -69,6 +71,7 @@ abstract class ProgressResponseBody extends ResponseBody {
 
                 // read() returns the number of bytes read, or -1 if this source is exhausted.
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
+
                 long curTime = SystemClock.elapsedRealtime();
                 long intervalTime = curTime - lastRefreshTime;
 

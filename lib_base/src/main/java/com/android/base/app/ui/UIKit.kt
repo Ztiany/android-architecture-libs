@@ -31,7 +31,7 @@ fun <H, T> H.handleLiveState(
         when {
             state.isError -> {
                 Timber.d("handleLiveState -> isError")
-                dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+                dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                     if (onError != null) {
                         onError(state.error())
                     } else {
@@ -45,7 +45,7 @@ fun <H, T> H.handleLiveState(
             }
             state.isSuccess -> {
                 Timber.d("handleLiveState -> isSuccess")
-                dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+                dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                     onSuccess(state.get())
                 }
             }//success end
@@ -78,7 +78,7 @@ fun <T> LoadingView.handleState(
     when {
         state.isError -> {
             Timber.d("handleState -> isError")
-            dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+            dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                 stateHandler.onError?.invoke(state.error())
             }
         }
@@ -88,7 +88,7 @@ fun <T> LoadingView.handleState(
         }
         state.isSuccess -> {
             Timber.d("handleState -> isSuccess")
-            dismissLoadingDialog(Sword.get().minimumShowingDialogMills()) {
+            dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                 stateHandler.onSuccess?.invoke(state.get())
                 if (state.hasData()) {
                     stateHandler.onSuccessWithData?.invoke(state.data())
@@ -134,7 +134,7 @@ fun RefreshListLayout<*>.handleListError(throwable: Throwable) {
         loadMoreFailed()
     }
     if (isEmpty) {
-        val errorTypeClassifier = Sword.get().errorClassifier()
+        val errorTypeClassifier = Sword.errorClassifier
         if (errorTypeClassifier != null) {
             when {
                 errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
@@ -284,7 +284,7 @@ fun RefreshStateLayout.handleResultError(throwable: Throwable) {
     if (isRefreshing) {
         refreshCompleted()
     }
-    val errorTypeClassifier = Sword.get().errorClassifier()
+    val errorTypeClassifier = Sword.errorClassifier
     if (errorTypeClassifier != null) {
         when {
             errorTypeClassifier.isNetworkError(throwable) -> {

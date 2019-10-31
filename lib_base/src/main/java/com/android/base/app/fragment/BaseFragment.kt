@@ -236,10 +236,8 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         return if (loadingViewImpl != null) {
             loadingViewImpl
         } else {
-            loadingView = onCreateLoadingView()
-                    ?: Sword.get().loadingViewFactory.createLoadingDelegate(requireContext())
-            loadingView
-                    ?: throw NullPointerException("you need to config LoadingViewFactory")
+            loadingView = onCreateLoadingView() ?: Sword.loadingViewFactory?.invoke(requireContext())
+            loadingView ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
         }
     }
 

@@ -1,5 +1,6 @@
 package com.android.base.rx;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,18 +22,17 @@ public class RxBusTest {
     private C mC1;
 
     private static class A {
+
         final String name;
 
         private A(String name) {
             this.name = "A  " + name;
         }
 
+        @NotNull
         @Override
         public String toString() {
-            return "A{" +
-                    "name='" + name + '\'' +
-                    '}';
-        }
+            return "A{" + "name='" + name + '\'' + '}'; }
     }
 
     private static class C extends A {
@@ -40,11 +40,10 @@ public class RxBusTest {
             super(name);
         }
 
+        @NotNull
         @Override
         public String toString() {
-            return "C {" +
-                    "name='" + name + '\'' +
-                    '}';
+            return "C {" + "name='" + name + '\'' + '}';
         }
     }
 
@@ -55,11 +54,10 @@ public class RxBusTest {
             this.name = "B  " + name;
         }
 
+        @NotNull
         @Override
         public String toString() {
-            return "B{" +
-                    "name='" + name + '\'' +
-                    '}';
+            return "B{" + "name='" + name + '\'' + '}';
         }
     }
 
@@ -102,7 +100,7 @@ public class RxBusTest {
     }
 
     @Test
-    public void send() throws Exception {
+    public void send() {
         A a = new A("A01");
         mRxBus.send(a);
         Assert.assertSame(a, mA);
@@ -113,7 +111,6 @@ public class RxBusTest {
         Assert.assertNotSame(b, mB);
         Assert.assertSame(b, mB1);
 
-
         C c = new C("C01");
         mRxBus.send("C", c);
         Assert.assertNotSame(c, mC);
@@ -121,7 +118,6 @@ public class RxBusTest {
 
         mRxBus.send("A", c);
         mRxBus.send(c);
-
     }
 
 }

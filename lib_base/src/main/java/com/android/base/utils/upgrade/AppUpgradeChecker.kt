@@ -181,7 +181,7 @@ object AppUpgradeChecker {
     }
 
     private fun safeContext(onContext: (Activity) -> Unit) {
-        val topActivity = Sword.get().topActivity
+        val topActivity = Sword.topActivity
         if (topActivity != null) {
             onContext(topActivity)
         } else {
@@ -189,7 +189,7 @@ object AppUpgradeChecker {
                 override fun onBackground() = Unit
                 override fun onForeground() {
                     AppUtils.unregisterAppStatusChangedListener(this)
-                    Sword.get().topActivity?.let { onContext(it) }
+                    Sword.topActivity?.let { onContext(it) }
                 }
             })
         }

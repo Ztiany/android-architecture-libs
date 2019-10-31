@@ -56,6 +56,7 @@ final class ProgressManager {
         //multi
         List<WeakReference<ProgressListener>> weakReferences = mMultiResponseListeners.get(url);
         if (!Checker.isEmpty(weakReferences)) {
+            assert weakReferences != null;
             for (WeakReference<ProgressListener> weakReference : weakReferences) {
                 ProgressListener progressListener = weakReference.get();
                 if (progressListener != null) {
@@ -78,6 +79,7 @@ final class ProgressManager {
         //multi
         List<WeakReference<ProgressListener>> weakReferences = mMultiResponseListeners.get(url);
         if (!Checker.isEmpty(weakReferences)) {
+            assert weakReferences != null;
             for (WeakReference<ProgressListener> weakReference : weakReferences) {
                 ProgressListener progressListener = weakReference.get();
                 if (progressListener != null) {
