@@ -19,12 +19,39 @@ import com.blankj.utilcode.util.Utils
 import timber.log.Timber
 import java.io.File
 
+/**
+ * A tool for checking app upgrade.
+ *
+ * usage, when automatic check new version:
+ *
+ * ```
+ *       AppUpgradeChecker.checkAppUpgrade()
+ * ```
+ *
+ * usage, when click to check new version:
+ * ```
+ *       if (AppUpgradeChecker.isDownloading) {
+ *          showMessage("正在下载更新")
+ *          return@setOnClickListener
+ *       }
+ *
+ *       AppUpgradeChecker.checkAppUpgrade(false)
+ *
+ *       if (!subscribed) {
+ *          subscribeUpgradeInfo()
+ *          subscribed = true
+ *      }
+ * ```
+ */
 object AppUpgradeChecker {
 
     private var successOnce = false
 
     var isDownloading = false
         private set
+
+    val isChecking: Boolean
+        get() = currentState.isLoading
 
     private var currentState = State.noChange<UpgradeInfo>()
         set(value) {
@@ -33,7 +60,7 @@ object AppUpgradeChecker {
         }
 
     private fun notifyStateChanged(state: State<UpgradeInfo>) {
-        innerLiveState.postValue(state)
+        innerLiveState.value = state
     }
 
     private val innerLiveState = MutableLiveData<State<UpgradeInfo>>()
@@ -54,14 +81,14 @@ object AppUpgradeChecker {
         AppUpgradeChecker.upgradeInteractor = upgradeInteractor
     }
 
-    fun checkAppUpgrade(force: Boolean = false) {
+    fun checkAppUpgrade(silence: Boolean = true) {
         Timber.d("checkAppUpgrade-->currentState == $currentState")
         /*正在检查*/
         if (currentState.isLoading) {
             return
         }
         /*已经检查过了*/
-        if (!force && successOnce) {
+        if (silence && successOnce) {
             return
         }
         /*正在下载*/
@@ -78,7 +105,6 @@ object AppUpgradeChecker {
                 .observeOnUI()
                 .subscribe(
                         { upgradeInfo ->
-                            currentState = State.success(upgradeInfo)
                             successOnce = true
                             processUpdateInfo(upgradeInfo)
                         },
@@ -89,19 +115,19 @@ object AppUpgradeChecker {
     }
 
     private fun processUpdateInfo(upgradeInfo: UpgradeInfo) {
+        currentState = State.success(upgradeInfo)
         if (upgradeInfo.isNewVersion) {
             AppUpgradeChecker.upgradeInfo = upgradeInfo
             safeContext {
                 upgradeInteractor.showUpgradeDialog(it, upgradeInfo,
                         onCancel = {
-                            currentState = State.success()
+                            //do nothing
                         },
                         onConfirm = {
                             doUpdate()
-                        })
+                        }
+                )
             }
-        } else {
-            currentState = State.success()
         }
     }
 
