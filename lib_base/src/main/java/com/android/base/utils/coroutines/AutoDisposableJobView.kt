@@ -1,4 +1,4 @@
-package com.bennyhuo.kotlin.coroutines.android.autodisposable
+package com.android.base.utils.coroutines
 
 import android.view.View
 import kotlinx.coroutines.*
