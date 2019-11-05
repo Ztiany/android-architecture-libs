@@ -9,7 +9,6 @@ import com.android.base.app.Sword
 import com.android.base.data.State
 import com.android.base.data.StateHandler
 import com.android.base.utils.common.isEmpty
-import timber.log.Timber
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------
 interface UIErrorHandler {
@@ -22,6 +21,7 @@ interface UIErrorHandler {
 
 fun <H, T> H.handleLiveState(
         liveData: LiveData<State<T>>,
+        loadingMessage: CharSequence = "",
         forceLoading: Boolean = true,
         onError: ((Throwable) -> Unit)? = null,
         onSuccess: (T?) -> Unit
@@ -30,7 +30,6 @@ fun <H, T> H.handleLiveState(
     liveData.observe(this, Observer { state ->
         when {
             state.isError -> {
-                Timber.d("handleLiveState -> isError")
                 dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                     if (onError != null) {
                         onError(state.error())
@@ -40,11 +39,9 @@ fun <H, T> H.handleLiveState(
                 }
             }
             state.isLoading -> {
-                Timber.d("handleLiveState -> isLoading")
-                showLoadingDialog(!forceLoading)
+                showLoadingDialog(loadingMessage, !forceLoading)
             }
             state.isSuccess -> {
-                Timber.d("handleLiveState -> isSuccess")
                 dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                     onSuccess(state.get())
                 }
@@ -56,18 +53,20 @@ fun <H, T> H.handleLiveState(
 
 fun <H, T> H.handleLiveState2(
         liveData: LiveData<State<T>>,
+        loadingMessage: CharSequence = "",
         forceLoading: Boolean = true,
         handler: StateHandler<T>.() -> Unit
 ) where H : UIErrorHandler, H : LoadingView, H : LifecycleOwner {
 
     liveData.observe(this, Observer { state ->
-        handleState(state, forceLoading, handler)
+        handleState(state, loadingMessage, forceLoading, handler)
     })
 
 }
 
 fun <T> LoadingView.handleState(
         state: State<T>,
+        loadingMessage: CharSequence = "",
         forceLoading: Boolean = true,
         handler: StateHandler<T>.() -> Unit
 ) {
@@ -77,17 +76,14 @@ fun <T> LoadingView.handleState(
 
     when {
         state.isError -> {
-            Timber.d("handleState -> isError")
             dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                 stateHandler.onError?.invoke(state.error())
             }
         }
         state.isLoading -> {
-            Timber.d("handleState -> isLoading")
-            showLoadingDialog(!forceLoading)
+            showLoadingDialog(loadingMessage, !forceLoading)
         }
         state.isSuccess -> {
-            Timber.d("handleState -> isSuccess")
             dismissLoadingDialog(Sword.minimumShowingDialogMills) {
                 stateHandler.onSuccess?.invoke(state.get())
                 if (state.hasData()) {
@@ -250,7 +246,13 @@ fun <T> RefreshListLayout<T>.submitListResultWithoutState(list: List<T>?, hasMor
 }
 
 //----------------------------------------------Loading In StateView----------------------------------------------
-fun <T> RefreshStateLayout.handleStateResult(state: State<T>, onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+private fun <T> newDefaultChecker(): ((T) -> Boolean)? {
+    return { t ->
+        (t is CharSequence && (t.isEmpty() || t.isBlank())) || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())
+    }
+}
+
+fun <T> RefreshStateLayout.handleStateResult(state: State<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
     when {
         state.isLoading -> {
             showLoadingLayout()
@@ -259,24 +261,24 @@ fun <T> RefreshStateLayout.handleStateResult(state: State<T>, onEmpty: (() -> Un
             handleResultError(state.error())
         }
         state.isSuccess -> {
-            handleResult(state.get(), onEmpty, onResult)
+            handleResult(state.get(), isEmpty, onEmpty, onResult)
         }
     }
 }
 
-fun <T> RefreshStateLayout.handleResult(t: T?, onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+fun <T> RefreshStateLayout.handleResult(t: T?, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
     if (isRefreshing) {
         refreshCompleted()
     }
-    if (t == null || (t is CharSequence && (t.isEmpty() || t.isBlank())) || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())) {
+    if (t == null || isEmpty?.invoke(t) == true) {
         if (onEmpty != null) {
             onEmpty()
         } else {
             showEmptyLayout()
         }
     } else {
-        onResult.invoke(t)
         showContentLayout()
+        onResult.invoke(t)
     }
 }
 
@@ -288,11 +290,9 @@ fun RefreshStateLayout.handleResultError(throwable: Throwable) {
     if (errorTypeClassifier != null) {
         when {
             errorTypeClassifier.isNetworkError(throwable) -> {
-                Timber.d("isNetworkError showNetErrorLayout")
                 showNetErrorLayout()
             }
             errorTypeClassifier.isServerError(throwable) -> {
-                Timber.d("isServerError showServerErrorLayout")
                 showServerErrorLayout()
             }
             else -> showErrorLayout()
