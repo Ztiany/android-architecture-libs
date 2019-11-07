@@ -11,7 +11,7 @@ object EnvironmentContext {
 
     private val spCache = SpCache(BaseUtils.getAppContext().packageName, false)
 
-    private val envMap = HashMap<String, MutableList<Environment>>()
+    private val envMap = LinkedHashMap<String, MutableList<Environment>>()
 
     private fun addEnv(category: String, env: Environment) {
         envMap[category].ifNonNull {
