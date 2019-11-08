@@ -1,27 +1,29 @@
-<manifest package="com.ztiany.mediaselector"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ztiany.mediaselector">
 
     <application>
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
-            android:name=".LimitedBoxingActivity"
+            android:name="com.bilibili.boxing_impl.ui.BoxingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Boxing.AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/Boxing.AppTheme.NoActionBar" />
 
         <activity
-            android:name=".LimitedBoxingViewActivity"
+            android:name="com.bilibili.boxing_impl.ui.BoxingViewActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Boxing.AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/Boxing.AppTheme.NoActionBar" />
 
+        <activity
+            android:name="com.bilibili.boxing_impl.ui.BoxingBottomSheetActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Boxing.AppTheme.NoActionBar" />
 
     </application>
 

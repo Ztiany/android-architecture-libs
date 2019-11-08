@@ -27,6 +27,10 @@ android {
         main {
             java.srcDirs += "src/github/java"
             res.srcDirs += "src/github/res"
+            java.srcDirs += "src/boxing/java"
+            res.srcDirs += "src/boxing/res"
+            java.srcDirs += "src/boxing-impl/java"
+            res.srcDirs += "src/boxing-impl/res"
         }
     }
 
@@ -36,28 +40,8 @@ dependencies {
     //support
     implementation androidLibraries.appcompat
     implementation androidLibraries.material
-
     /*imageLoader*/
     compileOnly thirdLibraries.glide
-
-    implementation('com.bilibili:boxing:1.0.4') {
-        exclude group: 'com.android.support'
-        exclude group: 'com.chensl.rotatephotoview'
-        exclude group: 'com.android.support.test.espresso'
-        exclude group: 'com.android.support.test'
-        exclude group: 'org.powermock'
-        exclude group: 'org.robolectric'
-    }
-
-    implementation('com.bilibili:boxing-impl:1.0.4') {
-        exclude group: 'com.android.support'
-        exclude group: 'com.chensl.rotatephotoview'
-        exclude group: 'com.android.support.test.espresso'
-        exclude group: 'com.android.support.test'
-        exclude group: 'org.powermock'
-        exclude group: 'org.robolectric'
-    }
-
     implementation('com.github.yalantis:ucrop:2.2.4') {
         exclude group: 'com.squareup.okhttp3'
     }

@@ -1,6 +1,6 @@
 # 多媒体文件选择库
 
-目前基于boxing修改
+基于 boxing 修改，因为 [Android Q SQLiteException](https://github.com/bilibili/boxing/issues/154) 问题没有被修复，暂时依赖源码。
 
 ## 1 AndroidN  在 FileProvider 的 xm l配置中加入：
 
@@ -13,7 +13,7 @@
 
 [RotatePhotoView](https://github.com/ChenSiLiang/RotatePhotoView)
 
-## 3 其他备选参考
+## 3 other options
 
 -  [boxing](https://github.com/Bilibili/boxing)
 -  [Matisse](https://github.com/zhihu/Matisse)
