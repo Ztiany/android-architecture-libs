@@ -23,6 +23,8 @@ import com.blankj.utilcode.util.AppUtils
 import dagger.android.AndroidInjection
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Flowable
+import io.reactivex.plugins.RxJavaPlugins
+import timber.log.Timber
 
 /**
  * useful tools for android development, just like a sword.
@@ -72,6 +74,16 @@ object Sword {
     /**设置默认的 Fragment 转场动画*/
     fun setDefaultFragmentAnimator(animator: FragmentAnimator?): Sword {
         FragmentConfig.setDefaultFragmentAnimator(animator)
+        return this
+    }
+
+    /** RxJava2的一个重要的设计理念是：不吃掉任何一个异常。产生的问题是，当RxJava2“downStream”取消订阅后，“upStream”仍有可能抛出异常，这时由于已经取消订阅，
+     * “downStream”无法处理异常，此时的异常无人处理，便会导致程序崩溃,解决方案：在Application设置RxJavaPlugin的ErrorHandler。
+     * refer: [RxJava2使用过程中遇到的坑](https://github.com/qqiabc521/blog/issues/3) */
+    fun setupRxJavaErrorHandler(): Sword {
+        RxJavaPlugins.setErrorHandler {
+            Timber.d("RxJavaPlugins error handler receives error: $it")
+        }
         return this
     }
 
