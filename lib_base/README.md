@@ -1,6 +1,6 @@
 # Android Development Base Library
 
-## 1 Third party Libraries
+## 1 Third part Libraries
 
 - [AndroidX](https://developer.android.com/jetpack/androidx)
 - [RxJava(2)](https://github.com/ReactiveX/RxJava)
