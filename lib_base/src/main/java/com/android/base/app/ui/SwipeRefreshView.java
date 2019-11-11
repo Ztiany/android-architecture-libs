@@ -17,8 +17,10 @@ class SwipeRefreshView implements RefreshView {
      */
     @Override
     public void autoRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        doRefresh();
+        mSwipeRefreshLayout.post(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            doRefresh();
+        });
     }
 
     @Override
