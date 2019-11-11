@@ -110,7 +110,7 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
 
     @Override
     public void replace(T oldElem, T newElem) {
-        if (mData != null && mData.contains(newElem)) {
+        if (mData != null && mData.contains(oldElem)) {
             replaceAt(mData.indexOf(oldElem), newElem);
         }
     }
