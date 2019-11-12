@@ -10,6 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import com.android.base.interfaces.TextWatcherAdapter
 import com.google.android.material.textfield.TextInputLayout
+import java.util.regex.Pattern
 
 
 inline fun TextView.textWatcher(init: KTextWatcher.() -> Unit) = addTextChangedListener(KTextWatcher().apply(init))
@@ -160,6 +161,34 @@ fun EditText.disableEmojiEntering() {
     //添加新的过滤规则
     newFilters[oldFiltersLength] = filter
     filters = newFilters
+}
+
+
+fun EditText.disableEntering(regex: String) {
+    val filter = RegexOnlyFilter(regex)
+    val oldFilters = filters
+    val oldFiltersLength = oldFilters.size
+    val newFilters = arrayOfNulls<InputFilter>(oldFiltersLength + 1)
+    if (oldFiltersLength > 0) {
+        System.arraycopy(oldFilters, 0, newFilters, 0, oldFiltersLength)
+    }
+    //添加新的过滤规则
+    newFilters[oldFiltersLength] = filter
+    filters = newFilters
+}
+
+private class RegexOnlyFilter(regex: String) : InputFilter {
+
+    private val pattern: Pattern = Pattern.compile(regex)
+
+    override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dstart: Int, dend: Int): CharSequence? {
+        val matcher = pattern.matcher(source)
+        return if (!matcher.find()) {
+            null
+        } else {
+            ""
+        }
+    }
 }
 
 private class EmojiExcludeFilter : InputFilter {
