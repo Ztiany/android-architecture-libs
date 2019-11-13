@@ -232,7 +232,8 @@ public class PullToZoomScrollView extends NestedScrollView {
         float addOffset = (height - mOriginContainerViewHeight) * mZoomFactory / mOriginContainerViewHeight;
         float scale = height * 1.0F / mOriginContainerViewHeight + addOffset;
         Timber.d("scale = %f", scale);
-        if (!Float.isInfinite(scale)) {
+
+        if (!Float.isInfinite(scale) && !Float.isNaN(scale)) {
             mZoomView.setScaleX(scale);
             mZoomView.setScaleY(scale);
         } else {
