@@ -116,7 +116,7 @@ object Sword {
         return this
     }
 
-    /** 获取可观察的 app 生命周期  */
+    /** 获取可观察的 app 生命周期，发射 tue 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
     val appState: Flowable<Boolean>
         get() = applicationDelegate.appStatus
 
