@@ -155,7 +155,11 @@ public abstract class TabManager {
         }
 
         FragmentInfo homePage() {
-            return mPages.get(0);
+            return mPages.get(defaultIndex());
+        }
+
+        protected int defaultIndex() {
+            return 0;
         }
 
         public int size() {
