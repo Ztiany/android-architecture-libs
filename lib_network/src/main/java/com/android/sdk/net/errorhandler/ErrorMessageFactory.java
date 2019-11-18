@@ -22,7 +22,7 @@ public class ErrorMessageFactory {
 
     public static CharSequence createMessage(Throwable exception) {
         ErrorMessage mErrorMessage = NetContext.get().netProvider().errorMessage();
-        Timber.d("createMessage with：" + exception);
+        Timber.d("createMessage with：%s", exception.toString());
 
         CharSequence message = null;
         //SocketTimeoutException android NetworkErrorException extends IOException
