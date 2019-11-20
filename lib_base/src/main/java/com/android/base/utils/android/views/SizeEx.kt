@@ -1,3 +1,5 @@
+@file:JvmName("Sizes")
+
 package com.android.base.utils.android.views
 
 import android.util.TypedValue

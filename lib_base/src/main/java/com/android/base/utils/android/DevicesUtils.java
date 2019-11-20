@@ -64,7 +64,7 @@ public class DevicesUtils {
                 serial = Build.class.getField("SERIAL").get(null).toString();
             }
         } catch (Exception e) {
-            Timber.e(e,"getDeviceId");
+            Timber.w("getDeviceId error: " + e.getMessage());
         }
         if (serial == null) {
             //serial 需要一个初始化
@@ -74,9 +74,8 @@ public class DevicesUtils {
         return new UUID(M_SZ_DEV_ID_SHORT.hashCode(), serial.hashCode()).toString();
     }
 
-
     @SuppressLint("ObsoleteSdkInt")
-    public static String printSystemInfo() {
+    public static void printSystemInfo() {
         Date date = new Date(System.currentTimeMillis());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = dateFormat.format(date);
@@ -117,11 +116,14 @@ public class DevicesUtils {
         }
 
         sb.append("\n_______ GINGERBREAD-9 _______");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            sb.append("\nSERIAL             :").append(Build.SERIAL);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                sb.append("\nSERIAL             :").append(Build.SERIAL);
+            }
+        } catch (Exception ignore) {
         }
+
         Log.i("DEVICES", sb.toString());
-        return sb.toString();
     }
 
 }
