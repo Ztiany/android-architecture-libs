@@ -13,10 +13,9 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.android.base.R;
 
-import timber.log.Timber;
-
 
 /**
+ * usage:
  * <pre>
  *     {@code
  *     <com.android.base.widget.pulltozoom.PullToZoomScrollView
@@ -94,8 +93,10 @@ public class PullToZoomScrollView extends NestedScrollView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PullToZoomScrollView);
         mZoomViewId = typedArray.getResourceId(R.styleable.PullToZoomScrollView_psv_zoom_view, -1);
         mContainerViewId = typedArray.getResourceId(R.styleable.PullToZoomScrollView_psv_header_view, -1);
-        mDamp = typedArray.getInteger(R.styleable.PullToZoomScrollView_psv_damp, 2);//默认阻尼2
-        mMaxZoomHeight = typedArray.getInteger(R.styleable.PullToZoomScrollView_psv_max_over, dpToPx(1500));//默认最大scroll 1500DP
+        //默认阻尼2
+        mDamp = typedArray.getInteger(R.styleable.PullToZoomScrollView_psv_damp, 2);
+        //默认最大scroll 1500DP
+        mMaxZoomHeight = typedArray.getInteger(R.styleable.PullToZoomScrollView_psv_max_over, dpToPx(1500));
         mZoomFactory = typedArray.getFloat(R.styleable.PullToZoomScrollView_psv_zoom_factory, 2.0F);
         typedArray.recycle();
 
@@ -126,8 +127,8 @@ public class PullToZoomScrollView extends NestedScrollView {
         getInnerViewHeight();
     }
 
-    private boolean hasInnerView() {
-        return mContainerView != null && mZoomView != null;
+    private boolean innerViewInitialized() {
+        return mContainerView != null && mZoomView != null && mOriginContainerViewHeight != 0 && mOriginZoomViewHeight != 0;
     }
 
     @Override
@@ -145,22 +146,19 @@ public class PullToZoomScrollView extends NestedScrollView {
     private boolean processOverScrollBy(int deltaX, int deltaY, int scrollX,
                                         int scrollY, int scrollRangeX, int scrollRangeY,
                                         int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
-        if (!hasInnerView()) {
+        if (!innerViewInitialized()) {
             return false;
         }
         if (mContainerView.getHeight() <= mMaxZoomHeight && isTouchEvent) {
             if (deltaY < 0) {
                 int offset = (int) (deltaY * 1.0F / mDamp);
                 if (mContainerView.getHeight() - offset >= mOriginContainerViewHeight) {
-                    int height = mContainerView
-                            .getHeight() - offset < mMaxZoomHeight ?
-                            mContainerView.getHeight() - offset : mMaxZoomHeight;
+                    int height = mContainerView.getHeight() - offset < mMaxZoomHeight ? mContainerView.getHeight() - offset : mMaxZoomHeight;
                     setContainerHeight(height);
                 }
             } else {
                 if (mContainerView.getHeight() > mOriginContainerViewHeight) {
-                    int height = mContainerView.getHeight() - deltaY > mOriginContainerViewHeight ?
-                            mContainerView.getHeight() - deltaY : mOriginContainerViewHeight;
+                    int height = mContainerView.getHeight() - deltaY > mOriginContainerViewHeight ? mContainerView.getHeight() - deltaY : mOriginContainerViewHeight;
                     setContainerHeight(height);
                     return true;
                 }
@@ -172,7 +170,7 @@ public class PullToZoomScrollView extends NestedScrollView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (hasInnerView()) {
+        if (innerViewInitialized()) {
             int action = ev.getAction();
             if (action == MotionEvent.ACTION_DOWN) {
                 cancelAnim();
@@ -231,9 +229,8 @@ public class PullToZoomScrollView extends NestedScrollView {
         mZoomView.setPivotY(mOriginContainerViewHeight / 3F);
         float addOffset = (height - mOriginContainerViewHeight) * mZoomFactory / mOriginContainerViewHeight;
         float scale = height * 1.0F / mOriginContainerViewHeight + addOffset;
-        Timber.d("scale = %f", scale);
 
-        if (!Float.isInfinite(scale) && !Float.isNaN(scale)) {
+        if (!Float.isInfinite(scale) && !Float.isNaN(scale) && scale >= 1F) {
             mZoomView.setScaleX(scale);
             mZoomView.setScaleY(scale);
         } else {
