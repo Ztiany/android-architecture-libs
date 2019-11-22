@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.io.File;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -29,6 +30,7 @@ public class SystemMediaSelector {
     private static final int REQUEST_CROP = 197;
     private static final int REQUEST_ALBUM = 198;
     private static final int REQUEST_FILE = 199;
+    private static final int REQUEST_LINRARY_CROP = 200;
 
     private static final String POSTFIX = ".file.provider";
     private String mAuthority;
@@ -37,11 +39,18 @@ public class SystemMediaSelector {
     private Activity mActivity;
     private Fragment mFragment;
 
-    private String mSavePhotoPath;
-    private CropOptions mCropOptions;
     private final CropOptions mDefaultOptions = new CropOptions();
     private String mCropTitle;
     private boolean mNeedCrop;
+    private CropOptions mCropOptions;
+
+    /*使用内部的裁剪库（推荐，系统裁剪兼容性差）*/
+    private boolean mUseInnerCrop = true;
+
+    /*用于保存图片*/
+    private String mSavePhotoPath;
+    /*某些手机，拍照和裁剪不能是同一个路径*/
+    private String mSavePhotoPathForCropCamera;
 
     public SystemMediaSelector(Activity activity, MediaSelectorCallback systemMediaSelectorCallback) {
         mActivity = activity;
@@ -57,10 +66,10 @@ public class SystemMediaSelector {
 
     private void init() {
         mAuthority = getContext().getPackageName().concat(POSTFIX);
-        mDefaultOptions.setAspectX(1);
-        mDefaultOptions.setAspectY(1);
-        mDefaultOptions.setOutputX(1000);
-        mDefaultOptions.setOutputY(1000);
+        mDefaultOptions.setAspectX(0);
+        mDefaultOptions.setAspectY(0);
+        mDefaultOptions.setOutputX(0);
+        mDefaultOptions.setOutputY(0);
     }
 
     private Context getContext() {
@@ -95,26 +104,63 @@ public class SystemMediaSelector {
         return mCropOptions == null ? mDefaultOptions : mCropOptions;
     }
 
+    public void setUseInnerCrop(boolean useInnerCrop) {
+        mUseInnerCrop = useInnerCrop;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
-    // Take method
+    // take photo from camera
     ///////////////////////////////////////////////////////////////////////////
 
     public boolean takePhotoFromCamera(String savePath) {
         mSavePhotoPath = savePath;
         mNeedCrop = false;
-        return toCamera();
+        return toCamera(mSavePhotoPath);
     }
 
     /**
      * 为了保证裁裁剪图片不出问题，务必指定CropOptions中的各个参数(不要为0，比如魅族手机如果指定OutputX和OutputY为0，则只会裁减出一个像素)，否则可能出现问题
      */
-    public boolean takePhotoFromCameraAndCrop(String savePath, CropOptions cropOptions, String cropTitle) {
+    public boolean takePhotoFromCameraAndCrop(String savePath, @Nullable CropOptions cropOptions, String cropTitle) {
         mSavePhotoPath = savePath;
+        mSavePhotoPathForCropCamera = Utils.addFilePostfix(mSavePhotoPath, "camera");
         mNeedCrop = true;
         mCropOptions = cropOptions;
         mCropTitle = cropTitle;
-        return toCamera();
+        return toCamera(mSavePhotoPathForCropCamera);
     }
+
+    private boolean toCropPhotoFromCamera() {
+        File targetFile = new File(mSavePhotoPath);
+        File srcFile = new File(mSavePhotoPathForCropCamera);
+        Intent intent = Utils.makeCropIntentNoCovering(getContext(), srcFile, targetFile, mAuthority, getCropOptions(), mCropTitle);
+        try {
+            startActivityForResult(intent, REQUEST_CROP);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "toCropPhotoFromAlbum error", e);
+        }
+        return false;
+    }
+
+    private boolean toCamera(String savePhotoPath) {
+        if (!Utils.hasCamera(getContext())) {
+            return false;
+        }
+        File targetFile = new File(savePhotoPath);
+        Intent intent = Utils.makeCaptureIntent(getContext(), targetFile, mAuthority);
+        try {
+            startActivityForResult(intent, REQUEST_CAMERA);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "takePhotoFromCamera error", e);
+        }
+        return false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // take photo from album
+    ///////////////////////////////////////////////////////////////////////////
 
     public boolean takePhotoFormAlbum() {
         mNeedCrop = false;
@@ -126,7 +172,7 @@ public class SystemMediaSelector {
         }
     }
 
-    public boolean takePhotoFormAlbumAndCrop(String savePhotoPath, CropOptions cropOptions, String cropTitle) {
+    public boolean takePhotoFormAlbumAndCrop(String savePhotoPath, @Nullable CropOptions cropOptions, String cropTitle) {
         mNeedCrop = true;
         mSavePhotoPath = savePhotoPath;
         mCropOptions = cropOptions;
@@ -139,44 +185,22 @@ public class SystemMediaSelector {
         }
     }
 
-    private boolean toCamera() {
-        if (!Utils.hasCamera(getContext())) {
-            return false;
-        }
+    private boolean toCropPhotoFromAlbum(Uri uri) {
         File targetFile = new File(mSavePhotoPath);
-        Intent intent = Utils.makeCaptureIntent(getContext(), targetFile, mAuthority);
-        try {
-            startActivityForResult(intent, REQUEST_CAMERA);
-            return true;
-        } catch (Exception e) {
-            Log.e(TAG, "takePhotoFromCamera error", e);
-        }
-        return false;
-    }
-
-    private boolean toCrop() {
-        File targetFile = new File(mSavePhotoPath);
-        Intent intent = Utils.makeCropIntent(getContext(), targetFile, mAuthority, getCropOptions(), mCropTitle);
+        File srcFile = new File(Utils.getAbsolutePath(getContext(), uri));
+        Intent intent = Utils.makeCropIntentNoCovering(getContext(), srcFile, targetFile, mAuthority, getCropOptions(), mCropTitle);
         try {
             startActivityForResult(intent, REQUEST_CROP);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "toCrop error", e);
+            Log.e(TAG, "toCropPhotoFromAlbum error", e);
         }
         return false;
     }
 
-    private boolean toCrop(Uri uri) {
-        File targetFile = new File(mSavePhotoPath);
-        Intent intent = Utils.makeCropIntent(getContext(), uri, targetFile, mAuthority, getCropOptions(), mCropTitle);
-        try {
-            startActivityForResult(intent, REQUEST_CROP);
-            return true;
-        } catch (Exception e) {
-            Log.e(TAG, "toCrop error", e);
-        }
-        return false;
-    }
+    ///////////////////////////////////////////////////////////////////////////
+    // take photo from album
+    ///////////////////////////////////////////////////////////////////////////
 
     public boolean takeFile() {
         return takeFile(null);
@@ -192,6 +216,7 @@ public class SystemMediaSelector {
         }
         return true;
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // Process Result
     ///////////////////////////////////////////////////////////////////////////
@@ -205,6 +230,17 @@ public class SystemMediaSelector {
             processAlbumResult(resultCode, data);
         } else if (requestCode == REQUEST_FILE) {
             processFileResult(resultCode, data);
+        } else if (requestCode == REQUEST_LINRARY_CROP) {
+            processUCropResult(data);
+        }
+    }
+
+    private void processUCropResult(Intent data) {
+        Uri uCropResult = Utils.getUCropResult(data);
+        if (uCropResult == null) {
+            mMediaSelectorCallback.onTakeFail();
+        } else {
+            mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uCropResult));
         }
     }
 
@@ -227,9 +263,13 @@ public class SystemMediaSelector {
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
                 if (mNeedCrop) {
-                    boolean success = toCrop(uri);
-                    if (!success) {
-                        mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uri));
+                    if (mUseInnerCrop) {
+                        Utils.toUCrop(getContext(), mFragment, Utils.getAbsolutePath(getContext(), uri), mSavePhotoPath, getCropOptions(), REQUEST_LINRARY_CROP);
+                    } else {
+                        boolean success = toCropPhotoFromAlbum(uri);
+                        if (!success) {
+                            mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uri));
+                        }
                     }
                 } else {
                     mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uri));
@@ -260,18 +300,31 @@ public class SystemMediaSelector {
 
     private void processCameraResult(int resultCode, @SuppressWarnings("unused") Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            //检测图片是否被保存下来
-            if (!new File(mSavePhotoPath).exists()) {
-                mMediaSelectorCallback.onTakeFail();
-                return;
-            }
             //需要裁减，可以裁减则进行裁减，否则直接返回
             if (mNeedCrop) {
-                boolean success = toCrop();
-                if (!success) {
-                    mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
+                //检测图片是否被保存下来
+                File photoPath = new File(mSavePhotoPathForCropCamera);
+                if (!photoPath.exists()) {
+                    mMediaSelectorCallback.onTakeFail();
+                    return;
                 }
+
+                if (mUseInnerCrop) {
+                    Utils.toUCrop(getContext(), mFragment, mSavePhotoPathForCropCamera, mSavePhotoPath, getCropOptions(), REQUEST_LINRARY_CROP);
+                } else {
+                    boolean success = toCropPhotoFromCamera();
+                    if (!success) {
+                        photoPath.renameTo(new File(mSavePhotoPath));
+                        mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
+                    }
+                }
+
             } else {
+                //检测图片是否被保存下来
+                if (!new File(mSavePhotoPath).exists()) {
+                    mMediaSelectorCallback.onTakeFail();
+                    return;
+                }
                 mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
             }
         }
@@ -290,6 +343,5 @@ public class SystemMediaSelector {
         }
 
     }
-
 
 }

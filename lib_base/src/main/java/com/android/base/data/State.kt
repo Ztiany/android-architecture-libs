@@ -1,5 +1,7 @@
 package com.android.base.data
 
+import androidx.lifecycle.MutableLiveData
+
 
 /**
  * @author Ztiany
@@ -200,4 +202,12 @@ inline fun <T> State<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): State<T
         onSuccess(t)
     }
     return this
+}
+
+fun <T : Any?> MutableLiveData<State<T>>.postLoading() {
+    postValue(State.loading())
+}
+
+fun <T : Any?> MutableLiveData<State<T>>.postError(error: Throwable) {
+    postValue(State.error(error))
 }

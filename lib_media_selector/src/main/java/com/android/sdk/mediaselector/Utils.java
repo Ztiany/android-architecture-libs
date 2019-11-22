@@ -16,13 +16,18 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 /**
  * See:
@@ -31,10 +36,12 @@ import androidx.core.content.FileProvider;
  * </pre>
  *
  * @author Ztiany
- *         Email: ztiany3@gmail.com
- *         Date : 2017-08-09 10:54
+ * Email: ztiany3@gmail.com
+ * Date : 2017-08-09 10:54
  */
 final class Utils {
+
+    private static final String TAG = "Utils";
 
     private Utils() {
         throw new UnsupportedOperationException("Utils");
@@ -93,9 +100,9 @@ final class Utils {
     /**
      * @param targetFile 源文件，裁剪之后新的图片覆盖此文件
      */
-    static Intent makeCropIntent(Context context, File targetFile, String authority, CropOptions cropOptions, String title) {
+    static Intent makeCropIntentCovering(Context context, File targetFile, String authority, CropOptions cropOptions, String title) {
+        Log.d(TAG, "makeCropIntentCovering() called with: context = [" + context + "], targetFile = [" + targetFile + "], authority = [" + authority + "], cropOptions = [" + cropOptions + "], title = [" + title + "]");
 
-        makeFilePath(targetFile);
         Intent intent = new Intent("com.android.camera.action.CROP");
 
         Uri fileUri;
@@ -117,29 +124,43 @@ final class Utils {
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
+
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, fileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
         intent = Intent.createChooser(intent, title);
         return intent;
     }
 
     /**
      * @param targetFile 目标文件，裁剪之后新的图片保存到此文件
-     * @param src        源文件
+     * @param srcFile    源文件
      */
-    static Intent makeCropIntent(Context context, Uri src, File targetFile, String authority, CropOptions cropOptions, String title) {
+    static Intent makeCropIntentNoCovering(Context context, File srcFile, File targetFile, String authority, CropOptions cropOptions, String title) {
+
+        makeFilePath(targetFile);
 
         Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(src, "image/*");
 
-        Uri fileUri;
+        Uri outputUri;
+        Uri srcUri;
+
         if (Build.VERSION.SDK_INT < 24) {
-            fileUri = Uri.fromFile(targetFile);
+            outputUri = Uri.fromFile(targetFile);
+            srcUri = Uri.fromFile(srcFile);
         } else {
-            fileUri = FileProvider.getUriForFile(context, authority, targetFile);
+            outputUri = FileProvider.getUriForFile(context, authority, targetFile);
+            srcUri = FileProvider.getUriForFile(context, authority, srcFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.setDataAndType(srcUri, "image/*");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+
         intent.putExtra("aspectX", cropOptions.getAspectX());
         intent.putExtra("aspectY", cropOptions.getAspectY());
         intent.putExtra("outputX", cropOptions.getOutputX());
@@ -148,22 +169,83 @@ final class Utils {
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
+
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, outputUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
         intent = Intent.createChooser(intent, title);
         return intent;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Album
+    // UCrop
     ///////////////////////////////////////////////////////////////////////////
 
+    static void toUCrop(Context context, Fragment fragment, String srcPath, String targetPath, CropOptions cropConfig, int requestCode) {
+        Uri srcUri = new Uri.Builder()
+                .scheme("file")
+                .appendPath(srcPath)
+                .build();
+
+        Uri targetUri = new Uri.Builder()
+                .scheme("file")
+                .appendPath(targetPath)
+                .build();
+
+        //参数
+        UCrop.Options crop = new UCrop.Options();
+        crop.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+        crop.withMaxResultSize(cropConfig.getOutputX(), cropConfig.getAspectY());
+        crop.withAspectRatio(cropConfig.getAspectX(), cropConfig.getAspectY());
+
+        //颜色
+        int color = StyleUtils.fetchPrimaryColor(context);
+        crop.setToolbarColor(color);
+        crop.setStatusBarColor(color);
+
+        //开始裁减
+        if (fragment != null) {
+            UCrop.of(srcUri, targetUri)
+                    .withOptions(crop)
+                    .start(context, fragment, requestCode);
+        } else {
+            if (!(context instanceof AppCompatActivity)) {
+                throw new IllegalArgumentException("the context must be instance of AppCompatActivity");
+            }
+            UCrop.of(srcUri, targetUri)
+                    .withOptions(crop)
+                    .start((AppCompatActivity) context, requestCode);
+        }
+    }
+
+    public static Uri getUCropResult(Intent data) {
+        if (data == null) {
+            return null;
+        }
+        Throwable throwable = UCrop.getError(data);
+        if (throwable != null) {
+            return null;
+        }
+        return UCrop.getOutput(data);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Album
+    ///////////////////////////////////////////////////////////////////////////
     static Intent makeAlbumIntent() {
         return new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // 从各种Uri中获取真实的路径
     ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @see "https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175"
+     */
     static String getAbsolutePath(final Context context, final Uri uri) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
@@ -213,14 +295,14 @@ final class Utils {
     }
 
     /**
-     * Get the value of the data column for this Uri. This is useful for
-     * MediaStore Uris, and other file-based ContentProviders.
+     * Get the value of the data column for this Uri. This is useful for MediaStore Uris, and other file-based ContentProviders.
      *
      * @param context       The context.
      * @param uri           The Uri to query.
      * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
+     * @see "https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175"
      */
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
@@ -329,18 +411,6 @@ final class Utils {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // FileUtils
-    ///////////////////////////////////////////////////////////////////////////
-
-    private static boolean makeFilePath(File file) {
-        if (file == null) {
-            return false;
-        }
-        File parent = file.getParentFile();
-        return parent.exists() || parent.mkdirs();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
     //如果照片保存的文件目录是由 getExternalFilesDir() 所提供的，那么，媒体扫描器是不能访问这些文件的，因为照片对于你的APP来说是私有的。
     ///////////////////////////////////////////////////////////////////////////
 
@@ -364,6 +434,70 @@ final class Utils {
         }
         // 最后通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + photoPath)));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // FileUtils
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static boolean makeFilePath(File file) {
+        if (file == null) {
+            return false;
+        }
+        File parent = file.getParentFile();
+        if (parent == null) {
+            return false;
+        }
+        return parent.exists() || parent.mkdirs();
+    }
+
+    private static void makeNewFile(File file) {
+        makeFilePath(file);
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean isSpace(final String s) {
+        if (s == null) return true;
+        for (int i = 0, len = s.length(); i < len; ++i) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String getFileNameNoExtension(final String filePath) {
+        if (isSpace(filePath)) return "";
+        int lastPoi = filePath.lastIndexOf('.');
+        int lastSep = filePath.lastIndexOf(File.separator);
+        if (lastSep == -1) {
+            return (lastPoi == -1 ? filePath : filePath.substring(0, lastPoi));
+        }
+        if (lastPoi == -1 || lastSep > lastPoi) {
+            return filePath.substring(lastSep + 1);
+        }
+        return filePath.substring(lastSep + 1, lastPoi);
+    }
+
+    public static String getFileExtension(final String filePath) {
+        if (isSpace(filePath)) return "";
+        int lastPoi = filePath.lastIndexOf('.');
+        int lastSep = filePath.lastIndexOf(File.separator);
+        if (lastPoi == -1 || lastSep >= lastPoi) return "";
+        return filePath.substring(lastPoi + 1);
+    }
+
+    public static String addFilePostfix(final String filePath, String postfix) {
+        if (isSpace(filePath)) return "";
+        File file = new File(filePath);
+        return file.getParentFile().getAbsolutePath() + File.separator + getFileNameNoExtension(filePath) + postfix + "." + getFileExtension(filePath);
     }
 
 }
