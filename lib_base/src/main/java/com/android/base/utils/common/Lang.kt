@@ -77,7 +77,6 @@ fun closeIO(closeable: Closeable?) {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 }
 
@@ -90,7 +89,6 @@ fun closeIOQuietly(closeable: Closeable?) {
             closeable.close()
         } catch (ignored: IOException) {
         }
-
     }
 }
 

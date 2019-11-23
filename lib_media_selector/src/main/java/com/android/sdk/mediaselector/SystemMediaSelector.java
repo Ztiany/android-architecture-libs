@@ -30,7 +30,7 @@ public class SystemMediaSelector {
     private static final int REQUEST_CROP = 197;
     private static final int REQUEST_ALBUM = 198;
     private static final int REQUEST_FILE = 199;
-    private static final int REQUEST_LINRARY_CROP = 200;
+    private static final int REQUEST_LIBRARY_CROP = 200;
 
     private static final String POSTFIX = ".file.provider";
     private String mAuthority;
@@ -87,6 +87,7 @@ public class SystemMediaSelector {
             mActivity.startActivityForResult(intent, code);
         }
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // setter
     ///////////////////////////////////////////////////////////////////////////
@@ -119,7 +120,7 @@ public class SystemMediaSelector {
     }
 
     /**
-     * 为了保证裁裁剪图片不出问题，务必指定CropOptions中的各个参数(不要为0，比如魅族手机如果指定OutputX和OutputY为0，则只会裁减出一个像素)，否则可能出现问题
+     * 为了保证裁裁剪图片不出问题，务必指定 CropOptions 中的各个参数不要为 0，否则可能出现问题（比如魅族手机如果指定 OutputX 和 OutputY 为 0，则只会裁减出一个像素）。
      */
     public boolean takePhotoFromCameraAndCrop(String savePath, @Nullable CropOptions cropOptions, String cropTitle) {
         mSavePhotoPath = savePath;
@@ -230,7 +231,7 @@ public class SystemMediaSelector {
             processAlbumResult(resultCode, data);
         } else if (requestCode == REQUEST_FILE) {
             processFileResult(resultCode, data);
-        } else if (requestCode == REQUEST_LINRARY_CROP) {
+        } else if (requestCode == REQUEST_LIBRARY_CROP) {
             processUCropResult(data);
         }
     }
@@ -264,7 +265,7 @@ public class SystemMediaSelector {
                 Uri uri = data.getData();
                 if (mNeedCrop) {
                     if (mUseInnerCrop) {
-                        Utils.toUCrop(getContext(), mFragment, Utils.getAbsolutePath(getContext(), uri), mSavePhotoPath, getCropOptions(), REQUEST_LINRARY_CROP);
+                        Utils.toUCrop(getContext(), mFragment, Utils.getAbsolutePath(getContext(), uri), mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
                     } else {
                         boolean success = toCropPhotoFromAlbum(uri);
                         if (!success) {
@@ -310,7 +311,7 @@ public class SystemMediaSelector {
                 }
 
                 if (mUseInnerCrop) {
-                    Utils.toUCrop(getContext(), mFragment, mSavePhotoPathForCropCamera, mSavePhotoPath, getCropOptions(), REQUEST_LINRARY_CROP);
+                    Utils.toUCrop(getContext(), mFragment, mSavePhotoPathForCropCamera, mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
                 } else {
                     boolean success = toCropPhotoFromCamera();
                     if (!success) {

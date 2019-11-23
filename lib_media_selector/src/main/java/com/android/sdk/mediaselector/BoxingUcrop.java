@@ -25,10 +25,8 @@ import android.net.Uri;
 import com.bilibili.boxing.loader.IBoxingCrop;
 import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.yalantis.ucrop.UCrop;
-import com.ztiany.mediaselector.R;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -53,7 +51,7 @@ final class BoxingUcrop implements IBoxingCrop {
         crop.withAspectRatio(cropConfig.getAspectRatioX(), cropConfig.getAspectRatioY());
 
         //颜色
-        int color = ContextCompat.getColor(context, R.color.boxing_colorPrimaryDark);
+        int color = MediaSelectorStyle.fetchPrimaryColor();
         crop.setToolbarColor(color);
         crop.setStatusBarColor(color);
 

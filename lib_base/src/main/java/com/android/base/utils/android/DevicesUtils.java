@@ -1,18 +1,11 @@
 package com.android.base.utils.android;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 
-import com.android.base.utils.android.compat.AndroidVersion;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
-
-import androidx.annotation.RequiresPermission;
-import timber.log.Timber;
 
 public class DevicesUtils {
 
@@ -28,50 +21,6 @@ public class DevicesUtils {
             model = "";
         }
         return model;
-    }
-
-    /**
-     * for getDeviceId，DevicesId 形式：
-     * <pre>
-     *      00000000-1082-436b-ffff-ffffc2e337a1
-     *      ffffffff-a987-897a-0000-000000de11f7
-     * </pre>
-     */
-    private static final String M_SZ_DEV_ID_SHORT = "35" +
-            Build.BOARD.length() % 10 + Build.BRAND.length() % 10 +
-            Build.CPU_ABI.length() % 10 + Build.DEVICE.length() % 10 +
-            Build.DISPLAY.length() % 10 + Build.HOST.length() % 10 +
-            Build.ID.length() % 10 + Build.MANUFACTURER.length() % 10 +
-            Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10 +
-            Build.TAGS.length() % 10 + Build.TYPE.length() % 10 +
-            Build.USER.length() % 10; //13 位
-
-    /**
-     * 参考：http://blog.csdn.net/nugongahou110/article/details/47003257
-     * 参考：https://stackoverflow.com/questions/2785485/is-there-a-unique-android-device-id/2853253#2853253
-     * 参考：https://www.jianshu.com/p/b6f4b0aca6b0
-     *
-     * @return device id
-     */
-    @RequiresPermission(value = Manifest.permission.READ_PHONE_STATE)
-    public static String getDeviceId() {
-        String serial = null;
-        try {
-            if (AndroidVersion.atLeast(26)) {
-                //add in api 26, need Permission.READ_PHONE_STATE
-                serial = Build.getSerial();
-            } else {
-                serial = Build.class.getField("SERIAL").get(null).toString();
-            }
-        } catch (Exception e) {
-            Timber.w("getDeviceId error: " + e.getMessage());
-        }
-        if (serial == null) {
-            //serial 需要一个初始化
-            serial = "serial"; // 随便一个初始化
-        }
-        //使用硬件信息拼凑出来的15位号码
-        return new UUID(M_SZ_DEV_ID_SHORT.hashCode(), serial.hashCode()).toString();
     }
 
     @SuppressLint("ObsoleteSdkInt")

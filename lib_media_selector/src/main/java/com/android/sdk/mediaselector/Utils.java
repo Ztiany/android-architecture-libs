@@ -202,7 +202,7 @@ final class Utils {
         crop.withAspectRatio(cropConfig.getAspectX(), cropConfig.getAspectY());
 
         //颜色
-        int color = StyleUtils.fetchPrimaryColor(context);
+        int color = MediaSelectorStyle.fetchPrimaryColor();
         crop.setToolbarColor(color);
         crop.setStatusBarColor(color);
 
