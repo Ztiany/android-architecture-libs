@@ -238,9 +238,11 @@ public class SystemMediaSelector {
 
     private void processUCropResult(Intent data) {
         Uri uCropResult = Utils.getUCropResult(data);
+        Log.d(TAG, "processCameraResult() called with: resultCode = [" + "], data = [" + uCropResult + "]");
         if (uCropResult == null) {
             mMediaSelectorCallback.onTakeFail();
         } else {
+            Log.d(TAG, "processCameraResult() called with: resultCode = [" + "], data = [" + Utils.getAbsolutePath(getContext(), uCropResult) + "]");
             mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uCropResult));
         }
     }

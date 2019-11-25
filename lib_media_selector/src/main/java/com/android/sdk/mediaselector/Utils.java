@@ -185,6 +185,8 @@ final class Utils {
     ///////////////////////////////////////////////////////////////////////////
 
     static void toUCrop(Context context, Fragment fragment, String srcPath, String targetPath, CropOptions cropConfig, int requestCode) {
+        makeFilePath(new File(targetPath));
+
         Uri srcUri = new Uri.Builder()
                 .scheme("file")
                 .appendPath(srcPath)
@@ -227,6 +229,7 @@ final class Utils {
         }
         Throwable throwable = UCrop.getError(data);
         if (throwable != null) {
+            throwable.printStackTrace();
             return null;
         }
         return UCrop.getOutput(data);
