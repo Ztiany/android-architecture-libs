@@ -91,15 +91,22 @@ public class XIntentUtils {
      * @param subject 主题
      * @param text    发送的内容
      */
-    public static void sendEmail(Context context, String[] email, String subject, String text) {
+    public static boolean sendEmail(Context context, String[] email, String subject, String text) {
         Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        emailIntent.setType("toastMessage/rfc822");
+        emailIntent.setType("message/rfc822");
         emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, email);
         emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
         if (emailIntent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(emailIntent);
+            try {
+                context.startActivity(emailIntent);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

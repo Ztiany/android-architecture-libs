@@ -23,9 +23,4 @@ package com.android.base.app.dagger;
  */
 public interface Injectable {
 
-    default boolean enableInject() {
-        return true;
-    }
-
 }
-

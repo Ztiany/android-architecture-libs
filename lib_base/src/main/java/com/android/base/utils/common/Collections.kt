@@ -12,6 +12,12 @@ fun <E> List<E>?.toArrayList(copy: Boolean = false): ArrayList<E> {
 
 }
 
+fun <E> List<E>?.ifNotEmpty(action: List<E>.() -> Unit) {
+    if (!this.isNullOrEmpty()) {
+        action.invoke(this)
+    }
+}
+
 fun <E> MutableList<E>.removeWhich(filter: (E) -> Boolean): Boolean {
     var removed = false
     val each = iterator()

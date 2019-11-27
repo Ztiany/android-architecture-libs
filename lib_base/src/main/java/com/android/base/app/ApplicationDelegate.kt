@@ -19,9 +19,10 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Email: ztiany3@gmail.com
  * Date : 2018-10-12 18:19
  */
-class ApplicationDelegate internal constructor() {
+internal class ApplicationDelegate internal constructor(private val androidComponentLifecycleInjector: AndroidComponentLifecycleInjector) {
 
     lateinit var application: Application
+
     private lateinit var crashHandler: CrashHandler
 
     /** 获取可观察的 app 生命周期  */
@@ -45,6 +46,8 @@ class ApplicationDelegate internal constructor() {
         application.registerReceiver(NetStateReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         //App前台后台
         listenActivityLifecycleCallbacks()
+        //声明周期回调
+        application.registerActivityLifecycleCallbacks(androidComponentLifecycleInjector)
     }
 
     fun onTerminate() {}

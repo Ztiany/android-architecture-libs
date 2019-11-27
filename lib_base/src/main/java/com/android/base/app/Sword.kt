@@ -1,27 +1,19 @@
 package com.android.base.app
 
 import android.app.Activity
-import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
-import com.android.base.app.dagger.Injectable
+import com.android.base.app.activity.ActivityDelegateOwner
 import com.android.base.app.fragment.animator.FragmentAnimator
+import com.android.base.app.fragment.delegates.FragmentDelegateOwner
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
 import com.android.base.app.ui.PageNumber
 import com.android.base.app.ui.RefreshLoadViewFactory
 import com.android.base.app.ui.RefreshLoadViewFactory.Factory
 import com.android.base.app.ui.RefreshViewFactory
-import com.android.base.interfaces.ActivityLifecycleCallbacksAdapter
 import com.android.base.receiver.NetworkState
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
-import dagger.android.AndroidInjection
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Flowable
 import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
@@ -35,8 +27,10 @@ import timber.log.Timber
  */
 object Sword {
 
+    private val androidComponentLifecycleInjector = AndroidComponentLifecycleInjector()
+
     /** Application lifecycle delegate */
-    val applicationDelegate = ApplicationDelegate()
+    internal val applicationDelegate = ApplicationDelegate(androidComponentLifecycleInjector)
 
     /** 错误类型分类器 */
     var errorClassifier: ErrorClassifier? = null
@@ -88,31 +82,12 @@ object Sword {
     }
 
     fun enableAutoInject(): Sword {
-        val activityLifecycleCallbacks: ActivityLifecycleCallbacks = object : ActivityLifecycleCallbacksAdapter {
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-                if (activity is Injectable) {
-                    if ((activity as Injectable).enableInject()) {
-                        AndroidInjection.inject(activity)
-                        if (activity is FragmentActivity) {
-                            handedFragmentInject(activity as FragmentActivity)
-                        }
-                    }
-                }
-            }
+        androidComponentLifecycleInjector.enableAutoInject()
+        return this
+    }
 
-            private fun handedFragmentInject(activity: FragmentActivity) {
-                activity.supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentLifecycleCallbacks() {
-                    override fun onFragmentAttached(fm: FragmentManager, f: Fragment, context: Context) {
-                        if (f is Injectable) {
-                            if ((f as Injectable).enableInject()) {
-                                AndroidSupportInjection.inject(f)
-                            }
-                        }
-                    }
-                }, true)
-            }
-        }
-        applicationDelegate.application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+    fun setDelegateInjector(delegateInjector: DelegateInjector): Sword {
+        androidComponentLifecycleInjector.delegateInjector = delegateInjector
         return this
     }
 
@@ -147,4 +122,12 @@ interface CrashProcessor {
 interface ErrorClassifier {
     fun isNetworkError(throwable: Throwable): Boolean
     fun isServerError(throwable: Throwable): Boolean
+}
+
+interface DelegateInjector {
+
+    fun injectFragmentDelegate(fragment: FragmentDelegateOwner)
+
+    fun injectActivityDelegate(activity: ActivityDelegateOwner)
+
 }
