@@ -1,5 +1,7 @@
 package com.android.base.utils.security;
 
+import android.util.Base64;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -12,7 +14,7 @@ import androidx.annotation.Nullable;
 @SuppressWarnings("unused")
 public class AESUtils {
 
-    //算法/模式/填充
+    //算法/加密模式/填充模式
     public static String AES = "AES";
     public static String AES_CBC_ISO10126PADDING = "AES/CBC/ISO10126Padding";
     public static String AES_CBC_NOPADDING = "AES/CBC/NoPadding";
@@ -63,6 +65,22 @@ public class AESUtils {
             Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.DECRYPT_MODE, key);
             return cipher.doFinal(content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param content base64 编码的密文
+     */
+    @Nullable
+    public static byte[] decryptData(String content, String algorithm, String password) {
+        try {
+            SecretKeySpec key = generateAESKey(algorithm, password);
+            Cipher cipher = Cipher.getInstance(algorithm);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return cipher.doFinal(Base64.decode(content, Base64.DEFAULT));
         } catch (Exception e) {
             e.printStackTrace();
         }
