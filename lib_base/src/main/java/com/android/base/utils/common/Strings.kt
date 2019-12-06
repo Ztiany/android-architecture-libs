@@ -2,10 +2,11 @@
 
 package com.android.base.utils.common
 
+
 import java.util.regex.Pattern
 
 private const val CHINA_PHONE_REG = "^1\\d{10}$"
-private const val ID_CARD_REG = "[1-9]\\d{13,16}[a-zA-Z0-9]{1}"
+private const val ID_CARD_REG = "(^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}$)"
 private const val EMAIL_REG = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*"
 private const val DIGIT_REG = "-?[1-9]\\d+\""
 private const val URL_REG = "(https?://(w{3}\\.)?)?\\w+\\.\\w+(\\.[a-zA-Z]+)*(:\\d{1,5})?(/\\w*)*(\\??(.+=.*)?(&.+=.*)?)?"
@@ -16,12 +17,28 @@ private const val CONTAINS_DIGITAL_REG = ".*[0-9]+.*"
 private const val CONTAINS_LETTERS_REG = ".*[a-zA-Z]+.*"
 private const val CONTAINS_LOWERCASE_LETTERS_REG = "^.*[a-z]+.*$"
 private const val CONTAINS_UPPERCASE_LETTERS_REG = "^.*[A-Z]+.*$"
+private const val CHINESE_HAN_NATIONALITY_NAME_REG = "^[\\u4E00-\\u9FA5]{2,4}\$"
+private const val CHINESE_NAME_REG = "^[\\u4E00-\\u9FA5]+(·[\\u4E00-\\u9FA5]+)*\$"
 
 /**
  * 验证中国的手机号
  */
 fun isChinaPhoneNumber(mobile: String?): Boolean {
     return !isEmpty(mobile) && Pattern.matches(CHINA_PHONE_REG, mobile)
+}
+
+/**
+ * 验证中文姓名
+ */
+fun isChineseName(name: String?): Boolean {
+    return !isEmpty(name) && Pattern.matches(CHINESE_NAME_REG, name)
+}
+
+/**
+ * 验证中文汉族姓名
+ */
+fun isChineseHanNationalityName(name: String?): Boolean {
+    return !isEmpty(name) && Pattern.matches(CHINESE_HAN_NATIONALITY_NAME_REG, name)
 }
 
 /**

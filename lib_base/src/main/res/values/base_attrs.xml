@@ -2,108 +2,108 @@
 <resources>
 
     <declare-styleable name="BannerViewPager">
-        <attr name="zvp_pager_number_id" format="reference"/>
-        <attr name="zvp_item_transition_name" format="string|reference"/>
+        <attr name="zvp_pager_number_id" format="reference" />
+        <attr name="zvp_item_transition_name" format="string|reference" />
     </declare-styleable>
 
     <declare-styleable name="PageNumberView">
-        <attr name="pnv_text_size" format="reference|dimension"/>
-        <attr name="pnv_text_color" format="reference|color"/>
+        <attr name="pnv_text_size" format="reference|dimension" />
+        <attr name="pnv_text_color" format="reference|color" />
     </declare-styleable>
 
     <declare-styleable name="RatioLayout">
-        <attr name="layout_ratio" format="float"/>
+        <attr name="layout_ratio" format="float" />
     </declare-styleable>
 
     <declare-styleable name="RatioImageView">
-        <attr name="layout_ratio"/>
+        <attr name="layout_ratio" />
     </declare-styleable>
 
     <declare-styleable name="RatioTextView">
-        <attr name="layout_ratio"/>
+        <attr name="layout_ratio" />
     </declare-styleable>
 
     <declare-styleable name="MultiStateView">
-        <attr name="msv_disable_when_requesting" format="boolean"/>
-        <attr name="msv_loadingView" format="reference"/>
-        <attr name="msv_requestingView" format="reference"/>
-        <attr name="msv_emptyView" format="reference"/>
-        <attr name="msv_errorView" format="reference"/>
-        <attr name="msv_net_errorView" format="reference"/>
-        <attr name="msv_server_errorView" format="reference"/>
+        <attr name="msv_disable_when_requesting" format="boolean" />
+        <attr name="msv_loadingView" format="reference" />
+        <attr name="msv_requestingView" format="reference" />
+        <attr name="msv_emptyView" format="reference" />
+        <attr name="msv_errorView" format="reference" />
+        <attr name="msv_net_errorView" format="reference" />
+        <attr name="msv_server_errorView" format="reference" />
         <attr name="msv_viewState" format="enum">
-            <enum name="content" value="1"/>
-            <enum name="loading" value="2"/>
-            <enum name="empty" value="3"/>
-            <enum name="error" value="4"/>
-            <enum name="net_error" value="5"/>
-            <enum name="server_error" value="6"/>
-            <enum name="requesting" value="7"/>
-            <enum name="blank" value="8"/>
+            <enum name="content" value="1" />
+            <enum name="loading" value="2" />
+            <enum name="empty" value="3" />
+            <enum name="error" value="4" />
+            <enum name="net_error" value="5" />
+            <enum name="server_error" value="6" />
+            <enum name="requesting" value="7" />
+            <enum name="blank" value="8" />
         </attr>
     </declare-styleable>
 
-
     <declare-styleable name="SimpleMultiStateView">
 
-        <attr name="msv_state_processor" format="string"/>
+        <attr name="msv_state_processor" format="string" />
 
-        <attr name="msv_errorImg" format="reference"/>
-        <attr name="msv_errorText" format="string"/>
-        <attr name="msv_errorAction" format="string"/>
+        <attr name="msv_errorImg" format="reference" />
+        <attr name="msv_errorText" format="string" />
+        <attr name="msv_errorAction" format="string" />
 
-        <attr name="msv_net_errorImg" format="reference"/>
-        <attr name="msv_net_errorText" format="string"/>
-        <attr name="msv_net_errorAction" format="string"/>
+        <attr name="msv_net_errorImg" format="reference" />
+        <attr name="msv_net_errorText" format="string" />
+        <attr name="msv_net_errorAction" format="string" />
 
-        <attr name="msv_server_errorImg" format="reference"/>
-        <attr name="msv_server_errorText" format="string"/>
-        <attr name="msv_server_errorAction" format="string"/>
+        <attr name="msv_server_errorImg" format="reference" />
+        <attr name="msv_server_errorText" format="string" />
+        <attr name="msv_server_errorAction" format="string" />
 
-        <attr name="msv_emptyImg" format="reference"/>
-        <attr name="msv_emptyText" format="string"/>
-        <attr name="msv_emptyAction" format="string"/>
+        <attr name="msv_emptyImg" format="reference" />
+        <attr name="msv_emptyText" format="string" />
+        <attr name="msv_emptyAction" format="string" />
 
     </declare-styleable>
 
     <declare-styleable name="ScrollChildSwipeRefreshLayout">
-        <attr name="srl_target_id" format="reference"/>
+        <attr name="srl_target_id" format="reference" />
         <!-- a array of colors  -->
-        <attr name="srl_color_scheme" format="reference"/>
+        <attr name="srl_color_scheme" format="reference" />
         <!--restore refresh state-->
-        <attr name="srl_restore_refresh_status" format="boolean"/>
+        <attr name="srl_restore_refresh_status" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="PullToZoomScrollView">
-        <attr name="psv_zoom_view" format="reference"/>
-        <attr name="psv_header_view" format="reference"/>
-        <attr name="psv_damp" format="integer"/>
-        <attr name="psv_max_over" format="integer"/>
-        <attr name="psv_zoom_factory" format="float"/>
+        <attr name="psv_zoom_view" format="reference" />
+        <attr name="psv_header_view" format="reference" />
+        <attr name="psv_damp" format="integer" />
+        <attr name="psv_max_over" format="integer" />
+        <attr name="psv_zoom_factory" format="float" />
     </declare-styleable>
 
     <declare-styleable name="TriangleView">
-        <attr name="tv_triangle_solid_color"
-            format="color|reference" />
-        <attr name="tv_triangle_bottom_color"
-            format="color|reference" />
-        <attr name="tv_triangle_stroke_color"
-            format="color|reference" />
-        <attr name="tv_triangle_stroke_width"
-            format="dimension|reference" />
-        <attr name="tv_triangle_angle_percent"
-            format="float" />
-        <attr name="tv_triangle_direction"
-            format="enum">
-            <enum name="top"
-                value="1" />
-            <enum name="down"
-                value="2" />
-            <enum name="left"
-                value="3" />
-            <enum name="right"
-                value="4" />
+        <attr name="tv_triangle_solid_color" format="color|reference" />
+        <attr name="tv_triangle_bottom_color" format="color|reference" />
+        <attr name="tv_triangle_stroke_color" format="color|reference" />
+        <attr name="tv_triangle_stroke_width" format="dimension|reference" />
+        <attr name="tv_triangle_angle_percent" format="float" />
+        <attr name="tv_triangle_direction" format="enum">
+            <enum name="top" value="1" />
+            <enum name="down" value="2" />
+            <enum name="left" value="3" />
+            <enum name="right" value="4" />
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ClearableEditText">
+        <attr name="cet_enable_password_visibility_toggle" format="boolean" />
+        <attr name="cet_enable_content_clearable" format="boolean" />
+        <!--must be a bitmap-->
+        <attr name="cet_password_seeing_drawable" format="reference" />
+        <!--must be a bitmap-->
+        <attr name="cet_password_closing_drawable" format="reference" />
+        <!--must be a bitmap-->
+        <attr name="cet_clear_drawable" format="reference" />
     </declare-styleable>
 
 </resources>
