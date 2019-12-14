@@ -1,5 +1,6 @@
 package com.android.base.app
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.IntentFilter
@@ -59,15 +60,15 @@ internal class ApplicationDelegate internal constructor(private val androidCompo
     fun onLowMemory() {}
 
     private fun listenActivityLifecycleCallbacks() {
-        AppUtils.registerAppStatusChangedListener(this, object : OnAppStatusChangedListener {
-            override fun onForeground() {
-                Timber.d("app进入前台")
-                appStatus.onNext(true)
-            }
-
-            override fun onBackground() {
+        AppUtils.registerAppStatusChangedListener(object : OnAppStatusChangedListener {
+            override fun onBackground(activity: Activity?) {
                 Timber.d("app进入后台")
                 appStatus.onNext(false)
+            }
+
+            override fun onForeground(activity: Activity?) {
+                Timber.d("app进入前台")
+                appStatus.onNext(true)
             }
         })
     }
