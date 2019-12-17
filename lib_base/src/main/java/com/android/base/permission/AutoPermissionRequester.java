@@ -68,7 +68,9 @@ public class AutoPermissionRequester {
                 mOnAllPermissionGrantedListener = null;
                 mOnPermissionDeniedListener = null;
                 mPermissionUIProvider = null;
-                mPermissionCallback.setDestroyed();
+                if (mPermissionCallback != null) {
+                    mPermissionCallback.setDestroyed();
+                }
             }
         };
 

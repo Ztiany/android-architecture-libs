@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ExtraTranslation">
+
+    <string name="ucrop_rotate" tools:ignore="PrivateResource">旋转</string>
+    <string name="ucrop_scale" tools:ignore="PrivateResource">缩放</string>
+    <string name="ucrop_crop" tools:ignore="PrivateResource">裁剪</string>
+
+</resources>

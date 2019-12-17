@@ -19,6 +19,14 @@ private const val CONTAINS_LOWERCASE_LETTERS_REG = "^.*[a-z]+.*$"
 private const val CONTAINS_UPPERCASE_LETTERS_REG = "^.*[A-Z]+.*$"
 private const val CHINESE_HAN_NATIONALITY_NAME_REG = "^[\\u4E00-\\u9FA5]{2,4}\$"
 private const val CHINESE_NAME_REG = "^[\\u4E00-\\u9FA5]+(·[\\u4E00-\\u9FA5]+)*\$"
+private const val PASSPORT_REG = "^([a-zA-z]|[0-9]){5,17}\$"
+
+/**
+ * 验证护照号
+ */
+fun isPassport(mobile: String?): Boolean {
+    return !isEmpty(mobile) && Pattern.matches(PASSPORT_REG, mobile)
+}
 
 /**
  * 验证中国的手机号
