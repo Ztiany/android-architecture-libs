@@ -41,7 +41,6 @@ public class AutoPermissionFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mHandler.removeCallbacks(mRunnable);
         mIsActivityReady = false;
     }
 
@@ -67,6 +66,7 @@ public class AutoPermissionFragment extends Fragment {
     }
 
     void startRequest() {
+        Timber.d("startRequest() called ");
         mHandler.removeCallbacks(mRunnable);
         startChecked();
     }
@@ -78,6 +78,7 @@ public class AutoPermissionFragment extends Fragment {
             if (callback != null) {
                 callback.onReady();
             }
+            mCallback = null;
             mHandler.removeCallbacks(mRunnable);
         } else {
             mHandler.postDelayed(mRunnable, 300);

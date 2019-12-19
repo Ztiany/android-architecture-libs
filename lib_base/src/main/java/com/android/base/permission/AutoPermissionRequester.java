@@ -140,6 +140,7 @@ public class AutoPermissionRequester {
                 @Override
                 public void onResume(@NonNull LifecycleOwner owner) {
                     mActivity.getLifecycle().removeObserver(this);
+                    Timber.d("startRequest 2");
                     startRequestInternal(supportFragmentManager, fragment);
                 }
             };
