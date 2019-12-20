@@ -78,7 +78,6 @@ public class AutoPermissionFragment extends Fragment {
             if (callback != null) {
                 callback.onReady();
             }
-            mCallback = null;
             mHandler.removeCallbacks(mRunnable);
         } else {
             mHandler.postDelayed(mRunnable, 300);
