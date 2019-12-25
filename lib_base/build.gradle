@@ -67,6 +67,7 @@ dependencies {
     api androidLibraries.material
     api androidLibraries.percentLayout
     api androidLibraries.constraintLayout
+    api androidLibraries.viewpager2
     api androidLibraries.annotation
 
     //AAC
