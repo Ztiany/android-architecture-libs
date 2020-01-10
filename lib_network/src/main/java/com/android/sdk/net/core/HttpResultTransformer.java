@@ -38,7 +38,11 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
 
     @Override
     public Publisher<Downstream> apply(Flowable<T> upstream) {
-        Flowable<Downstream> downstreamFlowable = upstream.map(this::processData);
+
+        Flowable<Downstream> downstreamFlowable = upstream
+                .switchIfEmpty(Flowable.error(newEmptyError()))
+                .map(this::processData);
+
         @SuppressWarnings("unchecked")
         PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
         if (postTransformer != null) {
@@ -50,7 +54,11 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
 
     @Override
     public ObservableSource<Downstream> apply(Observable<T> upstream) {
-        Observable<Downstream> downstreamObservable = upstream.map(this::processData);
+
+        Observable<Downstream> downstreamObservable = upstream
+                .switchIfEmpty(Observable.error(newEmptyError()))
+                .map(this::processData);
+
         @SuppressWarnings("unchecked")
         PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
         if (postTransformer != null) {
@@ -72,16 +80,16 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
         }
     }
 
+    private Throwable newEmptyError() {
+        if (NetContext.get().connected()) {
+            return new ServerErrorException(ServerErrorException.UNKNOW_ERROR);//有连接无数据，服务器错误
+        } else {
+            return new NetworkErrorException();//无连接网络错误
+        }
+    }
+
     private Downstream processData(Result<Upstream> rResult) {
-        if (rResult == null) {
-
-            if (NetContext.get().connected()) {
-                throwAs(new ServerErrorException(ServerErrorException.UNKNOW_ERROR));//有连接无数据，服务器错误
-            } else {
-                throw new NetworkErrorException();//无连接网络错误
-            }
-
-        } else if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(rResult)) {
+        if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(rResult)) {
 
             throwAs(new ServerErrorException(ServerErrorException.SERVER_DATA_ERROR));//服务器数据格式错误
 

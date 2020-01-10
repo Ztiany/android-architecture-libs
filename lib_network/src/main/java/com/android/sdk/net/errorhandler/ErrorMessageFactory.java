@@ -10,6 +10,7 @@ import com.android.sdk.net.provider.ErrorMessage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import io.reactivex.exceptions.CompositeException;
 import retrofit2.HttpException;
@@ -69,6 +70,12 @@ public class ErrorMessageFactory {
             }
         }
 
+        //6：RxJava Single
+        else if (exception instanceof NoSuchElementException) {
+            message = mErrorMessage.serverErrorMessage(exception);
+        }
+
+        //7：Others
         if (isEmpty(message)) {
             message = mErrorMessage.unknowErrorMessage(exception);
         }
