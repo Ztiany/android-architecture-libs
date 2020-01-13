@@ -25,18 +25,22 @@ private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Re
         val networkResult = call.invoke()
         handleResult(networkResult)
     } catch (e: Throwable) {
-        Result.Error(RuntimeException())
+        handleError(e)
+    }
+}
+
+fun <T> handleError(@Suppress("UNUSED_PARAMETER") ignore: Throwable): Result<T> {
+    return if (NetContext.get().connected()) {
+        //有连接无数据，服务器错误
+        Result.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
+    } else {
+        //无连接网络错误
+        Result.Error(NetworkErrorException())
     }
 }
 
 fun <T> handleResult(result: com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
-    if (result == null) {
-        return if (NetContext.get().connected()) {
-            Result.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR)) //有连接无数据，服务器错误
-        } else {
-            Result.Error(throw NetworkErrorException())//无连接网络错误
-        }
-    } else if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {
+    if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {
         Result.Error(ServerErrorException(ServerErrorException.SERVER_DATA_ERROR)) //服务器数据格式错误
     } else if (!result.isSuccess) { //检测响应码是否正确
         val apiHandler = NetContext.get().netProvider().aipHandler()
