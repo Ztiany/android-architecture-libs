@@ -17,7 +17,9 @@ public class ServiceHelper {
     public OkHttpClient getOkHttpClient(HttpConfig httpConfig) {
         if (mOkHttpClient == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            httpConfig.configHttp(builder);
+            if (httpConfig != null) {
+                httpConfig.configHttp(builder);
+            }
             mOkHttpClient = builder.build();
         }
         return mOkHttpClient;

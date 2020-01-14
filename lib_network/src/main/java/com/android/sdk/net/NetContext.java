@@ -2,6 +2,7 @@ package com.android.sdk.net;
 
 import com.android.sdk.net.core.ExceptionFactory;
 import com.android.sdk.net.provider.ApiHandler;
+import com.android.sdk.net.provider.CoroutinesRetryer;
 import com.android.sdk.net.provider.ErrorDataAdapter;
 import com.android.sdk.net.provider.ErrorMessage;
 import com.android.sdk.net.provider.HttpConfig;
@@ -11,6 +12,7 @@ import com.android.sdk.net.service.ServiceFactory;
 import com.android.sdk.net.service.ServiceHelper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.OkHttpClient;
 
 /**
@@ -105,6 +107,11 @@ public class NetContext {
 
         public Builder exceptionFactory(@NonNull ExceptionFactory exceptionFactory) {
             mNetProvider.mExceptionFactory = exceptionFactory;
+            return this;
+        }
+
+        public Builder coroutinesRetryer(@Nullable CoroutinesRetryer retryer) {
+            mNetProvider.mCoroutinesRetryer = retryer;
             return this;
         }
 

@@ -5,20 +5,43 @@ import com.android.sdk.net.core.ExceptionFactory
 import com.android.sdk.net.exception.ApiErrorException
 import com.android.sdk.net.exception.NetworkErrorException
 import com.android.sdk.net.exception.ServerErrorException
+import com.android.sdk.net.provider.CoroutinesRetryer
 import kotlinx.coroutines.delay
-
 
 suspend fun <T> apiCall(call: suspend () -> com.android.sdk.net.core.Result<T>): Result<T> {
     val retryPostAction = retryPostAction()
 
     var result = realCall(call)
 
-    if (result is Result.Error && retryPostAction.invoke(result.error)) {
+    if (result is Result.Error && retryPostAction.retry(result.error)) {
         result = realCall(call)
     }
 
     return result
 }
+
+suspend fun <T> apiCallWithRetrying(
+        block: suspend () -> com.android.sdk.net.core.Result<T>,
+        times: Int = 2,
+        delay: Long = 100,
+        checker: (Throwable) -> Boolean): Result<T> {
+
+    var result = apiCall(block)
+
+    repeat(times) {
+
+        if (result is Result.Error && checker((result as Result.Error).error)) {
+            delay(delay)
+            result = apiCall(block)
+        } else {
+            return result
+        }
+
+    }
+
+    return result
+}
+
 
 private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Result<T>): Result<T> {
     return try {
@@ -54,20 +77,8 @@ fun <T> handleResult(result: com.android.sdk.net.core.Result<T>, requireNonNullD
         }
     }
 
-
     return Result.Error(RuntimeException())
 }
-
-/*
-suspend fun <T> apiCallChecker(call: suspend () -> Result<T>): kotlin.Result<> {
-    try {
-        val result = call.invoke()
-        checkResult()
-    } catch (e: Throwable) {
-
-    }
-}
-*/
 
 private fun createException(rResult: com.android.sdk.net.core.Result<*>, exceptionFactory: ExceptionFactory? = null): Throwable {
     if (exceptionFactory != null) {
@@ -79,24 +90,16 @@ private fun createException(rResult: com.android.sdk.net.core.Result<*>, excepti
     return ApiErrorException(rResult.code, rResult.message)
 }
 
-private suspend fun <T> retryRequest(
-        times: Int = 2,
-        delay: Long = 100,
-        block: suspend () -> T,
-        retry: suspend (Throwable) -> Unit): T {
-    repeat(times - 1) {
-        try {
-            return block()
-        } catch (throwable: Throwable) {
-            retry(throwable)
-        }
-        delay(delay)
+private fun retryPostAction(): CoroutinesRetryer {
+    val coroutinesRetryer = NetContext.get().netProvider().coroutinesRetryer()
+    if (coroutinesRetryer != null) {
+        return coroutinesRetryer
     }
-    return block() // last attempt
-}
-
-private fun retryPostAction(): (suspend (Throwable) -> Boolean) {
-    return { false }
+    return object : CoroutinesRetryer {
+        override suspend fun retry(throwable: Throwable): Boolean {
+            return false
+        }
+    }
 }
 
 sealed class Result<out T> {
