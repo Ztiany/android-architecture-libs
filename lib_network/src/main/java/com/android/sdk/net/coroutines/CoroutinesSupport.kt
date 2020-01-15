@@ -8,31 +8,38 @@ import com.android.sdk.net.exception.ServerErrorException
 import com.android.sdk.net.provider.CoroutinesRetryer
 import kotlinx.coroutines.delay
 
-suspend fun <T> apiCall(call: suspend () -> com.android.sdk.net.core.Result<T>): Result<T> {
+suspend fun <T> apiCall(
+        call: suspend () -> com.android.sdk.net.core.Result<T>,
+        requiredData: Boolean = false,
+        exceptionFactory: ExceptionFactory? = null
+): Result<T> {
+
     val retryPostAction = retryPostAction()
 
-    var result = realCall(call)
+    var result = realCall(call, requiredData, exceptionFactory)
 
     if (result is Result.Error && retryPostAction.retry(result.error)) {
-        result = realCall(call)
+        result = realCall(call, requiredData, exceptionFactory)
     }
 
     return result
 }
 
 suspend fun <T> apiCallWithRetrying(
-        block: suspend () -> com.android.sdk.net.core.Result<T>,
-        times: Int = 2,
-        delay: Long = 100,
-        checker: (Throwable) -> Boolean): Result<T> {
+        call: suspend () -> com.android.sdk.net.core.Result<T>,
+        times: Int = 3,
+        delay: Long = 1000,
+        requiredData: Boolean = false,
+        exceptionFactory: ExceptionFactory? = null,
+        checker: ((Throwable) -> Boolean)? = null): Result<T> {
 
-    var result = apiCall(block)
+    var result = apiCall(call, requiredData, exceptionFactory)
 
     repeat(times) {
 
-        if (result is Result.Error && checker((result as Result.Error).error)) {
+        if (result is Result.Error && (checker == null || checker((result as Result.Error).error))) {
             delay(delay)
-            result = apiCall(block)
+            result = apiCall(call, requiredData, exceptionFactory)
         } else {
             return result
         }
@@ -43,10 +50,10 @@ suspend fun <T> apiCallWithRetrying(
 }
 
 
-private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Result<T>): Result<T> {
+private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
     return try {
         val networkResult = call.invoke()
-        handleResult(networkResult)
+        handleResult(networkResult, requireNonNullData, exceptionFactory)
     } catch (e: Throwable) {
         handleError(e)
     }
@@ -108,6 +115,10 @@ sealed class Result<out T> {
 
     data class Error(val error: Throwable) : Result<Nothing>()
 
+    fun isSuccessful() = this is Success
+
+    fun isFailed() = this is Error
+
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
@@ -115,4 +126,17 @@ sealed class Result<out T> {
         }
     }
 
+}
+
+fun <T> Result<T>.ifSuccessful(onSuccess: (T) -> Unit): Result<T> {
+    if (this is Result.Success) {
+        onSuccess(this.data)
+    }
+    return this
+}
+
+inline infix fun <T> Result<T>.otherwise(onFailed: (Throwable) -> Unit) {
+    if (this is Result.Error) {
+        onFailed(this.error)
+    }
 }
