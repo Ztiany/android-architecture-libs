@@ -282,8 +282,8 @@ fun View.measureSelfWithScreenSize(): Boolean {
         return false
     }
     measure(
-            View.MeasureSpec.makeMeasureSpec(WindowUtils.getScreenWidth(), View.MeasureSpec.AT_MOST),
-            View.MeasureSpec.makeMeasureSpec(WindowUtils.getScreenHeight(), View.MeasureSpec.AT_MOST))
+            View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenWidth(), View.MeasureSpec.AT_MOST),
+            View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenHeight(), View.MeasureSpec.AT_MOST))
     return true
 }
 

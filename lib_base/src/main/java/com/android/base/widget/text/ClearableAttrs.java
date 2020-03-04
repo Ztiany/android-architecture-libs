@@ -2,7 +2,7 @@ package com.android.base.widget.text;
 
 import android.graphics.Bitmap;
 
-class ClearableAttrs {
+public class ClearableAttrs {
 
     private Bitmap mClearBitmap;
     private Bitmap mPasswordVisibleBitmap;

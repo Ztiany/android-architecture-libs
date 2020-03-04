@@ -13,12 +13,16 @@ import android.view.WindowManager;
 
 import com.android.base.utils.BaseUtils;
 import com.android.base.utils.android.compat.SystemBarCompat;
+import com.blankj.utilcode.util.ScreenUtils;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * 窗口工具箱
+ *
+ * @see <a href='https://developer.android.com/reference/android/view/Display'>Display</>
+ * @see <a href='https://stackoverflow.com/questions/14341041/how-to-get-real-screen-height-and-width'>how-to-get-real-screen-height-and-width</>
  */
 public final class WindowUtils {
 
@@ -60,21 +64,19 @@ public final class WindowUtils {
     }
 
     public static int getScreenWidth() {
-        WindowManager wm = (WindowManager) BaseUtils.getAppContext().getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        if (wm != null) {
-            wm.getDefaultDisplay().getMetrics(outMetrics);
-        }
-        return outMetrics.widthPixels;
+        return ScreenUtils.getScreenWidth();
     }
 
     public static int getScreenHeight() {
-        WindowManager wm = (WindowManager) BaseUtils.getAppContext().getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        if (wm != null) {
-            wm.getDefaultDisplay().getMetrics(outMetrics);
-        }
-        return outMetrics.heightPixels;
+        return ScreenUtils.getScreenHeight();
+    }
+
+    public static int getAppScreenWidth() {
+        return ScreenUtils.getAppScreenWidth();
+    }
+
+    public static int getAppScreenHeight() {
+        return ScreenUtils.getAppScreenHeight();
     }
 
     /**

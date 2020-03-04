@@ -47,6 +47,7 @@ public class SystemBarCompat {
     }
 
     private static final String STATUS_BAR_HEIGHT_RES_NAME = "status_bar_height";
+
     private static final String NAV_BAR_HEIGHT_RES_NAME = "navigation_bar_height";
 
     ///////////////////////////////////////////////////////////////////////////
@@ -210,7 +211,7 @@ public class SystemBarCompat {
         int navigationBarHeight = 0;
         Resources rs = context.getResources();
         int id = rs.getIdentifier(NAV_BAR_HEIGHT_RES_NAME, "dimen", "android");
-        if (id > 0 && hasNavigationBar(context)) {
+        if (id > 0) {
             navigationBarHeight = rs.getDimensionPixelSize(id);
         }
         return navigationBarHeight;
@@ -248,23 +249,17 @@ public class SystemBarCompat {
         systemService.getDefaultDisplay().getSize(screenSize);
 
         if (realSize.y != screenSize.y) {
-            Timber.d("realSize.y = %d screenSize.y = %d", realSize.y, screenSize.y);
+
             int difference = realSize.y - screenSize.y;
-            int navBarHeight = 0;
-            Resources resources = context.getResources();
-            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                navBarHeight = resources.getDimensionPixelSize(resourceId);
-            }
-            Timber.d("navBarHeight = %d ", navBarHeight);
+            int navBarHeight = getNavigationBarHeight(context);
+
             if (navBarHeight != 0) {
                 if (difference >= navBarHeight) {
                     hasNavBar = true;
                 }
             }
-
         }
-        Timber.d("hasNavigationBar = " + hasNavBar);
+
         return hasNavBar;
     }
 
@@ -277,7 +272,7 @@ public class SystemBarCompat {
     @SuppressLint("ObsoleteSdkInt")
     private static boolean hasSoftKeys(Context context) {
 
-        boolean hasSoftwareKeys = true;
+        boolean hasSoftwareKeys = false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             Display d = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -301,6 +296,7 @@ public class SystemBarCompat {
             boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
             hasSoftwareKeys = !hasMenuKey && !hasBackKey;
         }
+
         return hasSoftwareKeys;
     }
 
