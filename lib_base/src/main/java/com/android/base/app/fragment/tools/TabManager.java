@@ -29,7 +29,7 @@ public abstract class TabManager {
     private final int mOperationType;
 
     public TabManager(Context context, FragmentManager fragmentManager, Tabs tabs, int containerId) {
-        this(context, fragmentManager, tabs, containerId, ATTACH_DETACH);
+        this(context, fragmentManager, tabs, containerId, SHOW_HIDE);
     }
 
     /**

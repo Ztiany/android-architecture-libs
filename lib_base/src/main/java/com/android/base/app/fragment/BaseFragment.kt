@@ -36,17 +36,13 @@ import timber.log.Timber
  */
 open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
 
-    private var loadingView: LoadingView? = null
-
-    private var layoutView: View? = null
-
-    /** just for cache*/
-    private var cachedView: View? = null
-
     private var fragmentAnimatorHelper: FragmentAnimatorHelper? = null
 
-    @Suppress("LeakingThis")
-    private val fragmentDelegates = FragmentDelegates(this)
+    private val reuseView = ReusingView()
+
+    private var loadingView: LoadingView? = null
+
+    private val fragmentDelegates by lazy { FragmentDelegates(this) }
 
     private var recentShowingDialogTime: Long = 0
 
@@ -77,53 +73,38 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (cachedView == null) {
-            val layout = provideLayout() ?: return null
-            if (layout is Int) {
-                return inflater.inflate(layout, container, false).also { cachedView = it }
-            }
-            if (layout is View) {
-                cachedView = layout
-                return layout
-            }
-            throw IllegalArgumentException("Here you should provide  a  layout id  or a View")
-        }
-
-        Timber.tag(tag()).d("mCachedView.parent: " + cachedView?.parent)
-
-        cachedView?.run {
-            val viewParent = parent
-            if (viewParent != null && viewParent is ViewGroup) {
-                viewParent.removeView(this)
-            }
-        }
-
-        return cachedView
+    /**缓存 Fragment 的 View，默认为不缓存，可能在某些特点场景下才会需要用到，设置为缓存可能有未知的问题。*/
+    @Suppress
+    protected fun setReuseView(reuse: Boolean) {
+        reuseView.cacheTheView = reuse
     }
 
     /**
-     * 使用此方法提供的布局，将只会被缓存起来，即此方法将只会被调用一次。
-     *
      * @return provide  a  layout id  or a View
      */
     protected open fun provideLayout(): Any? = null
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return reuseView.createView(provideLayout(), inflater, container)
+    }
+
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         Timber.tag(tag()).d("-->onViewCreated  savedInstanceState = %s", savedInstanceState)
-        if (layoutView !== view) {
-            layoutView = view
+
+        if (reuseView.isNotTheSameView(view)) {
             internalOnViewPrepared(view, savedInstanceState)
             onViewPrepared(view, savedInstanceState)
         }
+
         fragmentDelegates.onViewCreated(view, savedInstanceState)
     }
 
     internal open fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {}
 
     /**
-     * View is prepared, If [androidx.fragment.app.Fragment.onCreateView] return same layout, it will be called once
+     * View is prepared, If [androidx.fragment.app.Fragment.onCreateView] reuse the layout, it will be called once
      *
      * @param view view of fragment
      */
@@ -236,8 +217,10 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         return if (loadingViewImpl != null) {
             loadingViewImpl
         } else {
-            loadingView = onCreateLoadingView() ?: Sword.loadingViewFactory?.invoke(requireContext())
-            loadingView ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
+            loadingView = onCreateLoadingView()
+                    ?: Sword.loadingViewFactory?.invoke(requireContext())
+            loadingView
+                    ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
         }
     }
 
@@ -266,7 +249,7 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
     }
 
     override fun dismissLoadingDialog() {
-        loadingView().dismissLoadingDialog()
+        loadingView?.dismissLoadingDialog()
     }
 
     override fun dismissLoadingDialog(minimumMills: Long, onDismiss: () -> Unit) {
@@ -274,7 +257,7 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
     }
 
     override fun isLoadingDialogShowing(): Boolean {
-        return loadingView().isLoadingDialogShowing()
+        return loadingView != null && loadingView().isLoadingDialogShowing()
     }
 
     override fun showMessage(message: CharSequence) {
