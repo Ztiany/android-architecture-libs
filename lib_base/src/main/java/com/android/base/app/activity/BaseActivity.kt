@@ -47,7 +47,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
 
         activityState = ActivityState.CREATE
         activityDelegates.callOnCreateAfterSetContentView(savedInstanceState)
-        setupView(savedInstanceState)
+        initializeView(savedInstanceState)
     }
 
     override fun onRestart() {
@@ -150,7 +150,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
     }
 
     /**
-     * Before call super.onCreate and setContentView
+     * Before calling super.onCreate and setContentView
      *
      * @param savedInstanceState state
      */
@@ -164,9 +164,9 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
     protected abstract fun layout(): Any?
 
     /**
-     * after setContentView
+     * after calling setContentView
      */
-    protected abstract fun setupView(savedInstanceState: Bundle?)
+    protected abstract fun initializeView(savedInstanceState: Bundle?)
 
     override fun onBackPressed() {
         if (BackHandlerHelper.handleBackPress(this)) {
