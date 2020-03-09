@@ -8,7 +8,6 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 
 
-//-----------------------------------------------------------------------------------------
 fun <T> Observable<T>.subscribeWithLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
     this.subscribe(

@@ -1,13 +1,10 @@
 package com.android.base.rx.autodispose
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.android.base.data.State
 import com.github.dmstocking.optional.java.util.Optional
 import com.uber.autodispose.*
 
-
-//-----------------------------------------------------------------------------------------
 
 fun <T> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
