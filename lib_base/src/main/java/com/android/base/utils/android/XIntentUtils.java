@@ -146,9 +146,23 @@ public class XIntentUtils {
     /**
      * 打开网络设置界面
      */
-    public static boolean networkSettings(Context context) {
+    public static boolean openNetworkSettings(Context context) {
         try {
             Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return true;
+        } catch (Exception ignore) {
+            return false;
+        }
+    }
+
+    /**
+     * 打开系统设置界面
+     */
+    public static boolean openSystemSettings(Context context) {
+        try {
+            Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return true;
