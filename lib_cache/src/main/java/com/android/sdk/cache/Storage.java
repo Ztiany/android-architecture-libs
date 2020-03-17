@@ -5,6 +5,7 @@ import com.github.dmstocking.optional.java.util.Optional;
 
 import java.lang.reflect.Type;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 
@@ -16,9 +17,9 @@ import io.reactivex.Flowable;
  */
 public interface Storage {
 
-    void putEntity(String key, @Nullable Object entity, long cacheTime);
+    void putEntity(@NonNull String key, @Nullable Object entity, long cacheTime);
 
-    void putEntity(String key, @Nullable Object entity);
+    void putEntity(@NonNull String key, @Nullable Object entity);
 
     /**
      * @param key  缓存的 key
@@ -27,7 +28,7 @@ public interface Storage {
      * @return 缓存
      */
     @Nullable
-    <T> T getEntity(String key, Type type);
+    <T> T getEntity(@NonNull String key, @NonNull Type type);
 
     /**
      * 如果没有获取到缓存，那么 Flowable 将不会发送任何数据，默认在调用线程加载缓存。
@@ -37,7 +38,7 @@ public interface Storage {
      * @param <T>  缓存实体类型
      * @return 缓存
      */
-    <T> Flowable<T> flowable(String key, Type type);
+    <T> Flowable<T> flowable(@NonNull String key, @NonNull Type type);
 
     /**
      * 默认在调用线程加载缓存。
@@ -47,28 +48,29 @@ public interface Storage {
      * @param <T>  缓存实体类型
      * @return 缓存
      */
-    <T> Flowable<Optional<T>> flowableOptional(String key, Type type);
+    <T> Flowable<Optional<T>> flowableOptional(@NonNull String key, @NonNull Type type);
 
-    void putString(String key, String value);
+    void putString(@NonNull String key, @Nullable String value);
 
-    String getString(String key, String defaultValue);
+    @NonNull
+    String getString(@NonNull String key, @NonNull String defaultValue);
 
     @Nullable
-    String getString(String key);
+    String getString(@NonNull String key);
 
-    void putLong(String key, long value);
+    void putLong(@NonNull String key, long value);
 
-    long getLong(String key, long defaultValue);
+    long getLong(@NonNull String key, long defaultValue);
 
-    void putInt(String key, int value);
+    void putInt(@NonNull String key, int value);
 
-    int getInt(String key, int defaultValue);
+    int getInt(@NonNull String key, int defaultValue);
 
-    void putBoolean(String key, boolean value);
+    void putBoolean(@NonNull String key, boolean value);
 
-    boolean getBoolean(String key, boolean defaultValue);
+    boolean getBoolean(@NonNull String key, boolean defaultValue);
 
-    void remove(String key);
+    void remove(@NonNull String key);
 
     void clearAll();
 

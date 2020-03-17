@@ -9,6 +9,8 @@ import com.tencent.mmkv.MMKV;
 import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 
 /**
@@ -41,7 +43,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void putString(String key, String value) {
+    public void putString(@NonNull String key, @Nullable String value) {
         try {
             if (value == null) {
                 remove(key);
@@ -53,18 +55,21 @@ public class MMKVStorageImpl implements Storage {
         }
     }
 
+    @NonNull
     @Override
-    public String getString(String key, String defaultValue) {
+    public String getString(@NonNull String key, @NonNull String defaultValue) {
+        String result = null;
         try {
-            return mMmkv.decodeString(key, defaultValue);
+            result = mMmkv.decodeString(key, defaultValue);
         } catch (Error error) {
             error.printStackTrace();
         }
-        return defaultValue;
+        return result == null ? defaultValue : result;
     }
 
+    @Nullable
     @Override
-    public String getString(String key) {
+    public String getString(@NonNull String key) {
         try {
             return mMmkv.decodeString(key);
         } catch (Error error) {
@@ -74,7 +79,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void putLong(String key, long value) {
+    public void putLong(@NonNull String key, long value) {
         try {
             mMmkv.encode(key, value);
         } catch (Error error) {
@@ -83,7 +88,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public long getLong(String key, long defaultValue) {
+    public long getLong(@NonNull String key, long defaultValue) {
         try {
             return mMmkv.decodeLong(key, defaultValue);
         } catch (Error error) {
@@ -93,7 +98,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void putInt(String key, int value) {
+    public void putInt(@NonNull String key, int value) {
         try {
             mMmkv.encode(key, value);
         } catch (Error error) {
@@ -102,7 +107,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public int getInt(String key, int defaultValue) {
+    public int getInt(@NonNull String key, int defaultValue) {
         try {
             return mMmkv.decodeInt(key, defaultValue);
         } catch (Error error) {
@@ -112,7 +117,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void putBoolean(String key, boolean value) {
+    public void putBoolean(@NonNull String key, boolean value) {
         try {
             mMmkv.encode(key, value);
         } catch (Error error) {
@@ -121,7 +126,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public boolean getBoolean(String key, boolean defaultValue) {
+    public boolean getBoolean(@NonNull String key, boolean defaultValue) {
         try {
             return mMmkv.decodeBool(key, defaultValue);
         } catch (Error error) {
@@ -131,7 +136,7 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void remove(String key) {
+    public void remove(@NonNull String key) {
         try {
             mMmkv.removeValueForKey(key);
         } catch (Error error) {
@@ -145,27 +150,27 @@ public class MMKVStorageImpl implements Storage {
     }
 
     @Override
-    public void putEntity(String key, Object entity, long cacheTime) {
+    public void putEntity(@NonNull String key, Object entity, long cacheTime) {
         CommonImpl.putEntity(key, entity, cacheTime, this);
     }
 
     @Override
-    public void putEntity(String key, Object entity) {
+    public void putEntity(@NonNull String key, Object entity) {
         CommonImpl.putEntity(key, entity, 0, this);
     }
 
     @Override
-    public <T> T getEntity(String key, Type type) {
+    public <T> T getEntity(@NonNull String key, @NonNull Type type) {
         return CommonImpl.getEntity(key, type, this);
     }
 
     @Override
-    public <T> Flowable<T> flowable(String key, Type type) {
+    public <T> Flowable<T> flowable(@NonNull String key, @NonNull Type type) {
         return CommonImpl.flowableEntity(key, type, this);
     }
 
     @Override
-    public <T> Flowable<Optional<T>> flowableOptional(String key, Type type) {
+    public <T> Flowable<Optional<T>> flowableOptional(@NonNull String key, @NonNull Type type) {
         return CommonImpl.flowableOptionalEntity(key, type, this);
     }
 

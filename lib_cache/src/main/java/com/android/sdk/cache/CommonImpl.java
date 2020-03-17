@@ -26,7 +26,7 @@ final class CommonImpl {
     }
 
     private static String getCacheEntity(String key, Storage storage) {
-        String cacheStr = storage.getString(key, null);
+        String cacheStr = storage.getString(key, "");
         if (TextUtils.isEmpty(cacheStr)) {
             return null;
         }
