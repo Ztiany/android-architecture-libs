@@ -1,12 +1,14 @@
-package com.android.base.rx.autodispose
+package com.android.base.rx
 
 import androidx.lifecycle.MutableLiveData
 import com.android.base.data.State
 import com.github.dmstocking.optional.java.util.Optional
-import com.uber.autodispose.*
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Observable
 
 
-fun <T> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<State<T>>) {
+fun <T> Observable<T>.subscribeByLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -18,7 +20,7 @@ fun <T> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveD
     )
 }
 
-fun <T, R> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
+fun <T, R> Observable<T>.subscribeByLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -30,7 +32,7 @@ fun <T, R> ObservableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLi
     )
 }
 
-fun <T> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liveData: MutableLiveData<State<T>>) {
+fun <T> Observable<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -42,7 +44,7 @@ fun <T> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(live
     )
 }
 
-fun <T, R> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
+fun <T, R> Observable<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -55,7 +57,7 @@ fun <T, R> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(l
     )
 }
 
-fun <T> FlowableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<State<T>>) {
+fun <T> Flowable<T>.subscribeByLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -67,7 +69,7 @@ fun <T> FlowableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveDat
     )
 }
 
-fun <T, R> FlowableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
+fun <T, R> Flowable<T>.subscribeByLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -79,7 +81,7 @@ fun <T, R> FlowableSubscribeProxy<T>.subscribeWithLiveData(liveData: MutableLive
     )
 }
 
-fun <T> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liveData: MutableLiveData<State<T>>) {
+fun <T> Flowable<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<T>>) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -91,7 +93,7 @@ fun <T> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liveDa
     )
 }
 
-fun <T, R> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
+fun <T, R> Flowable<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -104,7 +106,7 @@ fun <T, R> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalWithLiveData(liv
     )
 }
 
-fun CompletableSubscribeProxy.subscribeWithLiveData(liveData: MutableLiveData<State<Any>>) {
+fun Completable.subscribeByLiveData(liveData: MutableLiveData<State<Any>>) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
@@ -116,7 +118,7 @@ fun CompletableSubscribeProxy.subscribeWithLiveData(liveData: MutableLiveData<St
     )
 }
 
-fun <T> CompletableSubscribeProxy.subscribeWithLiveData(liveData: MutableLiveData<State<T>>, provider: () -> T) {
+fun <T> Completable.subscribeByLiveData(liveData: MutableLiveData<State<T>>, provider: () -> T) {
     liveData.postValue(State.loading())
     this.subscribe(
             {
