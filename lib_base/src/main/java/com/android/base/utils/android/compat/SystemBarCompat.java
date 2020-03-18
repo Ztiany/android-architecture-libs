@@ -341,11 +341,13 @@ public class SystemBarCompat {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 window.getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
             }
             if (navigation && !status) {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
                 window.getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
             }
             if (navigation && status) {
                 window.clearFlags(
@@ -354,9 +356,10 @@ public class SystemBarCompat {
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+                setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
+                setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
             }
-            setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
-            setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
         } else if (AndroidVersion.at(19)) {
             setTranslucentSystemUi(window, status, navigation);
         }
