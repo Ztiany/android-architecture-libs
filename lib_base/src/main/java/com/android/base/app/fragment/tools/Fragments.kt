@@ -278,7 +278,7 @@ class EnhanceFragmentTransaction constructor(
      * 如果 [containerId]==0，则使用 [com.android.base.app.Sword.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
-    fun addWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+    fun addToStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
         //set add to stack
         val nonnullTag = (tag ?: fragment.javaClassName())
         addToBackStack(nonnullTag)
@@ -299,7 +299,7 @@ class EnhanceFragmentTransaction constructor(
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      * 此方法可能导致 Fragment 转场动画错乱。
      */
-    fun replaceWithStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+    fun replaceToStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
         //set add to stack
         val nonnullTag = (tag ?: fragment.javaClassName())
         addToBackStack(nonnullTag)
