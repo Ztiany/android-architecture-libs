@@ -16,6 +16,7 @@ public interface StorageFactory {
         Context context;
         String storageId;
         boolean multiProcess;
+        Encipher encipher;
 
         Builder(Context context) {
             this.context = context;
@@ -34,6 +35,11 @@ public interface StorageFactory {
          */
         public Builder storageId(String storageId) {
             this.storageId = storageId;
+            return this;
+        }
+
+        public Builder encipher(Encipher encipher) {
+            this.encipher = encipher;
             return this;
         }
 

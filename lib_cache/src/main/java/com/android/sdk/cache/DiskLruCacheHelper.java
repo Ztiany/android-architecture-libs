@@ -73,7 +73,7 @@ public class DiskLruCacheHelper {
                     dir + " is not a directory or does not exists. ");
         }
 
-        int appVersion = context == null ? DEFAULT_APP_VERSION : Utils.getAppVersion(context);
+        int appVersion = context == null ? DEFAULT_APP_VERSION : DiskLruCacheUtils.getAppVersion(context);
 
         return DiskLruCache.open(
                 dir,
@@ -85,7 +85,7 @@ public class DiskLruCacheHelper {
     private DiskLruCache generateCache(Context context, String dirName, int maxSize) throws IOException {
         return DiskLruCache.open(
                 getDiskCacheDir(context, dirName),
-                Utils.getAppVersion(context),
+                DiskLruCacheUtils.getAppVersion(context),
                 DEFAULT_VALUE_COUNT,
                 maxSize);
     }
@@ -128,7 +128,7 @@ public class DiskLruCacheHelper {
         if (inputStream == null) return null;
         String str = null;
         try {
-            str = Util.readFully(new InputStreamReader(inputStream, Util.UTF_8));
+            str = DiskLruCacheUtil.readFully(new InputStreamReader(inputStream, DiskLruCacheUtil.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
             try {
@@ -293,20 +293,20 @@ public class DiskLruCacheHelper {
     // ============== bitmap 数据 读写 =============
     // =======================================
     public void put(String key, Bitmap bitmap) {
-        put(key, Utils.bitmap2Bytes(bitmap));
+        put(key, DiskLruCacheUtils.bitmap2Bytes(bitmap));
     }
 
     public Bitmap getAsBitmap(String key) {
         byte[] bytes = getAsBytes(key);
         if (bytes == null) return null;
-        return Utils.bytes2Bitmap(bytes);
+        return DiskLruCacheUtils.bytes2Bitmap(bytes);
     }
 
     // =======================================
     // ============= drawable 数据 读写 =============
     // =======================================
     public void put(String key, Drawable value) {
-        put(key, Utils.drawable2Bitmap(value));
+        put(key, DiskLruCacheUtils.drawable2Bitmap(value));
     }
 
     public Drawable getAsDrawable(String key) {
@@ -314,7 +314,7 @@ public class DiskLruCacheHelper {
         if (bytes == null) {
             return null;
         }
-        return Utils.bitmap2Drawable(Utils.bytes2Bitmap(bytes));
+        return DiskLruCacheUtils.bitmap2Drawable(DiskLruCacheUtils.bytes2Bitmap(bytes));
     }
 
     // =======================================
@@ -322,7 +322,7 @@ public class DiskLruCacheHelper {
     // =======================================
     public boolean remove(String key) {
         try {
-            key = Utils.hashKeyForDisk(key);
+            key = DiskLruCacheUtils.hashKeyForDisk(key);
             return mDiskLruCache.remove(key);
         } catch (IOException e) {
             e.printStackTrace();
@@ -369,7 +369,7 @@ public class DiskLruCacheHelper {
     //basic editor
     public DiskLruCache.Editor editor(String key) {
         try {
-            key = Utils.hashKeyForDisk(key);
+            key = DiskLruCacheUtils.hashKeyForDisk(key);
             //wirte DIRTY
             DiskLruCache.Editor edit = mDiskLruCache.edit(key);
             //edit maybe null :the entry is editing
@@ -388,7 +388,7 @@ public class DiskLruCacheHelper {
     //basic get
     public InputStream get(String key) {
         try {
-            DiskLruCache.Snapshot snapshot = mDiskLruCache.get(Utils.hashKeyForDisk(key));
+            DiskLruCache.Snapshot snapshot = mDiskLruCache.get(DiskLruCacheUtils.hashKeyForDisk(key));
             if (snapshot == null) //not find entry , or entry.readable = false
             {
                 Log.e(TAG, "not find entry , or entry.readable = false");

@@ -1,41 +1,43 @@
 package com.android.sdk.cache;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
+import timber.log.Timber;
+
 /**
  * @author Ztiany
  * Email: ztiany3@gmail.com
- * Date : 2018-11-01 16:38
+ * Date : 2020-03-20 17:23
  */
-final class JsonUtils {
+public class JsonSerializer implements Serializer {
 
-    private static final String TAG = JsonUtils.class.getSimpleName();
+    private final String TAG = JsonSerializer.class.getSimpleName();
 
-    private final static Gson GSON = new GsonBuilder()
+    private final Gson GSON = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT)
             .excludeFieldsWithModifiers(Modifier.STATIC)
             .create();
 
-    static String toJson(Object entity) {
+    @Override
+    public String toJson(Object entity) {
         if (entity == null) {
             return "";
         }
         try {
             return GSON.toJson(entity);
         } catch (Exception e) {
-            Log.e(TAG, "JsonSerializer toJson error with: entity = " + entity, e);
+            Timber.e(e, "JsonSerializer toJson error with: entity = %s", entity.toString());
         }
         return "";
     }
 
     @SuppressWarnings("unchecked")
-    static <T> T fromJson(String json, Type clazz) {
+    @Override
+    public <T> T fromJson(String json, Type clazz) {
         try {
             if (clazz == String.class) {
                 return (T) json;
@@ -43,7 +45,7 @@ final class JsonUtils {
                 return GSON.fromJson(json, clazz);
             }
         } catch (Exception e) {
-            Log.e(TAG, "JsonSerializer fromJson error with: json = " + json + " class = " + clazz, e);
+            Timber.e(e, "JsonSerializer fromJson error with: json = " + json + " class = " + clazz);
         }
         return null;
     }

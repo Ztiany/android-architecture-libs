@@ -32,8 +32,9 @@ android {
 dependencies {
     implementation androidLibraries.annotation
     implementation thirdLibraries.mmkv
-    implementation thirdLibraries.gson
     implementation thirdLibraries.supportOptional
+    implementation thirdLibraries.timber
+    compileOnly thirdLibraries.gson
     compileOnly thirdLibraries.rxJava
     compileOnly kotlinLibraries.kotlinStdlib
 }

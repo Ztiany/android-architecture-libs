@@ -3,18 +3,14 @@ package com.android.sdk.cache;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.github.dmstocking.optional.java.util.Optional;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.reactivex.Flowable;
 
 @SuppressWarnings("WeakerAccess,unused")
-public class DiskLruStorageImpl implements Storage {
+public class DiskLruStorageImpl extends BaseStorage {
 
     private DiskLruCacheHelper mDiskLruCacheHelper;
     private static final int CACHE_SIZE = 50 * 1024 * 1024;//50M
@@ -58,13 +54,13 @@ public class DiskLruStorageImpl implements Storage {
             getDiskLruCacheHelper().remove(key);
             return;
         }
-        getDiskLruCacheHelper().put(buildKey(key), value);
+        getDiskLruCacheHelper().put(key, value);
     }
 
     @NonNull
     @Override
     public String getString(@NonNull String key, @NonNull String defaultValue) {
-        String result = getDiskLruCacheHelper().getAsString(buildKey(key));
+        String result = getDiskLruCacheHelper().getAsString(key);
         if (TextUtils.isEmpty(result)) {
             result = defaultValue;
         }
@@ -74,17 +70,17 @@ public class DiskLruStorageImpl implements Storage {
     @Nullable
     @Override
     public String getString(@NonNull String key) {
-        return getDiskLruCacheHelper().getAsString(buildKey(key));
+        return getDiskLruCacheHelper().getAsString(key);
     }
 
     @Override
     public void putLong(@NonNull String key, long value) {
-        getDiskLruCacheHelper().put(buildKey(key), String.valueOf(value));
+        getDiskLruCacheHelper().put(key, String.valueOf(value));
     }
 
     @Override
     public long getLong(@NonNull String key, long defaultValue) {
-        String strLong = getDiskLruCacheHelper().getAsString(buildKey(key));
+        String strLong = getDiskLruCacheHelper().getAsString(key);
         if (TextUtils.isEmpty(strLong)) {
             return defaultValue;
         }
@@ -93,12 +89,12 @@ public class DiskLruStorageImpl implements Storage {
 
     @Override
     public void putInt(@NonNull String key, int value) {
-        getDiskLruCacheHelper().put(buildKey(key), String.valueOf(value));
+        getDiskLruCacheHelper().put(key, String.valueOf(value));
     }
 
     @Override
     public int getInt(@NonNull String key, int defaultValue) {
-        String strInt = getDiskLruCacheHelper().getAsString(buildKey(key));
+        String strInt = getDiskLruCacheHelper().getAsString(key);
         if (TextUtils.isEmpty(strInt)) {
             return defaultValue;
         }
@@ -108,12 +104,12 @@ public class DiskLruStorageImpl implements Storage {
     @Override
     public void putBoolean(@NonNull String key, boolean value) {
         int bool = value ? 1 : 0;
-        getDiskLruCacheHelper().put(buildKey(key), String.valueOf(bool));
+        getDiskLruCacheHelper().put(key, String.valueOf(bool));
     }
 
     @Override
     public boolean getBoolean(@NonNull String key, boolean defaultValue) {
-        String strInt = getDiskLruCacheHelper().getAsString(buildKey(key));
+        String strInt = getDiskLruCacheHelper().getAsString(key);
         if (TextUtils.isEmpty(strInt)) {
             return defaultValue;
         }
@@ -122,7 +118,7 @@ public class DiskLruStorageImpl implements Storage {
 
     @Override
     public void remove(@NonNull String key) {
-        getDiskLruCacheHelper().remove(buildKey(key));
+        getDiskLruCacheHelper().remove(key);
     }
 
     @Override
@@ -132,35 +128,6 @@ public class DiskLruStorageImpl implements Storage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String buildKey(String originKey) {
-        return originKey;
-    }
-
-    @Override
-    public void putEntity(@NonNull String key, Object entity, long cacheTime) {
-        CommonImpl.putEntity(key, entity, cacheTime, this);
-    }
-
-    @Override
-    public void putEntity(@NonNull String key, Object entity) {
-        CommonImpl.putEntity(key, entity, 0, this);
-    }
-
-    @Override
-    public <T> T getEntity(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.getEntity(key, type, this);
-    }
-
-    @Override
-    public <T> Flowable<T> flowable(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.flowableEntity(key, type, this);
-    }
-
-    @Override
-    public <T> Flowable<Optional<T>> flowableOptional(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.flowableOptionalEntity(key, type, this);
     }
 
 }

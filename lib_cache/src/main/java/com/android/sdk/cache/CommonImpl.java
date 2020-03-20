@@ -1,13 +1,13 @@
 package com.android.sdk.cache;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.github.dmstocking.optional.java.util.Optional;
 
 import java.lang.reflect.Type;
 
 import io.reactivex.Flowable;
+import timber.log.Timber;
 
 /**
  * @author Ztiany
@@ -21,8 +21,8 @@ final class CommonImpl {
             storage.remove(key);
             return;
         }
-        CacheEntity cacheEntity = new CacheEntity(JsonUtils.toJson(entity), cacheTime);
-        storage.putString(key, JsonUtils.toJson(cacheEntity));
+        CacheEntity cacheEntity = new CacheEntity(StorageContext.provideSerializer().toJson(entity), cacheTime);
+        storage.putString(key, StorageContext.provideSerializer().toJson(cacheEntity));
     }
 
     private static String getCacheEntity(String key, Storage storage) {
@@ -31,7 +31,7 @@ final class CommonImpl {
             return null;
         }
 
-        CacheEntity cacheEntity = JsonUtils.fromJson(cacheStr, CacheEntity.class);
+        CacheEntity cacheEntity = StorageContext.provideSerializer().fromJson(cacheStr, CacheEntity.class);
 
         if (cacheEntity == null) {
             return null;
@@ -51,9 +51,9 @@ final class CommonImpl {
 
     static <T> T getEntity(String key, Type clazz, Storage storage) {
         String cacheEntity = getCacheEntity(key, storage);
-        Log.d("cache", "cacheEntity = " + cacheEntity);
+        Timber.d("cacheEntity = %s", cacheEntity);
         if (cacheEntity != null) {
-            return JsonUtils.fromJson(cacheEntity, clazz);
+            return StorageContext.provideSerializer().fromJson(cacheEntity, clazz);
         }
         return null;
     }

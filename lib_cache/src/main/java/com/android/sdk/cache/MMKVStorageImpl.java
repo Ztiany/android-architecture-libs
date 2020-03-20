@@ -1,17 +1,14 @@
 package com.android.sdk.cache;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.github.dmstocking.optional.java.util.Optional;
 import com.tencent.mmkv.MMKV;
 
-import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.reactivex.Flowable;
+import timber.log.Timber;
 
 /**
  * @author Ztiany
@@ -19,7 +16,7 @@ import io.reactivex.Flowable;
  * Date : 2018-11-01 11:25
  */
 @SuppressWarnings("WeakerAccess,unused")
-public class MMKVStorageImpl implements Storage {
+public class MMKVStorageImpl extends BaseStorage {
 
     private static final String TAG = MMKVStorageImpl.class.getSimpleName();
 
@@ -35,7 +32,7 @@ public class MMKVStorageImpl implements Storage {
 
         if (INITIALIZED.compareAndSet(false, true)) {
             String rootDir = MMKV.initialize(context.getApplicationContext());
-            Log.d(TAG, "MMKV initialized and rootDir is: " + rootDir);
+            Timber.d("MMKV initialized and rootDir is: %s", rootDir);
         }
 
         int mode = multiProcess ? MMKV.MULTI_PROCESS_MODE : MMKV.SINGLE_PROCESS_MODE;
@@ -147,31 +144,6 @@ public class MMKVStorageImpl implements Storage {
     @Override
     public void clearAll() {
         mMmkv.clear();
-    }
-
-    @Override
-    public void putEntity(@NonNull String key, Object entity, long cacheTime) {
-        CommonImpl.putEntity(key, entity, cacheTime, this);
-    }
-
-    @Override
-    public void putEntity(@NonNull String key, Object entity) {
-        CommonImpl.putEntity(key, entity, 0, this);
-    }
-
-    @Override
-    public <T> T getEntity(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.getEntity(key, type, this);
-    }
-
-    @Override
-    public <T> Flowable<T> flowable(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.flowableEntity(key, type, this);
-    }
-
-    @Override
-    public <T> Flowable<Optional<T>> flowableOptional(@NonNull String key, @NonNull Type type) {
-        return CommonImpl.flowableOptionalEntity(key, type, this);
     }
 
 }

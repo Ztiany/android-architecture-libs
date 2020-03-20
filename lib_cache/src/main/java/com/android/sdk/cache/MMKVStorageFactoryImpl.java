@@ -22,7 +22,11 @@ public class MMKVStorageFactoryImpl implements StorageFactory {
 
         @Override
         public Storage build() {
-            return new MMKVStorageImpl(context, storageId, multiProcess);
+            MMKVStorageImpl mmkvStorage = new MMKVStorageImpl(context, storageId, multiProcess);
+            if (encipher != null) {
+                return new EncipherStorage(mmkvStorage, encipher);
+            }
+            return mmkvStorage;
         }
 
     }

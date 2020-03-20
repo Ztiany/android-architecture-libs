@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-final class Utils {
+final class DiskLruCacheUtils {
 
     static int getAppVersion(Context context) {
         try {
@@ -25,7 +25,6 @@ final class Utils {
         }
         return 1;
     }
-
 
     static String hashKeyForDisk(String key) {
         String cacheKey;

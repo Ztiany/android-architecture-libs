@@ -91,7 +91,7 @@ class StrictLineReader implements Closeable {
         if (capacity < 0) {
             throw new IllegalArgumentException("capacity <= 0");
         }
-        if (!(charset.equals(Util.US_ASCII))) {
+        if (!(charset.equals(DiskLruCacheUtil.US_ASCII))) {
             throw new IllegalArgumentException("Unsupported encoding");
         }
 

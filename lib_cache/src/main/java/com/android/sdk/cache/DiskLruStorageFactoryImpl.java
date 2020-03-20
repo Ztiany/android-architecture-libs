@@ -1,7 +1,8 @@
 package com.android.sdk.cache;
 
 import android.content.Context;
-import android.util.Log;
+
+import timber.log.Timber;
 
 /**
  * @author Ztiany
@@ -9,8 +10,6 @@ import android.util.Log;
  * Date : 2018-11-09 11:20
  */
 public class DiskLruStorageFactoryImpl implements StorageFactory {
-
-    private static final String TAG = DiskLruStorageFactoryImpl.class.getSimpleName();
 
     @Override
     public Builder newBuilder(Context context) {
@@ -26,7 +25,7 @@ public class DiskLruStorageFactoryImpl implements StorageFactory {
         @Override
         public Builder enableMultiProcess(boolean multiProcess) {
             if (multiProcess) {
-                Log.d(TAG, "DiskLruStorage was initialized, but do not support multi process");
+                Timber.d("DiskLruStorage was initialized, but do not support multi process");
             }
             super.enableMultiProcess(multiProcess);
             return this;
@@ -34,7 +33,11 @@ public class DiskLruStorageFactoryImpl implements StorageFactory {
 
         @Override
         public Storage build() {
-            return new DiskLruStorageImpl(context, storageId);
+            DiskLruStorageImpl diskLruStorage = new DiskLruStorageImpl(context, storageId);
+            if (encipher != null) {
+                return new EncipherStorage(diskLruStorage, encipher);
+            }
+            return diskLruStorage;
         }
 
     }
