@@ -365,4 +365,13 @@ public class SystemBarCompat {
         }
     }
 
+    public static void displayInNotch(Activity activity) {
+        if (AndroidVersion.atLeast(28)) {
+            Window window = activity.getWindow();
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            window.setAttributes(attributes);
+        }
+    }
+
 }

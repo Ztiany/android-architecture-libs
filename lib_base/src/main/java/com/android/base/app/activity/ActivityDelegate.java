@@ -30,7 +30,7 @@ public interface ActivityDelegate<T extends Activity> {
     default void onCreateAfterSetContentView(@Nullable Bundle savedInstanceState) {
     }
 
-    default void onSaveInstanceState(Bundle savedInstanceState) {
+    default void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
     }
 
     default void onStart() {

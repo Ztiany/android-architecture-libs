@@ -8,6 +8,7 @@ import com.github.dmstocking.optional.java.util.function.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,7 +53,7 @@ final class ActivityDelegates {
         }
     }
 
-    void callOnSaveInstanceState(Bundle outState) {
+    void callOnSaveInstanceState(@NonNull  Bundle outState) {
         for (ActivityDelegate activityDelegate : mDelegates) {
             activityDelegate.onSaveInstanceState(outState);
         }

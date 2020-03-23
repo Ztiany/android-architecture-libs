@@ -14,9 +14,6 @@ import com.android.base.utils.common.isEmpty
 interface UIErrorHandler {
     /**处理异常*/
     fun handleError(throwable: Throwable)
-
-    /**异常描述*/
-    fun generateErrorMessage(throwable: Throwable)
 }
 
 fun <H, T> H.handleLiveState(
