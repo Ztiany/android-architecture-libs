@@ -16,4 +16,5 @@ public class ViewPagerInfo {
         this.clazz = clazz;
         this.args = args;
     }
+
 }

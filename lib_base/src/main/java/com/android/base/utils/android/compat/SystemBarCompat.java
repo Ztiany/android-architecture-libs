@@ -365,6 +365,10 @@ public class SystemBarCompat {
         }
     }
 
+    /**
+     * @see <a href='https://developer.android.com/guide/topics/display-cutout?hl=zh-cn'>支持刘海屏</a>
+     * @see <a href='https://juejin.im/post/5cf635846fb9a07f0c466ea7'>Android刘海屏、水滴屏全面屏适配方案</a>
+     */
     public static void displayInNotch(Activity activity) {
         if (AndroidVersion.atLeast(28)) {
             Window window = activity.getWindow();

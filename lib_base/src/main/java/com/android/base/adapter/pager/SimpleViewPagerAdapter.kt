@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 
 /**
- * 如果使用可缩放的 View 作为 pager，可能不适合使用此Adapter
+ * 如果  pager view 存在状态（比如 PhotoView），可能不适合使用此Adapter。
  *
  * @param <T>  数据
- * @param <VH> View Holder类型
-</VH></T> */
+ * @param <VH> View Holder 类型
+ */
 abstract class SimpleViewPagerAdapter<T>(data: List<T>) : ViewPagerAdapter<T, KtViewHolder>(data) {
 
     override fun createViewHolder(container: ViewGroup): KtViewHolder {

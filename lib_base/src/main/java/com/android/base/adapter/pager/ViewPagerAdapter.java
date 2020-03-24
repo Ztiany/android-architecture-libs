@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * 如果使用可缩放的 View 作为 pager，可能不适合使用此 Adapter
+ * 如果  pager view 存在状态（比如 PhotoView），可能不适合使用此Adapter。
  *
  * @param <T>  数据
  * @param <VH> View Holder类型

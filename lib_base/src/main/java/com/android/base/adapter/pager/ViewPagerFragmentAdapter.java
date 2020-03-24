@@ -2,6 +2,8 @@ package com.android.base.adapter.pager;
 
 import android.content.Context;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     public void setDataSource(List<ViewPagerInfo> viewPagerInfoList) {
         mTabs.clear();
         mTabs.addAll(viewPagerInfoList);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -31,6 +34,7 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
         return mTabs.size();
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         ViewPagerInfo viewPagerInfo = mTabs.get(position);
@@ -45,4 +49,5 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     public List<ViewPagerInfo> getTabs() {
         return mTabs;
     }
+
 }

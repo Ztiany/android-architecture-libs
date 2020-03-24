@@ -25,6 +25,7 @@ public class ViewPagerStateFragmentAdapter extends FragmentStatePagerAdapter {
     public void setDataSource(List<ViewPagerInfo> viewPagerInfoList) {
         mTabs.clear();
         mTabs.addAll(viewPagerInfoList);
+        notifyDataSetChanged();
     }
 
     @Override
