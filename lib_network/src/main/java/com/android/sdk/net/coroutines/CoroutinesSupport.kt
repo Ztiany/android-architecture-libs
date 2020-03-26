@@ -59,7 +59,7 @@ private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Re
     }
 }
 
-fun <T> handleError(@Suppress("UNUSED_PARAMETER") ignore: Throwable): Result<T> {
+private fun <T> handleError(@Suppress("UNUSED_PARAMETER") ignore: Throwable): Result<T> {
     return if (NetContext.get().connected()) {
         //有连接无数据，服务器错误
         Result.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
@@ -69,7 +69,7 @@ fun <T> handleError(@Suppress("UNUSED_PARAMETER") ignore: Throwable): Result<T> 
     }
 }
 
-fun <T> handleResult(result: com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
+private fun <T> handleResult(result: com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
     if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {
         Result.Error(ServerErrorException(ServerErrorException.SERVER_DATA_ERROR)) //服务器数据格式错误
     } else if (!result.isSuccess) { //检测响应码是否正确

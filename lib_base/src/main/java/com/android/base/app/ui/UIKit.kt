@@ -17,7 +17,9 @@ interface UIErrorHandler {
 }
 
 fun <H, T> H.handleLiveState(
+        /**core: data*/
         liveData: LiveData<State<T>>,
+        //configuration
         loadingMessage: CharSequence = "",
         forceLoading: Boolean = true,
         onError: ((Throwable) -> Unit)? = null,
@@ -49,47 +51,102 @@ fun <H, T> H.handleLiveState(
 }
 
 fun <H, T> H.handleLiveState2(
+        /**core: data*/
         liveData: LiveData<State<T>>,
+        //configuration
         loadingMessage: CharSequence = "",
         forceLoading: Boolean = true,
         handler: StateHandler<T>.() -> Unit
 ) where H : UIErrorHandler, H : LoadingView, H : LifecycleOwner {
 
+    val stateHandler = StateHandler<T>()
+
+    handler(stateHandler)
+
     liveData.observe(this, Observer { state ->
-        handleState(state, loadingMessage, forceLoading, handler)
+        when {
+            state.isError -> {
+                dismissLoadingDialog(Sword.minimumShowingDialogMills) {
+                    val onError = stateHandler.onError
+                    if (onError != null) {
+                        onError(state.error())
+                    } else {
+                        handleError(state.error())
+                    }
+                }
+            }
+            state.isLoading -> {
+                showLoadingDialog(loadingMessage, !forceLoading)
+            }
+            state.isSuccess -> {
+                dismissLoadingDialog(Sword.minimumShowingDialogMills) {
+                    stateHandler.onSuccess?.invoke(state.get())
+                    if (state.hasData()) {
+                        stateHandler.onSuccessWithData?.invoke(state.data())
+                    } else {
+                        stateHandler.onEmpty?.invoke()
+                    }
+                }
+            }//success end
+        }
     })
 
 }
 
-fun <T> LoadingView.handleState(
-        state: State<T>,
-        loadingMessage: CharSequence = "",
-        forceLoading: Boolean = true,
-        handler: StateHandler<T>.() -> Unit
-) {
+//----------------------------------------------Loading In StateView----------------------------------------------
+private fun <T> newDefaultChecker(): ((T) -> Boolean)? {
+    return { t ->
+        (t is CharSequence && (t.isEmpty() || t.isBlank())) || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())
+    }
+}
 
-    val stateHandler = StateHandler<T>()
-    handler(stateHandler)
-
+fun <T> RefreshStateLayout.handleStateResult(state: State<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
     when {
-        state.isError -> {
-            dismissLoadingDialog(Sword.minimumShowingDialogMills) {
-                stateHandler.onError?.invoke(state.error())
-            }
-        }
         state.isLoading -> {
-            showLoadingDialog(loadingMessage, !forceLoading)
+            showLoadingLayout()
+        }
+        state.isError -> {
+            handleResultError(state.error())
         }
         state.isSuccess -> {
-            dismissLoadingDialog(Sword.minimumShowingDialogMills) {
-                stateHandler.onSuccess?.invoke(state.get())
-                if (state.hasData()) {
-                    stateHandler.onSuccessWithData?.invoke(state.data())
-                } else {
-                    stateHandler.onEmpty?.invoke()
-                }
+            handleResult(state.get(), isEmpty, onEmpty, onResult)
+        }
+    }
+}
+
+fun <T> RefreshStateLayout.handleResult(t: T?, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+    if (isRefreshing) {
+        refreshCompleted()
+    }
+    if (t == null || isEmpty?.invoke(t) == true) {
+        if (onEmpty != null) {
+            onEmpty()
+        } else {
+            showEmptyLayout()
+        }
+    } else {
+        showContentLayout()
+        onResult.invoke(t)
+    }
+}
+
+fun RefreshStateLayout.handleResultError(throwable: Throwable) {
+    if (isRefreshing) {
+        refreshCompleted()
+    }
+    val errorTypeClassifier = Sword.errorClassifier
+    if (errorTypeClassifier != null) {
+        when {
+            errorTypeClassifier.isNetworkError(throwable) -> {
+                showNetErrorLayout()
             }
-        }//success end
+            errorTypeClassifier.isServerError(throwable) -> {
+                showServerErrorLayout()
+            }
+            else -> showErrorLayout()
+        }
+    } else {
+        showErrorLayout()
     }
 }
 
@@ -239,62 +296,5 @@ fun <T> RefreshListLayout<T>.submitListResultWithoutState(list: List<T>?, hasMor
 
     if (onEmpty != null && isEmpty) {
         onEmpty()
-    }
-}
-
-//----------------------------------------------Loading In StateView----------------------------------------------
-private fun <T> newDefaultChecker(): ((T) -> Boolean)? {
-    return { t ->
-        (t is CharSequence && (t.isEmpty() || t.isBlank())) || (t is Collection<*> && t.isEmpty()) || (t is Map<*, *> && t.isEmpty())
-    }
-}
-
-fun <T> RefreshStateLayout.handleStateResult(state: State<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
-    when {
-        state.isLoading -> {
-            showLoadingLayout()
-        }
-        state.isError -> {
-            handleResultError(state.error())
-        }
-        state.isSuccess -> {
-            handleResult(state.get(), isEmpty, onEmpty, onResult)
-        }
-    }
-}
-
-fun <T> RefreshStateLayout.handleResult(t: T?, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
-    if (isRefreshing) {
-        refreshCompleted()
-    }
-    if (t == null || isEmpty?.invoke(t) == true) {
-        if (onEmpty != null) {
-            onEmpty()
-        } else {
-            showEmptyLayout()
-        }
-    } else {
-        showContentLayout()
-        onResult.invoke(t)
-    }
-}
-
-fun RefreshStateLayout.handleResultError(throwable: Throwable) {
-    if (isRefreshing) {
-        refreshCompleted()
-    }
-    val errorTypeClassifier = Sword.errorClassifier
-    if (errorTypeClassifier != null) {
-        when {
-            errorTypeClassifier.isNetworkError(throwable) -> {
-                showNetErrorLayout()
-            }
-            errorTypeClassifier.isServerError(throwable) -> {
-                showServerErrorLayout()
-            }
-            else -> showErrorLayout()
-        }
-    } else {
-        showErrorLayout()
     }
 }

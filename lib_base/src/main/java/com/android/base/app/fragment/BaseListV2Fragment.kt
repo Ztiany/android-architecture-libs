@@ -7,13 +7,18 @@ import com.android.base.app.ui.AutoPageNumber
 import com.android.base.app.ui.RefreshListLayout
 import com.android.base.app.ui.StateLayoutConfig
 
+
 /**
+ * 区别于 [BaseListFragment] 只能支持 RecyclerView。[BaseListFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
+ * 在底部添加 load more view 的 item，来实现加载更多。[BaseListV2Fragment] 没有采用此种方式，所以你使用的 RefreshView 应该是支持这下来刷新和加载更多功能的。
+ *
+ * 在调用 [BaseListV2Fragment] 的 [onActivityCreated] 之前，你应该设置好 [dataManager]。
+ *
  *@author Ztiany
  *      Email: ztiany3@gmail.com
  *      Date : 2019-03-26 15:06
- *@see [BaseListV2Fragment]
  */
-abstract class BaseListV2Fragment<T> : BaseDialogFragment(), RefreshListLayout<T> {
+abstract class BaseListV2Fragment<T> : BaseFragment(), RefreshListLayout<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
