@@ -5,6 +5,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 operator fun CompositeDisposable?.plusAssign(disposable: Disposable) {
     this?.add(disposable)
@@ -20,6 +22,28 @@ fun Disposable?.disposeChecked() {
 
 fun newCompositeIfDisposed(cd: CompositeDisposable?): CompositeDisposable {
     return RxKit.newCompositeIfUnsubscribed(cd)
+}
+
+fun autoCompositeDisposable(): ReadWriteProperty<Any, CompositeDisposable> {
+    return CompositeDisposableDelegate()
+}
+
+internal class CompositeDisposableDelegate : ReadWriteProperty<Any, CompositeDisposable> {
+
+    private lateinit var compositeDisposable: CompositeDisposable
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): CompositeDisposable {
+        if (!::compositeDisposable.isInitialized) {
+            compositeDisposable = CompositeDisposable()
+        }
+        compositeDisposable = newCompositeIfDisposed(compositeDisposable)
+        return compositeDisposable
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: CompositeDisposable) {
+        compositeDisposable = value
+    }
+
 }
 
 fun <T> Single<T>.observeOnUI(): Single<T> = this.observeOn(AndroidSchedulers.mainThread())
