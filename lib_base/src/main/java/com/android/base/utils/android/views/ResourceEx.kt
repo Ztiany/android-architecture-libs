@@ -105,11 +105,11 @@ fun getIntArray(@ArrayRes id: Int): IntArray {
     return BaseUtils.getResources().getIntArray(id)
 }
 
-fun createUriByResource(id: Int): Uri {
+fun createResourceUri(id: Int): Uri {
     return Uri.parse("android.resource://" + BaseUtils.getAppContext().packageName + "/" + id)
 }
 
-fun createUriByAssets(path: String): Uri {
+fun createAssetsUri(path: String): Uri {
     return Uri.parse("file:///android_asset/$path")
 }
 
