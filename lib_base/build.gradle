@@ -61,12 +61,16 @@ dependencies {
     testImplementation testLibraries.junit
 
     //AndroidSupport
-    api androidLibraries.supportV4
+    api androidLibraries.activity
+    api androidLibraries.activityKtx
+    api androidLibraries.fragment
+    api androidLibraries.fragmentKtx
     api androidLibraries.appcompat
     api androidLibraries.recyclerView
-    api androidLibraries.material
     api androidLibraries.percentLayout
     api androidLibraries.constraintLayout
+    api androidLibraries.swiperefreshlayout
+    api androidLibraries.material
     api androidLibraries.viewpager2
     api androidLibraries.annotation
 

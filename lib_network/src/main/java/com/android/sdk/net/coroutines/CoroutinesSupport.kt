@@ -141,7 +141,7 @@ private suspend fun <T> realCallDirectly(call: suspend () -> Result<T>, requireN
         }
 
     } catch (e: Throwable) {
-        return if (NetContext.get().connected()) {
+        if (NetContext.get().connected()) {
             //有连接无数据，服务器错误
             throw ServerErrorException(ServerErrorException.UNKNOW_ERROR)
         } else {
