@@ -1,5 +1,6 @@
 package com.android.sdk.net.coroutines
 
+import com.android.sdk.net.core.Result
 import com.android.sdk.net.NetContext
 import com.android.sdk.net.core.ExceptionFactory
 import com.android.sdk.net.exception.ApiErrorException
@@ -9,37 +10,37 @@ import com.android.sdk.net.provider.CoroutinesRetryer
 import kotlinx.coroutines.delay
 
 suspend fun <T> apiCall(
-        call: suspend () -> com.android.sdk.net.core.Result<T>,
-        requiredData: Boolean = false,
+        call: suspend () -> Result<T>,
+        requireNonNullData: Boolean = false,
         exceptionFactory: ExceptionFactory? = null
-): Result<T> {
+): CallResult<T> {
 
     val retryPostAction = retryPostAction()
 
-    var result = realCall(call, requiredData, exceptionFactory)
+    var result = realCall(call, requireNonNullData, exceptionFactory)
 
-    if (result is Result.Error && retryPostAction.retry(result.error)) {
-        result = realCall(call, requiredData, exceptionFactory)
+    if (result is CallResult.Error && retryPostAction.retry(result.error)) {
+        result = realCall(call, requireNonNullData, exceptionFactory)
     }
 
     return result
 }
 
-suspend fun <T> apiCallWithRetrying(
-        call: suspend () -> com.android.sdk.net.core.Result<T>,
+suspend fun <T> apiCall(
+        call: suspend () -> Result<T>,
+        requireNonNullData: Boolean = false,
         times: Int = 3,
         delay: Long = 1000,
-        requiredData: Boolean = false,
         exceptionFactory: ExceptionFactory? = null,
-        checker: ((Throwable) -> Boolean)? = null): Result<T> {
+        checker: ((Throwable) -> Boolean)? = null): CallResult<T> {
 
-    var result = apiCall(call, requiredData, exceptionFactory)
+    var result = apiCall(call, requireNonNullData, exceptionFactory)
 
     repeat(times) {
 
-        if (result is Result.Error && (checker == null || checker((result as Result.Error).error))) {
+        if (result is CallResult.Error && (checker == null || checker((result as CallResult.Error).error))) {
             delay(delay)
-            result = apiCall(call, requiredData, exceptionFactory)
+            result = apiCall(call, requireNonNullData, exceptionFactory)
         } else {
             return result
         }
@@ -49,52 +50,116 @@ suspend fun <T> apiCallWithRetrying(
     return result
 }
 
+private suspend fun <T> realCall(call: suspend () -> Result<T>, requireNonNullData: Boolean, exceptionFactory: ExceptionFactory? = null): CallResult<T> {
+    try {
+        val result = call.invoke()
 
-private suspend fun <T> realCall(call: suspend () -> com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
-    return try {
-        val networkResult = call.invoke()
-        handleResult(networkResult, requireNonNullData, exceptionFactory)
+        return if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {//服务器数据格式错误
+            CallResult.Error(ServerErrorException(ServerErrorException.SERVER_DATA_ERROR))
+        } else if (!result.isSuccess) { //检测响应码是否正确
+            val apiHandler = NetContext.get().netProvider().aipHandler()
+            apiHandler?.onApiError(result)
+            CallResult.Error(createException(result, exceptionFactory))
+        } else if (requireNonNullData) { //如果约定必须返回的数据却没有返回数据，则认为是服务器错误。
+            val data = result.data
+            if (data == null) {
+                CallResult.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
+            } else {
+                CallResult.Success(data)
+            }
+        } else {
+            CallResult.Success(result.data)
+        }
+
     } catch (e: Throwable) {
-        handleError(e)
-    }
-}
-
-private fun <T> handleError(@Suppress("UNUSED_PARAMETER") ignore: Throwable): Result<T> {
-    return if (NetContext.get().connected()) {
-        //有连接无数据，服务器错误
-        Result.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
-    } else {
-        //无连接网络错误
-        Result.Error(NetworkErrorException())
-    }
-}
-
-private fun <T> handleResult(result: com.android.sdk.net.core.Result<T>, requireNonNullData: Boolean = true, exceptionFactory: ExceptionFactory? = null): Result<T> {
-    if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {
-        Result.Error(ServerErrorException(ServerErrorException.SERVER_DATA_ERROR)) //服务器数据格式错误
-    } else if (!result.isSuccess) { //检测响应码是否正确
-        val apiHandler = NetContext.get().netProvider().aipHandler()
-        apiHandler?.onApiError(result)
-        return Result.Error(createException(result, exceptionFactory))
-    }
-
-    if (requireNonNullData) { //如果约定必须返回的数据却没有返回数据，则认为是服务器错误
-        if (result.data == null) {
-            return Result.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
+        return if (NetContext.get().connected()) {
+            //有连接无数据，服务器错误
+            CallResult.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
+        } else {
+            //无连接网络错误
+            CallResult.Error(NetworkErrorException())
         }
     }
 
-    return Result.Error(RuntimeException())
 }
 
-private fun createException(rResult: com.android.sdk.net.core.Result<*>, exceptionFactory: ExceptionFactory? = null): Throwable {
+suspend fun <T> apiCallDirectly(
+        call: suspend () -> Result<T>,
+        requireNonNullData: Boolean = false,
+        exceptionFactory: ExceptionFactory? = null
+): T {
+
+    val retryPostAction = retryPostAction()
+
+    var result = realCallDirectly(call, requireNonNullData, exceptionFactory)
+
+    if (result is CallResult.Error && retryPostAction.retry(result.error)) {
+        result = realCallDirectly(call, requireNonNullData, exceptionFactory)
+    }
+
+    return result
+}
+
+suspend fun <T> apiCallDirectly(
+        call: suspend () -> Result<T>,
+        requireNonNullData: Boolean = false,
+        times: Int = 3,
+        delay: Long = 1000,
+        exceptionFactory: ExceptionFactory? = null,
+        checker: ((Throwable) -> Boolean)? = null): T {
+
+    var result = apiCallDirectly(call, requireNonNullData, exceptionFactory)
+
+    repeat(times) {
+
+        if (result is CallResult.Error && (checker == null || checker((result as CallResult.Error).error))) {
+            delay(delay)
+            result = apiCallDirectly(call, requireNonNullData, exceptionFactory)
+        } else {
+            return result
+        }
+
+    }
+
+    return result
+}
+
+private suspend fun <T> realCallDirectly(call: suspend () -> Result<T>, requireNonNullData: Boolean, exceptionFactory: ExceptionFactory? = null): T {
+    try {
+        val result = call.invoke()
+
+        return if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(result)) {//服务器数据格式错误
+            throw ServerErrorException(ServerErrorException.SERVER_DATA_ERROR)
+        } else if (!result.isSuccess) { //检测响应码是否正确
+            val apiHandler = NetContext.get().netProvider().aipHandler()
+            apiHandler?.onApiError(result)
+            throw createException(result, exceptionFactory)
+        } else if (requireNonNullData) { //如果约定必须返回的数据却没有返回数据，则认为是服务器错误。
+            result.data ?: throw ServerErrorException(ServerErrorException.UNKNOW_ERROR)
+        } else {
+            result.data
+        }
+
+    } catch (e: Throwable) {
+        return if (NetContext.get().connected()) {
+            //有连接无数据，服务器错误
+            throw ServerErrorException(ServerErrorException.UNKNOW_ERROR)
+        } else {
+            //无连接网络错误
+            throw NetworkErrorException()
+        }
+    }
+
+}
+
+private fun createException(result: Result<*>, exceptionFactory: ExceptionFactory? = null): Throwable {
     if (exceptionFactory != null) {
-        val exception = exceptionFactory.create(rResult)
+        val exception = exceptionFactory.create(result)
         if (exception != null) {
             return exception
         }
     }
-    return ApiErrorException(rResult.code, rResult.message)
+    return ApiErrorException(result.code, result.message)
 }
 
 private fun retryPostAction(): CoroutinesRetryer {
@@ -109,11 +174,11 @@ private fun retryPostAction(): CoroutinesRetryer {
     }
 }
 
-sealed class Result<out T> {
+sealed class CallResult<out T> {
 
-    data class Success<out T : Any>(val data: T) : Result<T>()
+    class Success<out T>(val data: T) : CallResult<T>()
 
-    data class Error(val error: Throwable) : Result<Nothing>()
+    class Error(val error: Throwable) : CallResult<Nothing>()
 
     fun isSuccessful() = this is Success
 
@@ -128,15 +193,15 @@ sealed class Result<out T> {
 
 }
 
-fun <T> Result<T>.ifSuccessful(onSuccess: (T) -> Unit): Result<T> {
-    if (this is Result.Success) {
+inline infix fun <T> CallResult<T>.ifSuccessful(onSuccess: (T) -> Unit): CallResult<T> {
+    if (this is CallResult.Success) {
         onSuccess(this.data)
     }
     return this
 }
 
-inline infix fun <T> Result<T>.otherwise(onFailed: (Throwable) -> Unit) {
-    if (this is Result.Error) {
+inline infix fun <T> CallResult<T>.ifFailed(onFailed: (Throwable) -> Unit) {
+    if (this is CallResult.Error) {
         onFailed(this.error)
     }
 }
