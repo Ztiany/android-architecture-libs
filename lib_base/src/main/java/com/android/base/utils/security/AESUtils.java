@@ -59,6 +59,29 @@ public class AESUtils {
     }
 
     @Nullable
+    public static byte[] encryptData(String content, String algorithm, String password) {
+        return encryptData(content.getBytes(), algorithm, password);
+    }
+
+    @Nullable
+    public static String encryptDataToBase64(byte[] content, String algorithm, String password) {
+        try {
+            SecretKeySpec key = generateAESKey(algorithm, password);
+            Cipher cipher = Cipher.getInstance(algorithm);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return Base64.encodeToString(cipher.doFinal(content), Base64.NO_WRAP);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String encryptDataToBase64(String content, String algorithm, String password) {
+        return encryptDataToBase64(content.getBytes(), algorithm, password);
+    }
+
+    @Nullable
     public static byte[] decryptData(byte[] content, String algorithm, String password) {
         try {
             SecretKeySpec key = generateAESKey(algorithm, password);
@@ -75,12 +98,12 @@ public class AESUtils {
      * @param content base64 编码的密文
      */
     @Nullable
-    public static byte[] decryptData(String content, String algorithm, String password) {
+    public static byte[] decryptDataFromBase64(String content, String algorithm, String password) {
         try {
             SecretKeySpec key = generateAESKey(algorithm, password);
             Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.DECRYPT_MODE, key);
-            return cipher.doFinal(Base64.decode(content, Base64.DEFAULT));
+            return cipher.doFinal(Base64.decode(content, Base64.NO_WRAP));
         } catch (Exception e) {
             e.printStackTrace();
         }

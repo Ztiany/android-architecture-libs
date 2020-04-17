@@ -155,6 +155,7 @@ public abstract class RecyclerAdapter<T, VH extends ViewHolder> extends Recycler
         mDataManager.setDataSource(elements, notifyDataSetChanged);
     }
 
+    @NonNull
     @Override
     public List<T> getItems() {
         return mDataManager.getItems();

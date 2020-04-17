@@ -2,6 +2,7 @@ package com.android.base.adapter;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -60,6 +61,7 @@ public interface DataManager<T> {
     @Nullable
     T getItem(int position);
 
+    @NonNull
     List<T> getItems();
 
     int getDataSize();

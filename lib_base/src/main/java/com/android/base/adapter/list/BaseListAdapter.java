@@ -177,6 +177,7 @@ public abstract class BaseListAdapter<T, VH extends ViewHolder> extends BaseAdap
         mDataManager.clear();
     }
 
+    @NonNull
     @Override
     public List<T> getItems() {
         return mDataManager.getItems();

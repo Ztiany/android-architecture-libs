@@ -5,6 +5,8 @@ import android.widget.BaseAdapter;
 import com.android.base.adapter.DataManager;
 import com.android.base.utils.common.Checker;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,31 +21,35 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     ListDataManagerImpl(List<T> tList, BaseAdapter adapter) {
         mData = tList;
         mBaseAdapter = adapter;
+        newListIfNeed();
     }
 
-    private void checkData() {
+    private boolean newListIfNeed() {
         if (mData == null) {
             mData = new ArrayList<>();
+            return true;
+        } else {
+            return false;
         }
     }
 
     @Override
     public void add(T elem) {
-        checkData();
+        newListIfNeed();
         mData.add(elem);
         notifyDataSetChanged();
     }
 
     @Override
     public void addAt(int location, T elem) {
-        checkData();
+        newListIfNeed();
         mData.add(location, elem);
         notifyDataSetChanged();
     }
 
     @Override
     public void addItems(List<T> elements) {
-        checkData();
+        newListIfNeed();
         mData.addAll(elements);
         notifyDataSetChanged();
     }
@@ -69,7 +75,7 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
 
     @Override
     public void addItemsAt(int location, List<T> elements) {
-        checkData();
+        newListIfNeed();
         mData.addAll(location, elements);
         notifyDataSetChanged();
     }
@@ -91,10 +97,9 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
 
     @Override
     public void replaceAll(List<T> elements) {
-        if (mData == null) {
-            mData = new ArrayList<>();
+        if (!newListIfNeed()) {
+            mData.clear();
         }
-        mData.clear();
         if (elements != null) {
             mData.addAll(elements);
         }
@@ -104,6 +109,7 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     @Override
     public void setDataSource(List<T> newDataSource, boolean notifyDataSetChanged) {
         mData = newDataSource;
+        newListIfNeed();
         if (notifyDataSetChanged) {
             notifyDataSetChanged();
         }
@@ -173,12 +179,10 @@ final class ListDataManagerImpl<T> implements DataManager<T> {
     @Override
     public int indexItem(T t) {
         List<T> items = getItems();
-        if (items == null) {
-            return -1;
-        }
         return items.indexOf(t);
     }
 
+    @NotNull
     @Override
     public List<T> getItems() {
         return mData;

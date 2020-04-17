@@ -222,7 +222,7 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
 
     @Override
     public final int getDataSize() {
-        return getItems() == null ? 0 : getItems().size();
+        return getItems().size();
     }
 
     @Override
@@ -240,6 +240,7 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
         mAsyncListDiffer.submitList(elements);
     }
 
+    @NonNull
     @Override
     public List<T> getItems() {
         return mAsyncListDiffer.getCurrentList();
@@ -256,11 +257,7 @@ public abstract class DiffRecyclerAdapter<T, VH extends ViewHolder> extends Recy
     }
 
     private List<T> newList() {
-        if (getItems() == null) {
-            return new ArrayList<>();
-        } else {
-            return new ArrayList<>(getItems());
-        }
+        return new ArrayList<>(getItems());
     }
 
 }

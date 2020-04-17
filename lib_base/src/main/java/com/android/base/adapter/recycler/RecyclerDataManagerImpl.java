@@ -4,6 +4,8 @@ package com.android.base.adapter.recycler;
 import com.android.base.adapter.DataManager;
 import com.android.base.utils.common.Checker;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,16 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
     RecyclerDataManagerImpl(List<T> tList, RecyclerView.Adapter adapter) {
         mData = tList;
         mAdapter = adapter;
+        newListIfNeed();
+    }
+
+    private boolean newListIfNeed() {
+        if (mData == null) {
+            mData = new ArrayList<>();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -69,8 +81,7 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
             if (element == null) {
                 continue;
             }
-            if (mData.contains(element)) {
-                mData.remove(element);
+            if (mData.remove(element)) {
                 if (!hasRemovedElements) {
                     hasRemovedElements = true;
                 }
@@ -125,10 +136,9 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
 
     @Override
     public void replaceAll(List<T> elements) {
-        if (mData == null) {
-            mData = new ArrayList<>();
+        if (!newListIfNeed()) {
+            mData.clear();
         }
-        mData.clear();
         if (elements != null) {
             mData.addAll(elements);
         }
@@ -138,6 +148,7 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
     @Override
     public void setDataSource(List<T> newDataSource, boolean notifyDataSetChanged) {
         mData = newDataSource;
+        newListIfNeed();
         if (notifyDataSetChanged) {
             notifyDataSetChanged();
         }
@@ -220,12 +231,10 @@ final class RecyclerDataManagerImpl<T> implements DataManager<T> {
     @Override
     public int indexItem(T t) {
         List<T> items = getItems();
-        if (items == null) {
-            return -1;
-        }
         return items.indexOf(t);
     }
 
+    @NotNull
     @Override
     public List<T> getItems() {
         return mData;
