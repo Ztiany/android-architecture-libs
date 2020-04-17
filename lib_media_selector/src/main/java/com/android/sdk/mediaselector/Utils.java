@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.yalantis.ucrop.UCrop;
 
@@ -40,8 +39,6 @@ import androidx.fragment.app.Fragment;
  * Date : 2017-08-09 10:54
  */
 final class Utils {
-
-    private static final String TAG = "Utils";
 
     private Utils() {
         throw new UnsupportedOperationException("Utils");
@@ -101,8 +98,6 @@ final class Utils {
      * @param targetFile 源文件，裁剪之后新的图片覆盖此文件
      */
     static Intent makeCropIntentCovering(Context context, File targetFile, String authority, CropOptions cropOptions, String title) {
-        Log.d(TAG, "makeCropIntentCovering() called with: context = [" + context + "], targetFile = [" + targetFile + "], authority = [" + authority + "], cropOptions = [" + cropOptions + "], title = [" + title + "]");
-
         Intent intent = new Intent("com.android.camera.action.CROP");
 
         Uri fileUri;
@@ -171,6 +166,7 @@ final class Utils {
         intent.putExtra("noFaceDetection", true);
 
         List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
         for (ResolveInfo resolveInfo : resInfoList) {
             String packageName = resolveInfo.activityInfo.packageName;
             context.grantUriPermission(packageName, outputUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -223,7 +219,7 @@ final class Utils {
         }
     }
 
-    public static Uri getUCropResult(Intent data) {
+    static Uri getUCropResult(Intent data) {
         if (data == null) {
             return null;
         }
@@ -476,7 +472,7 @@ final class Utils {
         return true;
     }
 
-    public static String getFileNameNoExtension(final String filePath) {
+    private static String getFileNameNoExtension(final String filePath) {
         if (isSpace(filePath)) return "";
         int lastPoi = filePath.lastIndexOf('.');
         int lastSep = filePath.lastIndexOf(File.separator);
@@ -489,7 +485,7 @@ final class Utils {
         return filePath.substring(lastSep + 1, lastPoi);
     }
 
-    public static String getFileExtension(final String filePath) {
+    private static String getFileExtension(final String filePath) {
         if (isSpace(filePath)) return "";
         int lastPoi = filePath.lastIndexOf('.');
         int lastSep = filePath.lastIndexOf(File.separator);
@@ -497,7 +493,7 @@ final class Utils {
         return filePath.substring(lastPoi + 1);
     }
 
-    public static String addFilePostfix(final String filePath, String postfix) {
+    static String addFilePostfix(final String filePath, String postfix) {
         if (isSpace(filePath)) return "";
         File file = new File(filePath);
         return file.getParentFile().getAbsolutePath() + File.separator + getFileNameNoExtension(filePath) + postfix + "." + getFileExtension(filePath);

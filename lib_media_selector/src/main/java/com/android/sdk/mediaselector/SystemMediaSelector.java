@@ -4,18 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.android.base.app.activity.ActivityDelegate;
+import com.android.base.app.activity.ActivityDelegateOwner;
+import com.android.base.app.fragment.delegates.FragmentDelegate;
+import com.android.base.app.fragment.delegates.FragmentDelegateOwner;
+
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
  * 通过系统相册或者系统相机获取照片
  * <pre>
- *     1. 默认的 FileProvider 的 Authorities 为 {@code PackageName+ ".file.provider"}
+ *     1. 默认的 FileProvider 的 Authorities 为 {@code PackageName+ ".file.provider"}。
+ *     2. 如果你的 host 实现了 {@link ActivityDelegateOwner} 或者 {@link FragmentDelegateOwner}，请尽早地初始化 SystemMediaSelector。
  * </pre>
  *
  * @author Ztiany
@@ -32,10 +40,13 @@ public class SystemMediaSelector {
     private static final int REQUEST_FILE = 199;
     private static final int REQUEST_LIBRARY_CROP = 200;
 
+    private boolean mHasInitialized = false;
+
     private static final String POSTFIX = ".file.provider";
     private String mAuthority;
 
-    private final MediaSelectorCallback mMediaSelectorCallback;
+    private final SystemMediaSelectorResultListener mMediaSelectorCallback;
+
     private Activity mActivity;
     private Fragment mFragment;
 
@@ -49,27 +60,80 @@ public class SystemMediaSelector {
 
     /*用于保存图片*/
     private String mSavePhotoPath;
+
     /*某些手机，拍照和裁剪不能是同一个路径*/
     private String mSavePhotoPathForCropCamera;
 
-    public SystemMediaSelector(Activity activity, MediaSelectorCallback systemMediaSelectorCallback) {
+    private static final String CROP_TITLE_KEY = "crop_title_key";
+    private static final String NEED_CROP_KEY = "need_crop_key";
+    private static final String CROP_OPTIONS_KEY = "crop_options_key";
+    private static final String SAVE_PHOTO_PATH_KEY = "save_photo_path_key";
+    private static final String SAVE_PHOTO_PATH_FOR_CROP_CAMERA = "save_photo_path_for_crop_camera";
+
+    public SystemMediaSelector(SystemMediaSelectorResultListener mediaSelectorCallback, @NonNull Activity activity) {
+        mMediaSelectorCallback = mediaSelectorCallback;
         mActivity = activity;
-        mMediaSelectorCallback = systemMediaSelectorCallback;
-        init();
+        if (mActivity instanceof ActivityDelegateOwner) {
+            ((ActivityDelegateOwner) mActivity).addDelegate(new ActivityDelegate() {
+                @Override
+                public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+                    saveStatesIfExist(savedInstanceState);
+                }
+
+                @Override
+                public void onRestoreInstanceState(Bundle savedInstanceState) {
+                    recoverStatesIfNeed(savedInstanceState);
+                }
+
+                @Override
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    SystemMediaSelector.this.onActivityResult(requestCode, resultCode, data);
+                }
+            });
+        }
+        initConfig();
     }
 
-    public SystemMediaSelector(Fragment fragment, MediaSelectorCallback systemMediaSelectorCallback) {
+    public SystemMediaSelector(@NonNull Fragment fragment, @NonNull SystemMediaSelectorResultListener mediaSelectorCallback) {
         mFragment = fragment;
-        mMediaSelectorCallback = systemMediaSelectorCallback;
-        init();
+        mMediaSelectorCallback = mediaSelectorCallback;
+
+        if (mFragment instanceof FragmentDelegateOwner) {
+            ((FragmentDelegateOwner) mFragment).addDelegate(new FragmentDelegate() {
+                @Override
+                public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                    recoverStatesIfNeed(savedInstanceState);
+                    initConfig();
+                }
+
+                @Override
+                public void onSaveInstanceState(Bundle savedInstanceState) {
+                    saveStatesIfExist(savedInstanceState);
+                }
+
+                @Override
+                public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                    SystemMediaSelector.this.onActivityResult(requestCode, resultCode, data);
+                }
+
+            });
+        }
+        initConfig();
     }
 
-    private void init() {
-        mAuthority = getContext().getPackageName().concat(POSTFIX);
-        mDefaultOptions.setAspectX(0);
-        mDefaultOptions.setAspectY(0);
-        mDefaultOptions.setOutputX(0);
-        mDefaultOptions.setOutputY(0);
+    private void initConfig() {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        if (!mHasInitialized) {
+            mAuthority = context.getPackageName().concat(POSTFIX);
+            mDefaultOptions.setAspectX(0);
+            mDefaultOptions.setAspectY(0);
+            mDefaultOptions.setOutputX(0);
+            mDefaultOptions.setOutputY(0);
+            mHasInitialized = true;
+        }
     }
 
     private Context getContext() {
@@ -113,7 +177,7 @@ public class SystemMediaSelector {
     // take photo from camera
     ///////////////////////////////////////////////////////////////////////////
 
-    public boolean takePhotoFromCamera(String savePath) {
+    public boolean takePhotoFromCamera(@NonNull String savePath) {
         mSavePhotoPath = savePath;
         mNeedCrop = false;
         return toCamera(mSavePhotoPath);
@@ -122,12 +186,12 @@ public class SystemMediaSelector {
     /**
      * 为了保证裁裁剪图片不出问题，务必指定 CropOptions 中的各个参数不要为 0，否则可能出现问题（比如魅族手机如果指定 OutputX 和 OutputY 为 0，则只会裁减出一个像素）。
      */
-    public boolean takePhotoFromCameraAndCrop(String savePath, @Nullable CropOptions cropOptions, String cropTitle) {
+    public boolean takePhotoFromCameraAndCrop(@NonNull String savePath, @Nullable CropOptions cropOptions, @Nullable String cropTitle) {
         mSavePhotoPath = savePath;
         mSavePhotoPathForCropCamera = Utils.addFilePostfix(mSavePhotoPath, "camera");
         mNeedCrop = true;
         mCropOptions = cropOptions;
-        mCropTitle = cropTitle;
+        mCropTitle = cropTitle == null ? "" : cropTitle;
         return toCamera(mSavePhotoPathForCropCamera);
     }
 
@@ -173,11 +237,11 @@ public class SystemMediaSelector {
         }
     }
 
-    public boolean takePhotoFormAlbumAndCrop(String savePhotoPath, @Nullable CropOptions cropOptions, String cropTitle) {
+    public boolean takePhotoFormAlbumAndCrop(@NonNull String savePhotoPath, @Nullable CropOptions cropOptions, @Nullable String cropTitle) {
         mNeedCrop = true;
         mSavePhotoPath = savePhotoPath;
         mCropOptions = cropOptions;
-        mCropTitle = cropTitle;
+        mCropTitle = cropTitle == null ? "" : cropTitle;
         try {
             startActivityForResult(Utils.makeAlbumIntent(), REQUEST_ALBUM);
             return true;
@@ -222,6 +286,52 @@ public class SystemMediaSelector {
     // Process Result
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * 如果你的 host 实现了 {@link ActivityDelegateOwner} 或者 {@link FragmentDelegateOwner}，则不要调用该方法。
+     */
+    public void recoverStatesIfNeed(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return;
+        }
+        if (!TextUtils.isEmpty(mSavePhotoPath)) {
+            savedInstanceState.putString(SAVE_PHOTO_PATH_KEY, mSavePhotoPath);
+        }
+        if (!TextUtils.isEmpty(mSavePhotoPathForCropCamera)) {
+            savedInstanceState.putString(SAVE_PHOTO_PATH_FOR_CROP_CAMERA, mSavePhotoPathForCropCamera);
+        }
+        if (!TextUtils.isEmpty(mCropTitle)) {
+            savedInstanceState.putString(CROP_TITLE_KEY, mCropTitle);
+        }
+        if (mCropOptions != null) {
+            savedInstanceState.putParcelable(CROP_OPTIONS_KEY, mCropOptions);
+        }
+        savedInstanceState.putBoolean(NEED_CROP_KEY, mNeedCrop);
+    }
+
+    /**
+     * 如果你的 host 实现了 {@link ActivityDelegateOwner} 或者 {@link FragmentDelegateOwner}，则不要调用该方法。
+     */
+    public void saveStatesIfExist(Bundle savedInstanceState) {
+        if (savedInstanceState.containsKey(SAVE_PHOTO_PATH_KEY)) {
+            mSavePhotoPath = savedInstanceState.getString(SAVE_PHOTO_PATH_KEY, "");
+        }
+        if (savedInstanceState.containsKey(SAVE_PHOTO_PATH_FOR_CROP_CAMERA)) {
+            mSavePhotoPathForCropCamera = savedInstanceState.getString(SAVE_PHOTO_PATH_FOR_CROP_CAMERA, "");
+        }
+        if (savedInstanceState.containsKey(CROP_TITLE_KEY)) {
+            mCropTitle = savedInstanceState.getString(CROP_TITLE_KEY, mCropTitle);
+        }
+        if (savedInstanceState.containsKey(CROP_OPTIONS_KEY)) {
+            mCropOptions = savedInstanceState.getParcelable(CROP_OPTIONS_KEY);
+        }
+        if (savedInstanceState.containsKey(NEED_CROP_KEY)) {
+            mNeedCrop = savedInstanceState.getBoolean(SAVE_PHOTO_PATH_FOR_CROP_CAMERA, mNeedCrop);
+        }
+    }
+
+    /**
+     * 如果你的 host 实现了 {@link ActivityDelegateOwner} 或者 {@link FragmentDelegateOwner}，则不要调用该方法。
+     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CAMERA) {
             processCameraResult(resultCode, data);
@@ -242,8 +352,13 @@ public class SystemMediaSelector {
         if (uCropResult == null) {
             mMediaSelectorCallback.onTakeFail();
         } else {
-            Log.d(TAG, "processCameraResult() called with: resultCode = [" + "], data = [" + Utils.getAbsolutePath(getContext(), uCropResult) + "]");
-            mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uCropResult));
+            String absolutePath = Utils.getAbsolutePath(getContext(), uCropResult);
+            if (!TextUtils.isEmpty(absolutePath)) {
+                mMediaSelectorCallback.onTakeSuccess(absolutePath);
+            } else {
+                mMediaSelectorCallback.onTakeFail();
+            }
+            Log.d(TAG, "processCameraResult() called with: resultCode = [" + "], data = [" + absolutePath + "]");
         }
     }
 
@@ -253,8 +368,7 @@ public class SystemMediaSelector {
             if (uri == null) {
                 mMediaSelectorCallback.onTakeFail();
             } else {
-                String absolutePath = Utils.getAbsolutePath(getContext(), uri);
-                mMediaSelectorCallback.onTakeSuccess(absolutePath);
+                returnUriResultChecked(uri);
             }
         } else {
             mMediaSelectorCallback.onTakeFail();
@@ -262,87 +376,96 @@ public class SystemMediaSelector {
     }
 
     private void processAlbumResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (data != null && data.getData() != null) {
-                Uri uri = data.getData();
-                if (mNeedCrop) {
-                    if (mUseInnerCrop) {
-                        Utils.toUCrop(getContext(), mFragment, Utils.getAbsolutePath(getContext(), uri), mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
-                    } else {
-                        boolean success = toCropPhotoFromAlbum(uri);
-                        if (!success) {
-                            mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uri));
-                        }
-                    }
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (data == null) {
+            mMediaSelectorCallback.onTakeFail();
+            return;
+        }
+
+        Uri uri = data.getData();
+        if (uri == null) {
+            mMediaSelectorCallback.onTakeFail();
+            return;
+        }
+
+        if (mNeedCrop) {
+            if (mUseInnerCrop) {
+                String absolutePath = Utils.getAbsolutePath(getContext(), uri);
+                if (TextUtils.isEmpty(absolutePath)) {
+                    mMediaSelectorCallback.onTakeFail();
                 } else {
-                    mMediaSelectorCallback.onTakeSuccess(Utils.getAbsolutePath(getContext(), uri));
+                    Utils.toUCrop(getContext(), mFragment, absolutePath, mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
                 }
             } else {
-                mMediaSelectorCallback.onTakeFail();
+                boolean success = toCropPhotoFromAlbum(uri);
+                if (!success) {
+                    returnUriResultChecked(uri);
+                }
             }
+        } else {
+            returnUriResultChecked(uri);
         }
     }
 
     private void processCropResult(int resultCode, @SuppressWarnings("unused") Intent data) {
         //有时候，系统裁减的结果可能没有保存到我们指定的目录，而是通过data返回了
-        if (resultCode == Activity.RESULT_OK) {
-            if (new File(mSavePhotoPath).exists()) {
-                mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
-            } else if (data != null && data.getData() != null) {
-                String realPathFromURI = Utils.getAbsolutePath(getContext(), data.getData());
-                if (TextUtils.isEmpty(realPathFromURI)) {
-                    mMediaSelectorCallback.onTakeFail();
-                } else {
-                    mMediaSelectorCallback.onTakeSuccess(realPathFromURI);
-                }
-            } else {
-                mMediaSelectorCallback.onTakeFail();
-            }
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (new File(mSavePhotoPath).exists()) {
+            mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
+        } else if (data != null && data.getData() != null) {
+            returnUriResultChecked(data.getData());
+        } else {
+            mMediaSelectorCallback.onTakeFail();
+        }
+    }
+
+    private void returnUriResultChecked(Uri uri) {
+        String absolutePath = Utils.getAbsolutePath(getContext(), uri);
+        if (TextUtils.isEmpty(absolutePath)) {
+            mMediaSelectorCallback.onTakeFail();
+        } else {
+            mMediaSelectorCallback.onTakeSuccess(absolutePath);
         }
     }
 
     private void processCameraResult(int resultCode, @SuppressWarnings("unused") Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            //需要裁减，可以裁减则进行裁减，否则直接返回
-            if (mNeedCrop) {
-                //检测图片是否被保存下来
-                File photoPath = new File(mSavePhotoPathForCropCamera);
-                if (!photoPath.exists()) {
-                    mMediaSelectorCallback.onTakeFail();
-                    return;
-                }
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
 
-                if (mUseInnerCrop) {
-                    Utils.toUCrop(getContext(), mFragment, mSavePhotoPathForCropCamera, mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
-                } else {
-                    boolean success = toCropPhotoFromCamera();
-                    if (!success) {
-                        photoPath.renameTo(new File(mSavePhotoPath));
-                        mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
-                    }
-                }
-
-            } else {
-                //检测图片是否被保存下来
-                if (!new File(mSavePhotoPath).exists()) {
-                    mMediaSelectorCallback.onTakeFail();
-                    return;
-                }
-                mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
+        //需要裁减，可以裁减则进行裁减，否则直接返回
+        if (mNeedCrop) {
+            //检测图片是否被保存下来
+            File photoPath = new File(mSavePhotoPathForCropCamera);
+            if (!photoPath.exists()) {
+                mMediaSelectorCallback.onTakeFail();
+                return;
             }
+
+            if (mUseInnerCrop) {
+                Utils.toUCrop(getContext(), mFragment, mSavePhotoPathForCropCamera, mSavePhotoPath, getCropOptions(), REQUEST_LIBRARY_CROP);
+            } else {
+                boolean success = toCropPhotoFromCamera();
+                if (!success) {
+                    boolean renameTo = photoPath.renameTo(new File(mSavePhotoPath));
+                    Log.d(TAG, "rename to " + renameTo);
+                    mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
+                }
+            }
+            return;
         }
-    }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Interface
-    ///////////////////////////////////////////////////////////////////////////
-
-    public interface MediaSelectorCallback {
-
-        default void onTakeSuccess(String path) {
-        }
-
-        default void onTakeFail() {
+        //检测图片是否被保存下来
+        if (!new File(mSavePhotoPath).exists()) {
+            mMediaSelectorCallback.onTakeFail();
+        } else {
+            mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
         }
 
     }

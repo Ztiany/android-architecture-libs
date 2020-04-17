@@ -1,6 +1,8 @@
 package com.android.sdk.mediaselector;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 
 /**
  * 裁剪配置类
@@ -8,7 +10,7 @@ import java.io.Serializable;
  * Date: 2016/7/27 13:19
  */
 @SuppressWarnings("WeakerAccess")
-public class CropOptions implements Serializable {
+public class CropOptions implements Parcelable {
 
     private int aspectX = 1;
     private int aspectY = 1;
@@ -17,6 +19,38 @@ public class CropOptions implements Serializable {
 
     public CropOptions() {
     }
+
+    protected CropOptions(Parcel in) {
+        aspectX = in.readInt();
+        aspectY = in.readInt();
+        outputX = in.readInt();
+        outputY = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(aspectX);
+        dest.writeInt(aspectY);
+        dest.writeInt(outputX);
+        dest.writeInt(outputY);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<CropOptions> CREATOR = new Creator<CropOptions>() {
+        @Override
+        public CropOptions createFromParcel(Parcel in) {
+            return new CropOptions(in);
+        }
+
+        @Override
+        public CropOptions[] newArray(int size) {
+            return new CropOptions[size];
+        }
+    };
 
     int getAspectX() {
         return aspectX;

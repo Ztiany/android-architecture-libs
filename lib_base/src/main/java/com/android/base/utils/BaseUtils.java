@@ -1,5 +1,6 @@
 package com.android.base.utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -13,8 +14,8 @@ import com.blankj.utilcode.util.Utils;
  */
 public class BaseUtils {
 
-    public static void init(Context context) {
-        Utils.init(context);
+    public static void init(Application application) {
+        Utils.init(application);
     }
 
     public static Context getAppContext() {

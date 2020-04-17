@@ -40,10 +40,11 @@ dependencies {
     //support
     implementation androidLibraries.appcompat
     implementation androidLibraries.material
+    //foundation
+    compileOnly project(':lib_foundation')
     /*imageLoader*/
     compileOnly thirdLibraries.glide
     implementation('com.github.yalantis:ucrop:2.2.4') {
         exclude group: 'com.squareup.okhttp3'
     }
-
 }

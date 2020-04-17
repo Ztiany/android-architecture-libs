@@ -60,6 +60,8 @@ dependencies {
     //测试
     testImplementation testLibraries.junit
 
+    api project(':lib_foundation')
+
     //AndroidSupport
     api androidLibraries.activity
     api androidLibraries.activityKtx
