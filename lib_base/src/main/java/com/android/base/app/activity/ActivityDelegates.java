@@ -3,6 +3,7 @@ package com.android.base.app.activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.android.base.foundation.activity.ActivityDelegate;
 import com.github.dmstocking.optional.java.util.function.Predicate;
 
 import java.util.ArrayList;

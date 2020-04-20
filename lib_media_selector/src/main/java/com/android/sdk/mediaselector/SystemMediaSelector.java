@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.android.base.app.activity.ActivityDelegate;
-import com.android.base.app.activity.ActivityDelegateOwner;
-import com.android.base.app.fragment.delegates.FragmentDelegate;
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner;
+import com.android.base.foundation.activity.ActivityDelegate;
+import com.android.base.foundation.activity.ActivityDelegateOwner;
+import com.android.base.foundation.fragment.FragmentDelegate;
+import com.android.base.foundation.fragment.FragmentDelegateOwner;
 
 import java.io.File;
 

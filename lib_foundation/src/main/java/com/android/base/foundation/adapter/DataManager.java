@@ -1,4 +1,4 @@
-package com.android.base.adapter;
+package com.android.base.foundation.adapter;
 
 import java.util.List;
 

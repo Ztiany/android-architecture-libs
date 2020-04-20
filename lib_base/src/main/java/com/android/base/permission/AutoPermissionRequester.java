@@ -3,7 +3,7 @@ package com.android.base.permission;
 
 import android.content.Intent;
 
-import com.android.base.utils.android.ActFragWrapper;
+import com.android.base.foundation.common.ActFragWrapper;
 
 import java.util.Arrays;
 

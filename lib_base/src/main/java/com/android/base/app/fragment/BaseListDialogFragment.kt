@@ -2,7 +2,7 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.android.base.adapter.DataManager
+import com.android.base.foundation.adapter.DataManager
 import com.android.base.app.ui.AutoPageNumber
 import com.android.base.app.ui.PageNumber
 import com.android.base.app.ui.RefreshListLayout

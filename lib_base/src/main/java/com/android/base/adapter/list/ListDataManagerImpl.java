@@ -2,7 +2,7 @@ package com.android.base.adapter.list;
 
 import android.widget.BaseAdapter;
 
-import com.android.base.adapter.DataManager;
+import com.android.base.foundation.adapter.DataManager;
 import com.android.base.utils.common.Checker;
 
 import org.jetbrains.annotations.NotNull;

@@ -2,9 +2,9 @@ package com.android.base.app
 
 import android.app.Activity
 import android.content.Context
-import com.android.base.app.activity.ActivityDelegateOwner
+import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.app.fragment.animator.FragmentAnimator
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
 import com.android.base.app.ui.PageNumber

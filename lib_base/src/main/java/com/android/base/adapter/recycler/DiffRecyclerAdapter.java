@@ -3,7 +3,7 @@ package com.android.base.adapter.recycler;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.android.base.adapter.DataManager;
+import com.android.base.foundation.adapter.DataManager;
 import com.android.base.utils.common.Checker;
 
 import java.util.ArrayList;

@@ -3,8 +3,8 @@ package com.android.base.app.mvp
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import com.android.base.app.fragment.delegates.FragmentDelegate
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner
+import com.android.base.foundation.fragment.FragmentDelegate
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 
 
 class PresenterBinder constructor(private val lifecycle: Lifecycle) : FragmentDelegate<Fragment> {

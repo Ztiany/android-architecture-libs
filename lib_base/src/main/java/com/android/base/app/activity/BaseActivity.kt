@@ -6,6 +6,9 @@ import android.view.View
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.android.base.foundation.activity.ActivityDelegate
+import com.android.base.foundation.activity.ActivityDelegateOwner
+import com.android.base.foundation.activity.ActivityState
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
 import com.android.base.utils.android.compat.AndroidVersion
 import com.github.dmstocking.optional.java.util.function.Predicate

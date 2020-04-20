@@ -1,4 +1,4 @@
-package com.android.base.app.activity;
+package com.android.base.foundation.activity;
 
 
 import com.github.dmstocking.optional.java.util.function.Predicate;

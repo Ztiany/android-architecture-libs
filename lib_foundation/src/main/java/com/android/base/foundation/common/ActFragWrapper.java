@@ -1,4 +1,4 @@
-package com.android.base.utils.android;
+package com.android.base.foundation.common;
 
 import android.app.Activity;
 import android.app.Service;

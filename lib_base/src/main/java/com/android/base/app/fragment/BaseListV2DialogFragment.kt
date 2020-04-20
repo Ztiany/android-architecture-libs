@@ -2,7 +2,7 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import android.view.View
-import com.android.base.adapter.DataManager
+import com.android.base.foundation.adapter.DataManager
 import com.android.base.app.ui.AutoPageNumber
 import com.android.base.app.ui.RefreshListLayout
 import com.android.base.app.ui.StateLayoutConfig

@@ -1,6 +1,6 @@
 package com.android.base.app.ui;
 
-import com.android.base.adapter.DataManager;
+import com.android.base.foundation.adapter.DataManager;
 
 /**
  * @author Ztiany

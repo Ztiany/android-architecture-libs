@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.android.base.app.activity.ActivityDelegate
-import com.android.base.app.activity.ActivityDelegateOwner
-import com.android.base.app.activity.ActivityState
-import com.android.base.app.fragment.delegates.FragmentDelegate
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner
+import com.android.base.foundation.activity.ActivityDelegate
+import com.android.base.foundation.activity.ActivityDelegateOwner
+import com.android.base.foundation.activity.ActivityState
+import com.android.base.foundation.fragment.FragmentDelegate
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.utils.common.javaClassName
 import kotlin.reflect.KClass
 

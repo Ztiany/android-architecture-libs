@@ -2,7 +2,7 @@ package com.android.base.adapter.recycler;
 
 import android.content.Context;
 
-import com.android.base.adapter.DataManager;
+import com.android.base.foundation.adapter.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;

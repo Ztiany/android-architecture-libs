@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.android.base.app.Sword
 import com.android.base.app.activity.BackHandlerHelper
 import com.android.base.app.activity.OnBackPressListener
-import com.android.base.app.fragment.delegates.FragmentDelegate
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner
+import com.android.base.foundation.fragment.FragmentDelegate
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.app.ui.LoadingView
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
 import com.github.dmstocking.optional.java.util.function.Predicate

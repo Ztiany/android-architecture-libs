@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.android.base.app.activity.ActivityDelegateOwner
+import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.app.dagger.Injectable
-import com.android.base.app.fragment.delegates.FragmentDelegateOwner
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.interfaces.ActivityLifecycleCallbacksAdapter
 import dagger.android.AndroidInjection
 import dagger.android.support.AndroidSupportInjection

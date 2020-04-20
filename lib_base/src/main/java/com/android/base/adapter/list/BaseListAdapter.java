@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.android.base.R;
-import com.android.base.adapter.DataManager;
+import com.android.base.foundation.adapter.DataManager;
 
 import java.util.List;
 

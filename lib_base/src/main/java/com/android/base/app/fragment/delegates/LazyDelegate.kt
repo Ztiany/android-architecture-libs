@@ -3,6 +3,8 @@ package com.android.base.app.fragment.delegates
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.android.base.foundation.fragment.FragmentDelegate
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 
 /**
  * 用于在ViewPager中实现懒加载的Fragment：

@@ -1,4 +1,4 @@
-package com.android.base.app.activity
+package com.android.base.foundation.activity
 
 enum class ActivityState {
     INITIALIZED,
