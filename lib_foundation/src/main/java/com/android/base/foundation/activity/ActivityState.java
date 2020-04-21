@@ -1,6 +1,6 @@
-package com.android.base.foundation.activity
+package com.android.base.foundation.activity;
 
-enum class ActivityState {
+public enum ActivityState {
     INITIALIZED,
     CREATE,
     START,
