@@ -333,12 +333,17 @@ public class SystemMediaSelector {
      * 如果你的 host 实现了 {@link ActivityDelegateOwner} 或者 {@link FragmentDelegateOwner}，则不要调用该方法。
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            mMediaSelectorCallback.onCancel();
+            return;
+        }
+
         if (requestCode == REQUEST_CAMERA) {
-            processCameraResult(resultCode, data);
+            processCameraResult(data);
         } else if (requestCode == REQUEST_CROP) {
-            processCropResult(resultCode, data);
+            processCropResult(data);
         } else if (requestCode == REQUEST_ALBUM) {
-            processAlbumResult(resultCode, data);
+            processAlbumResult(data);
         } else if (requestCode == REQUEST_FILE) {
             processFileResult(resultCode, data);
         } else if (requestCode == REQUEST_LIBRARY_CROP) {
@@ -375,11 +380,7 @@ public class SystemMediaSelector {
         }
     }
 
-    private void processAlbumResult(int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
+    private void processAlbumResult(Intent data) {
         if (data == null) {
             mMediaSelectorCallback.onTakeFail();
             return;
@@ -410,12 +411,8 @@ public class SystemMediaSelector {
         }
     }
 
-    private void processCropResult(int resultCode, @SuppressWarnings("unused") Intent data) {
+    private void processCropResult(Intent data) {
         //有时候，系统裁减的结果可能没有保存到我们指定的目录，而是通过data返回了
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
         if (new File(mSavePhotoPath).exists()) {
             mMediaSelectorCallback.onTakeSuccess(mSavePhotoPath);
         } else if (data != null && data.getData() != null) {
@@ -434,11 +431,7 @@ public class SystemMediaSelector {
         }
     }
 
-    private void processCameraResult(int resultCode, @SuppressWarnings("unused") Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
+    private void processCameraResult(@SuppressWarnings("unused") Intent data) {
         //需要裁减，可以裁减则进行裁减，否则直接返回
         if (mNeedCrop) {
             //检测图片是否被保存下来

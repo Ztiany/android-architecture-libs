@@ -7,4 +7,8 @@ public interface SystemMediaSelectorResultListener {
 
     default void onTakeFail() {
     }
+
+    default void onCancel() {
+    }
+
 }
