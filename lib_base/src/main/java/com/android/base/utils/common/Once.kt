@@ -1,5 +1,6 @@
 package com.android.base.utils.common
 
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -14,9 +15,13 @@ internal class OnceDelegate(initValue: Boolean) : ReadWriteProperty<Any, Boolean
 
     private var value = initValue
 
+    private val called = AtomicBoolean(false)
+
     override fun getValue(thisRef: Any, property: KProperty<*>): Boolean {
         val returnValue = value
-        value = !returnValue
+        if (called.compareAndSet(false, true)) {
+            value = !returnValue
+        }
         return returnValue
     }
 
