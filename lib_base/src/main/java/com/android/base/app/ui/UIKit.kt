@@ -16,6 +16,10 @@ interface UIErrorHandler {
     fun handleError(throwable: Throwable)
 }
 
+fun LoadingView.dismissLoadingDialogDelayed(onDismiss: () -> Unit) {
+    dismissLoadingDialog(Sword.minimumShowingDialogMills, onDismiss)
+}
+
 fun <H, T> H.handleLiveState(
         /**core: data*/
         liveData: LiveData<State<T>>,
