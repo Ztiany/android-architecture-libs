@@ -10,6 +10,7 @@ import java.util.List;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 
 public abstract class TabManager {
 
@@ -26,16 +27,18 @@ public abstract class TabManager {
     private static final String CURRENT_ID_KET = "main_tab_id";
     private static final int NONE = -1;
     private int mCurrentId = NONE;
+
     private final int mOperationType;
+    private final boolean mEnableMaxLifecycle;
 
     public TabManager(Context context, FragmentManager fragmentManager, Tabs tabs, int containerId) {
-        this(context, fragmentManager, tabs, containerId, SHOW_HIDE);
+        this(context, fragmentManager, tabs, containerId, SHOW_HIDE, true);
     }
 
     /**
      * @param operationType {@link #ATTACH_DETACH} or {@link #SHOW_HIDE}
      */
-    public TabManager(Context context, FragmentManager fragmentManager, Tabs tabs, int containerId, int operationType) {
+    public TabManager(Context context, FragmentManager fragmentManager, Tabs tabs, int containerId, int operationType, boolean enableMaxLifecycle) {
         if (operationType != ATTACH_DETACH && operationType != SHOW_HIDE) {
             throw new IllegalArgumentException("the operationType must be ATTACH_DETACH or SHOW_HIDE");
         }
@@ -44,6 +47,7 @@ public abstract class TabManager {
         mContext = context;
         mFragmentManager = fragmentManager;
         mOperationType = operationType;
+        mEnableMaxLifecycle = enableMaxLifecycle;
     }
 
     public final void setup(Bundle bundle) {
@@ -87,11 +91,14 @@ public abstract class TabManager {
         doChangeTab(pageId);
     }
 
-    private void hideOrDetach(FragmentTransaction ft, Fragment fragment) {
+    private void hideOrDetach(FragmentTransaction fragmentTransaction, Fragment fragment) {
         if (mOperationType == SHOW_HIDE) {
-            ft.hide(fragment);
+            fragmentTransaction.hide(fragment);
         } else {
-            ft.detach(fragment);
+            fragmentTransaction.detach(fragment);
+        }
+        if (mEnableMaxLifecycle) {
+            fragmentTransaction.setMaxLifecycle(fragment, Lifecycle.State.STARTED);
         }
     }
 
@@ -100,6 +107,9 @@ public abstract class TabManager {
             fragmentTransaction.show(fragment);
         } else {
             fragmentTransaction.attach(fragment);
+        }
+        if (mEnableMaxLifecycle) {
+            fragmentTransaction.setMaxLifecycle(fragment, Lifecycle.State.RESUMED);
         }
     }
 

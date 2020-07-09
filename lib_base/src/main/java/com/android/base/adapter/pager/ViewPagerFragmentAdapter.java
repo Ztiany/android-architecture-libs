@@ -18,7 +18,14 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     private Context mContext;
 
     public ViewPagerFragmentAdapter(FragmentManager fragmentManager, Context context) {
-        super(fragmentManager);
+        this(fragmentManager, context, BEHAVIOR_SET_USER_VISIBLE_HINT);
+    }
+
+    /**
+     * @param behavior {@link FragmentPagerAdapter#BEHAVIOR_SET_USER_VISIBLE_HINT} or {@link FragmentPagerAdapter#BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT}
+     */
+    public ViewPagerFragmentAdapter(FragmentManager fragmentManager, Context context, int behavior) {
+        super(fragmentManager, behavior);
         mContext = context;
         mTabs = new ArrayList<>();
     }

@@ -59,27 +59,27 @@ interface AutoDisposeLifecycleOwnerEx : LifecycleOwner {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx)
     }
 
-    fun <T> Single<T>.autoDispose(): SingleSubscribeProxy<T> {
+    fun <T> Single<T>.autoDisposeOn(): SingleSubscribeProxy<T> {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx)
     }
 
-    fun <T> Flowable<T>.autoDispose(event: Lifecycle.Event): FlowableSubscribeProxy<T> {
+    fun <T> Flowable<T>.autoDisposeOn(event: Lifecycle.Event): FlowableSubscribeProxy<T> {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx, event)
     }
 
-    fun <T> Observable<T>.autoDispose(event: Lifecycle.Event): ObservableSubscribeProxy<T> {
+    fun <T> Observable<T>.autoDisposeOn(event: Lifecycle.Event): ObservableSubscribeProxy<T> {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx, event)
     }
 
-    fun Completable.autoDispose(event: Lifecycle.Event): CompletableSubscribeProxy {
+    fun Completable.autoDisposeOn(event: Lifecycle.Event): CompletableSubscribeProxy {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx, event)
     }
 
-    fun <T> Maybe<T>.autoDispose(event: Lifecycle.Event): MaybeSubscribeProxy<T> {
+    fun <T> Maybe<T>.autoDisposeOn(event: Lifecycle.Event): MaybeSubscribeProxy<T> {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx, event)
     }
 
-    fun <T> Single<T>.autoDispose(event: Lifecycle.Event): SingleSubscribeProxy<T> {
+    fun <T> Single<T>.autoDisposeOn(event: Lifecycle.Event): SingleSubscribeProxy<T> {
         return this.bindLifecycle(this@AutoDisposeLifecycleOwnerEx, event)
     }
 
