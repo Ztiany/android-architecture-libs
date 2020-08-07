@@ -18,7 +18,6 @@
 package com.bilibili.boxing.model;
 
 import android.content.ContentResolver;
-import androidx.annotation.NonNull;
 
 import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
@@ -28,6 +27,8 @@ import com.bilibili.boxing.model.task.impl.AlbumTask;
 import com.bilibili.boxing.model.task.impl.ImageTask;
 import com.bilibili.boxing.model.task.impl.VideoTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
+
+import androidx.annotation.NonNull;
 
 /**
  * The Manager to load {@link IMediaTask} and {@link AlbumTask}, holding {@link BoxingConfig}.
@@ -54,9 +55,9 @@ public class BoxingManager {
         return mConfig;
     }
 
-    public void loadMedia(@NonNull final ContentResolver cr, final int page,
-                          final String id, @NonNull final IMediaTaskCallback callback) {
+    public void loadMedia(@NonNull final ContentResolver cr, final int page, final String id, @NonNull final IMediaTaskCallback callback) {
         final IMediaTask task = mConfig.isVideoMode() ? new VideoTask() : new ImageTask();
+
         BoxingExecutor.getInstance().runWorker(new Runnable() {
             @Override
             public void run() {
@@ -68,13 +69,11 @@ public class BoxingManager {
 
     public void loadAlbum(@NonNull final ContentResolver cr, @NonNull final IAlbumTaskCallback callback) {
         BoxingExecutor.getInstance().runWorker(new Runnable() {
-
             @Override
             public void run() {
                 new AlbumTask().start(cr, callback);
             }
         });
-
     }
 
 }

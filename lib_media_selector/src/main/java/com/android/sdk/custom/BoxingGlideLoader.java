@@ -15,7 +15,7 @@
  *
  */
 
-package com.android.sdk.mediaselector;
+package com.android.sdk.custom;
 
 import android.graphics.Bitmap;
 import android.widget.ImageView;

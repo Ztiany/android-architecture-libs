@@ -1,4 +1,10 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+androidExtensions {
+    experimental = true
+}
 
 android {
 
@@ -40,6 +46,9 @@ dependencies {
     //support
     implementation androidLibraries.appcompat
     implementation androidLibraries.material
+    implementation androidLibraries.lifecycleRuntimeKtx
+    implementation kotlinLibraries.kotlinStdlib
+    implementation kotlinLibraries.kotlinCoroutines
     //foundation
     implementation project(':lib_foundation')
     /*imageLoader*/

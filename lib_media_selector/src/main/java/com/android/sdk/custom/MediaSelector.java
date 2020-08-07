@@ -1,4 +1,4 @@
-package com.android.sdk.mediaselector;
+package com.android.sdk.custom;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.android.sdk.common.CropOptions;
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.BoxingCrop;
 import com.bilibili.boxing.BoxingMediaLoader;
