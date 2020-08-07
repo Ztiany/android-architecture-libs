@@ -1,15 +1,15 @@
 package com.android.sdk.net;
 
-import com.android.sdk.net.core.ExceptionFactory;
-import com.android.sdk.net.provider.ApiHandler;
-import com.android.sdk.net.provider.CoroutinesRetryer;
-import com.android.sdk.net.provider.ErrorDataAdapter;
-import com.android.sdk.net.provider.ErrorMessage;
-import com.android.sdk.net.provider.HttpConfig;
-import com.android.sdk.net.provider.NetworkChecker;
-import com.android.sdk.net.provider.PostTransformer;
-import com.android.sdk.net.service.ServiceFactory;
-import com.android.sdk.net.service.ServiceHelper;
+import com.android.sdk.net.core.result.ExceptionFactory;
+import com.android.sdk.net.core.provider.ApiHandler;
+import com.android.sdk.net.core.provider.CoroutinesRetryer;
+import com.android.sdk.net.core.provider.ErrorDataAdapter;
+import com.android.sdk.net.core.provider.ErrorMessage;
+import com.android.sdk.net.core.provider.HttpConfig;
+import com.android.sdk.net.core.provider.NetworkChecker;
+import com.android.sdk.net.core.provider.PostTransformer;
+import com.android.sdk.net.core.service.ServiceFactory;
+import com.android.sdk.net.core.service.ServiceHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,7 +71,7 @@ public class NetContext {
         return mServiceHelper.getServiceFactory(netProvider().httpConfig());
     }
 
-    public class Builder {
+    public static class Builder {
 
         private NetProviderImpl mNetProvider = new NetProviderImpl();
 

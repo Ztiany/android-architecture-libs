@@ -1,12 +1,12 @@
 package com.android.sdk.net.coroutines
 
-import com.android.sdk.net.core.Result
+import com.android.sdk.net.core.result.Result
 import com.android.sdk.net.NetContext
-import com.android.sdk.net.core.ExceptionFactory
-import com.android.sdk.net.exception.ApiErrorException
-import com.android.sdk.net.exception.NetworkErrorException
-import com.android.sdk.net.exception.ServerErrorException
-import com.android.sdk.net.provider.CoroutinesRetryer
+import com.android.sdk.net.core.result.ExceptionFactory
+import com.android.sdk.net.core.exception.ApiErrorException
+import com.android.sdk.net.core.exception.NetworkErrorException
+import com.android.sdk.net.core.exception.ServerErrorException
+import com.android.sdk.net.core.provider.CoroutinesRetryer
 import kotlinx.coroutines.delay
 
 suspend fun <T> apiCall(
