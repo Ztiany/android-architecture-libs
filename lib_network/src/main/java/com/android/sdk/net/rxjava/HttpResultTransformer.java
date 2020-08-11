@@ -9,7 +9,6 @@ import com.android.sdk.net.core.exception.ApiErrorException;
 import com.android.sdk.net.core.exception.NetworkErrorException;
 import com.android.sdk.net.core.exception.ServerErrorException;
 import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.core.provider.PostTransformer;
 
 import org.reactivestreams.Publisher;
 
@@ -24,18 +23,25 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
 
-public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements ObservableTransformer<T, Downstream>, FlowableTransformer<T, Downstream>, SingleTransformer<T, Downstream> {
+public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements
+        ObservableTransformer<T, Downstream>, FlowableTransformer<T, Downstream>, SingleTransformer<T, Downstream> {
 
     private final boolean mRequireNonNullData;
     private final DataExtractor<Downstream, Upstream> mDataExtractor;
     @Nullable private final ExceptionFactory mExceptionFactory;
 
-    public HttpResultTransformer(boolean requireNonNullData, @NonNull DataExtractor<Downstream, Upstream> dataExtractor, @Nullable ExceptionFactory exceptionFactory) {
+    public HttpResultTransformer(
+            boolean requireNonNullData,
+            @NonNull DataExtractor<Downstream, Upstream> dataExtractor,
+            @Nullable ExceptionFactory exceptionFactory
+    ) {
+
         mRequireNonNullData = requireNonNullData;
         mDataExtractor = dataExtractor;
         if (exceptionFactory == null) {
             exceptionFactory = NetContext.get().netProvider().exceptionFactory();
         }
+
         mExceptionFactory = exceptionFactory;
     }
 
@@ -47,9 +53,9 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
                 .map(this::processData);
 
         @SuppressWarnings("unchecked")
-        PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
-        if (postTransformer != null) {
-            return downstreamFlowable.compose(postTransformer);
+        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        if (rxResultPostTransformer != null) {
+            return downstreamFlowable.compose(rxResultPostTransformer);
         } else {
             return downstreamFlowable;
         }
@@ -63,9 +69,9 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
                 .map(this::processData);
 
         @SuppressWarnings("unchecked")
-        PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
-        if (postTransformer != null) {
-            return downstreamObservable.compose(postTransformer);
+        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        if (rxResultPostTransformer != null) {
+            return downstreamObservable.compose(rxResultPostTransformer);
         } else {
             return downstreamObservable;
         }
@@ -75,9 +81,9 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
     public SingleSource<Downstream> apply(Single<T> upstream) {
         Single<Downstream> downstreamSingle = upstream.map(this::processData);
         @SuppressWarnings("unchecked")
-        PostTransformer<Downstream> postTransformer = (PostTransformer<Downstream>) NetContext.get().netProvider().postTransformer();
-        if (postTransformer != null) {
-            return downstreamSingle.compose(postTransformer);
+        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        if (rxResultPostTransformer != null) {
+            return downstreamSingle.compose(rxResultPostTransformer);
         } else {
             return downstreamSingle;
         }

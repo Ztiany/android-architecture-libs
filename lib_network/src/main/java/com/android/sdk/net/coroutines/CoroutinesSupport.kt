@@ -6,7 +6,6 @@ import com.android.sdk.net.core.result.ExceptionFactory
 import com.android.sdk.net.core.exception.ApiErrorException
 import com.android.sdk.net.core.exception.NetworkErrorException
 import com.android.sdk.net.core.exception.ServerErrorException
-import com.android.sdk.net.core.provider.CoroutinesRetryer
 import kotlinx.coroutines.delay
 
 suspend fun <T> apiCall(
@@ -51,6 +50,7 @@ suspend fun <T> apiCall(
 }
 
 private suspend fun <T> realCall(call: suspend () -> Result<T>, requireNonNullData: Boolean, exceptionFactory: ExceptionFactory? = null): CallResult<T> {
+
     try {
         val result = call.invoke()
 
@@ -125,6 +125,7 @@ suspend fun <T> apiCallDirectly(
 }
 
 private suspend fun <T> realCallDirectly(call: suspend () -> Result<T>, requireNonNullData: Boolean, exceptionFactory: ExceptionFactory? = null): T {
+
     try {
         val result = call.invoke()
 
@@ -162,12 +163,12 @@ private fun createException(result: Result<*>, exceptionFactory: ExceptionFactor
     return ApiErrorException(result.code, result.message)
 }
 
-private fun retryPostAction(): CoroutinesRetryer {
-    val coroutinesRetryer = NetContext.get().netProvider().coroutinesRetryer()
-    if (coroutinesRetryer != null) {
-        return coroutinesRetryer
+private fun retryPostAction(): CoroutinesResultPostProcessor {
+    val coroutinesResultPostProcessor = NetContext.get().netProvider().coroutinesResultPostProcessor()
+    if (coroutinesResultPostProcessor != null) {
+        return coroutinesResultPostProcessor
     }
-    return object : CoroutinesRetryer {
+    return object : CoroutinesResultPostProcessor {
         override suspend fun retry(throwable: Throwable): Boolean {
             return false
         }

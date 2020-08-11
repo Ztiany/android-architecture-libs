@@ -1,13 +1,12 @@
 package com.android.sdk.net;
 
-import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.core.provider.CoroutinesRetryer;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 import com.android.sdk.net.core.provider.ErrorDataAdapter;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.HttpConfig;
-import com.android.sdk.net.core.provider.NetworkChecker;
-import com.android.sdk.net.core.provider.PostTransformer;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
+import com.android.sdk.net.core.result.ExceptionFactory;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,12 +28,12 @@ public interface NetProvider {
     ErrorDataAdapter errorDataAdapter();
 
     @Nullable
-    PostTransformer postTransformer();
-
-    @Nullable
     ExceptionFactory exceptionFactory();
 
     @Nullable
-    CoroutinesRetryer coroutinesRetryer();
+    RxResultPostTransformer rxResultPostTransformer();
+
+    @Nullable
+    CoroutinesResultPostProcessor coroutinesResultPostProcessor();
 
 }

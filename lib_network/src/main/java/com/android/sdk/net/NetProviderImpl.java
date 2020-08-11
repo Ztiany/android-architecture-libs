@@ -1,12 +1,12 @@
 package com.android.sdk.net;
 
 import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.core.provider.CoroutinesRetryer;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 import com.android.sdk.net.core.provider.ErrorDataAdapter;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.HttpConfig;
 import com.android.sdk.net.core.provider.NetworkChecker;
-import com.android.sdk.net.core.provider.PostTransformer;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
 import com.android.sdk.net.core.result.ExceptionFactory;
 
 import androidx.annotation.NonNull;
@@ -20,8 +20,8 @@ class NetProviderImpl implements NetProvider {
     ErrorMessage mErrorMessage;
     ErrorDataAdapter mErrorDataAdapter;
     NetworkChecker mNetworkChecker;
-    PostTransformer mPostTransformer;
-    CoroutinesRetryer mCoroutinesRetryer;
+    RxResultPostTransformer mRxResultPostTransformer;
+    CoroutinesResultPostProcessor mCoroutinesResultPostProcessor;
 
     @Override
     public boolean isConnected() {
@@ -54,8 +54,8 @@ class NetProviderImpl implements NetProvider {
 
     @Nullable
     @Override
-    public PostTransformer postTransformer() {
-        return mPostTransformer;
+    public RxResultPostTransformer rxResultPostTransformer() {
+        return mRxResultPostTransformer;
     }
 
     @Nullable
@@ -66,8 +66,8 @@ class NetProviderImpl implements NetProvider {
 
     @Nullable
     @Override
-    public CoroutinesRetryer coroutinesRetryer() {
-        return mCoroutinesRetryer;
+    public CoroutinesResultPostProcessor coroutinesResultPostProcessor() {
+        return mCoroutinesResultPostProcessor;
     }
 
     void checkRequired() {

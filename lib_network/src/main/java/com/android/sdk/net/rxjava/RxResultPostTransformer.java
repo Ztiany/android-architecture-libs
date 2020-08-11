@@ -1,6 +1,4 @@
-package com.android.sdk.net.core.provider;
-
-import com.android.sdk.net.rxjava.ResultHandlers;
+package com.android.sdk.net.rxjava;
 
 import io.reactivex.FlowableTransformer;
 import io.reactivex.ObservableTransformer;
@@ -13,6 +11,6 @@ import io.reactivex.SingleTransformer;
  * Email: ztiany3@gmail.com
  * Date : 2018-12-21 14:31
  */
-public interface PostTransformer<Data> extends ObservableTransformer<Data, Data>, FlowableTransformer<Data, Data>, SingleTransformer<Data, Data> {
+public interface RxResultPostTransformer<Data> extends ObservableTransformer<Data, Data>, FlowableTransformer<Data, Data>, SingleTransformer<Data, Data> {
 
 }

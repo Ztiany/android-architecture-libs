@@ -1,4 +1,4 @@
-package com.android.sdk.net.rxjava
+package com.android.sdk.net
 
 import com.android.sdk.net.core.service.ServiceFactory
 

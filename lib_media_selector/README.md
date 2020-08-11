@@ -10,13 +10,14 @@
 使用注意，配置好 FileProvider：
 
 ```xml
-<cache-path name="internal" path="boxing" />
-<external-path name="external" path="DCIM/bili/boxing" />
+<external-files-path
+    name="app_external"
+    path="/"/>
 ```
 
 原始 boxing 库存在以下问题：
 
-1. 依赖  [RotatePhotoView](https://github.com/ChenSiLiang/RotatePhotoView) 导致的崩溃。
+1.  [RotatePhotoView](https://github.com/ChenSiLiang/RotatePhotoView) 依赖混乱导致的崩溃。
 2.  [Android Q SQLiteException](https://github.com/bilibili/boxing/issues/154) 问题。
 3. 没有适配 Android 10 的 ScopedStorage。
 
