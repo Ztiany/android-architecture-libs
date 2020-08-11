@@ -20,6 +20,8 @@ package com.bilibili.boxing.model.config;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.jetbrains.annotations.NotNull;
+
 import androidx.annotation.DrawableRes;
 
 /**
@@ -33,11 +35,11 @@ import androidx.annotation.DrawableRes;
  * @author ChenSL
  */
 public class BoxingConfig implements Parcelable {
+
     public static final int DEFAULT_SELECTED_COUNT = 9;
 
     private Mode mMode = Mode.SINGLE_IMG;
     private ViewMode mViewMode = ViewMode.PREVIEW;
-    private BoxingCropOption mCropOption;
 
     private int mMediaPlaceHolderRes;
     private int mMediaCheckedRes;
@@ -81,10 +83,6 @@ public class BoxingConfig implements Parcelable {
 
     public ViewMode getViewMode() {
         return mViewMode;
-    }
-
-    public BoxingCropOption getCropOption() {
-        return mCropOption;
     }
 
     /**
@@ -200,11 +198,6 @@ public class BoxingConfig implements Parcelable {
         return this;
     }
 
-    public BoxingConfig withCropOption(BoxingCropOption cropOption) {
-        this.mCropOption = cropOption;
-        return this;
-    }
-
     /**
      * set the max count of selected medias in {@link Mode#MULTI_IMG}
      * @param count max count
@@ -257,6 +250,7 @@ public class BoxingConfig implements Parcelable {
         return this;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "BoxingConfig{" +
@@ -274,7 +268,6 @@ public class BoxingConfig implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.mMode == null ? -1 : this.mMode.ordinal());
         dest.writeInt(this.mViewMode == null ? -1 : this.mViewMode.ordinal());
-        dest.writeParcelable(this.mCropOption, flags);
         dest.writeInt(this.mMediaPlaceHolderRes);
         dest.writeInt(this.mMediaCheckedRes);
         dest.writeInt(this.mMediaUnCheckedRes);
@@ -292,7 +285,6 @@ public class BoxingConfig implements Parcelable {
         this.mMode = tmpMMode == -1 ? null : Mode.values()[tmpMMode];
         int tmpMViewMode = in.readInt();
         this.mViewMode = tmpMViewMode == -1 ? null : ViewMode.values()[tmpMViewMode];
-        this.mCropOption = in.readParcelable(BoxingCropOption.class.getClassLoader());
         this.mMediaPlaceHolderRes = in.readInt();
         this.mMediaCheckedRes = in.readInt();
         this.mMediaUnCheckedRes = in.readInt();
@@ -316,4 +308,5 @@ public class BoxingConfig implements Parcelable {
             return new BoxingConfig[size];
         }
     };
+
 }

@@ -17,6 +17,7 @@
 
 package com.bilibili.boxing.model.entity;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -26,20 +27,21 @@ import android.os.Parcelable;
  * @author ChenSL
  */
 public abstract class BaseMedia implements Parcelable {
+
     protected enum TYPE {
         IMAGE, VIDEO
     }
 
-    protected String mPath;
+    protected Uri mUri;
     protected String mId;
     protected String mSize;
 
     public BaseMedia() {
     }
 
-    public BaseMedia(String id, String path) {
+    public BaseMedia(String id, Uri uri) {
         mId = id;
-        mPath = path;
+        mUri = uri;
     }
 
     public abstract TYPE getType();
@@ -52,7 +54,7 @@ public abstract class BaseMedia implements Parcelable {
         try {
             long result = Long.parseLong(mSize);
             return result > 0 ? result : 0;
-        }catch (NumberFormatException size) {
+        } catch (NumberFormatException size) {
             return 0;
         }
     }
@@ -65,12 +67,12 @@ public abstract class BaseMedia implements Parcelable {
         mSize = size;
     }
 
-    public String getPath(){
-        return mPath;
+    public Uri getUri() {
+        return mUri;
     }
 
-    public void setPath(String path) {
-        mPath = path;
+    public void setUri(Uri uri) {
+        mUri = uri;
     }
 
     @Override
@@ -80,13 +82,13 @@ public abstract class BaseMedia implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.mPath);
+        dest.writeParcelable(this.mUri, flags);
         dest.writeString(this.mId);
         dest.writeString(this.mSize);
     }
 
     protected BaseMedia(Parcel in) {
-        this.mPath = in.readString();
+        this.mUri = in.readParcelable(Uri.class.getClassLoader());
         this.mId = in.readString();
         this.mSize = in.readString();
     }

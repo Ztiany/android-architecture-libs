@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
  * @author ChenSL
  */
 public class BoxingManager {
+
     private static final BoxingManager INSTANCE = new BoxingManager();
 
     private BoxingConfig mConfig;
@@ -57,23 +58,11 @@ public class BoxingManager {
 
     public void loadMedia(@NonNull final ContentResolver cr, final int page, final String id, @NonNull final IMediaTaskCallback callback) {
         final IMediaTask task = mConfig.isVideoMode() ? new VideoTask() : new ImageTask();
-
-        BoxingExecutor.getInstance().runWorker(new Runnable() {
-            @Override
-            public void run() {
-                task.load(cr, page, id, callback);
-            }
-        });
-
+        BoxingExecutor.getInstance().runWorker(() -> task.load(cr, page, id, callback));
     }
 
     public void loadAlbum(@NonNull final ContentResolver cr, @NonNull final IAlbumTaskCallback callback) {
-        BoxingExecutor.getInstance().runWorker(new Runnable() {
-            @Override
-            public void run() {
-                new AlbumTask().start(cr, callback);
-            }
-        });
+        BoxingExecutor.getInstance().runWorker(() -> new AlbumTask().start(cr, callback));
     }
 
 }

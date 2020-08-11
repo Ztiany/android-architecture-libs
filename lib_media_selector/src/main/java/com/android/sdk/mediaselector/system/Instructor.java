@@ -108,6 +108,7 @@ public class Instructor implements Parcelable {
 
     public Instructor setNeedCrop() {
         mNeedCrop = true;
+        mCropOptions = new CropOptions();
         return this;
     }
 

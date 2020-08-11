@@ -18,6 +18,7 @@
 package com.android.sdk.mediaselector.custom;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bilibili.boxing.loader.IBoxingCallback;
@@ -40,43 +41,48 @@ import androidx.annotation.Nullable;
 final class BoxingGlideLoader implements IBoxingMediaLoader {
 
     @Override
-    public void displayThumbnail(@NonNull ImageView img, @NonNull String absPath, int width, int height) {
-        String path = "file://" + absPath;
+    public void displayThumbnail(@NonNull ImageView img, @NonNull Uri uri, int width, int height) {
+
         try {
             RequestOptions requestOptions = new RequestOptions();
-            Glide.with(img.getContext()).load(path).apply(requestOptions).into(img);
+            Glide.with(img.getContext()).load(uri).apply(requestOptions).into(img);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void displayRaw(@NonNull final ImageView imageView, @NonNull String absPath, int width, int height, final IBoxingCallback iBoxingCallback) {
-        String path = "file://" + absPath;
-        Glide.with(imageView.getContext())
-                .asBitmap()
-                .load(path)
-                .listener(new RequestListener<Bitmap>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        if (iBoxingCallback != null) {
-                            iBoxingCallback.onFail(e);
-                            return true;
-                        }
-                        return false;
-                    }
+    public void displayRaw(@NonNull final ImageView imageView, @NonNull Uri uri, int width, int height, final IBoxingCallback iBoxingCallback) {
 
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        if (resource != null && iBoxingCallback != null) {
-                            imageView.setImageBitmap(resource);
-                            iBoxingCallback.onSuccess();
-                            return true;
+        try {
+            Glide.with(imageView.getContext())
+                    .asBitmap()
+                    .load(uri)
+                    .listener(new RequestListener<Bitmap>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                            if (iBoxingCallback != null) {
+                                iBoxingCallback.onFail(e);
+                                return true;
+                            }
+                            return false;
                         }
-                        return false;
-                    }
-                })
-                .into(imageView);
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            if (resource != null && iBoxingCallback != null) {
+                                imageView.setImageBitmap(resource);
+                                iBoxingCallback.onSuccess();
+                                return true;
+                            }
+                            return false;
+                        }
+                    })
+                    .into(imageView);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

@@ -18,14 +18,15 @@
 package com.bilibili.boxing.presenter;
 
 import android.content.ContentResolver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * This specifies the contract between the view and the presenter.
@@ -38,6 +39,7 @@ public interface PickerContract {
      * define the functions of the view, interacting with presenter
      */
     interface View {
+
         /**
          * set the presenter attaching to the view
          */
@@ -72,11 +74,6 @@ public interface PickerContract {
         void clearMedia();
 
         /**
-         * start crop the {@link BaseMedia} in the single media mode
-         */
-        void startCrop(@NonNull BaseMedia media, int requestCode);
-
-        /**
          * set or update the config.
          *
          * @param config {@link BoxingConfig}
@@ -89,6 +86,7 @@ public interface PickerContract {
      * define the function of presenter, to control the module to load data and to tell view to displayRaw the data
      */
     interface Presenter {
+
         /**
          * load the specify data from {@link ContentResolver}
          *
@@ -129,4 +127,5 @@ public interface PickerContract {
          */
         void checkSelectedMedia(List<BaseMedia> allMedias, List<BaseMedia> selectedMedias);
     }
+
 }

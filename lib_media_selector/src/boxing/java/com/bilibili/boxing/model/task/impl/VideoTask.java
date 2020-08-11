@@ -18,7 +18,10 @@
 package com.bilibili.boxing.model.task.impl;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
@@ -26,6 +29,7 @@ import com.bilibili.boxing.model.entity.impl.VideoMedia;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,28 +44,40 @@ import androidx.annotation.WorkerThread;
 @WorkerThread
 public class VideoTask implements IMediaTask<VideoMedia> {
 
-    private final static String[] MEDIA_COL = new String[]{
-            MediaStore.Video.Media.DATA,
-            MediaStore.Video.Media._ID,
-            MediaStore.Video.Media.TITLE,
-            MediaStore.Video.Media.MIME_TYPE,
-            MediaStore.Video.Media.SIZE,
-            MediaStore.Video.Media.DATE_TAKEN,
-            MediaStore.Video.Media.DURATION
-    };
-
-
     @Override
     public void load(final ContentResolver cr, final int page, String id, final IMediaTaskCallback<VideoMedia> callback) {
-        loadVideos(cr, page, callback);
+        loadVideosVersionChecked(cr, page, callback);
     }
 
-    private void loadVideos(ContentResolver cr, int page, @NonNull final IMediaTaskCallback<VideoMedia> callback) {
+    private void loadVideosVersionChecked(ContentResolver cr, int page, @NonNull final IMediaTaskCallback<VideoMedia> callback) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            loadVideosBelowAndroidQ(cr, page, callback);
+        } else {
+              loadVideosAboveAndroidQ(cr, page, callback);
+        }
+    }
+
+    private void loadVideosBelowAndroidQ(ContentResolver cr, int page, @NonNull final IMediaTaskCallback<VideoMedia> callback) {
         final List<VideoMedia> videoMedias = new ArrayList<>();
-        final Cursor cursor = cr.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MEDIA_COL, null, null,
-                MediaStore.Images.Media.DATE_MODIFIED + " desc" + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " + IMediaTask.PAGE_LIMIT);
-        try {
-            int count = 0;
+
+        String[] mediaCol = new String[]{
+                MediaStore.Video.Media.DATA,
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Media.TITLE,
+                MediaStore.Video.Media.MIME_TYPE,
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Video.Media.DATE_TAKEN,
+                MediaStore.Video.Media.DURATION
+        };
+
+        try (Cursor cursor = cr.query(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                mediaCol,
+                null, null,
+                MediaStore.Images.Media.DATE_MODIFIED + " desc" + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " + IMediaTask.PAGE_LIMIT)) {
+
+            int count;
+
             if (cursor != null && cursor.moveToFirst()) {
                 count = cursor.getCount();
                 do {
@@ -72,8 +88,15 @@ public class VideoTask implements IMediaTask<VideoMedia> {
                     String size = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
                     String date = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_TAKEN));
                     String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
-                    VideoMedia video = new VideoMedia.Builder(id, data).setTitle(title).setDuration(duration)
-                            .setSize(size).setDataTaken(date).setMimeType(type).build();
+
+                    VideoMedia video = new VideoMedia.Builder(id, Uri.fromFile(new File(data)))
+                            .setTitle(title)
+                            .setDuration(duration)
+                            .setSize(size)
+                            .setDataTaken(date)
+                            .setMimeType(type)
+                            .build();
+
                     videoMedias.add(video);
 
                 } while (!cursor.isLast() && cursor.moveToNext());
@@ -81,22 +104,65 @@ public class VideoTask implements IMediaTask<VideoMedia> {
             } else {
                 postMedias(callback, videoMedias, 0);
             }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
-
     }
 
-    private void postMedias(@NonNull final IMediaTaskCallback<VideoMedia> callback,
-                            final List<VideoMedia> videoMedias, final int count) {
-        BoxingExecutor.getInstance().runUI(new Runnable() {
-            @Override
-            public void run() {
-                callback.postMedia(videoMedias, count);
+
+    private void loadVideosAboveAndroidQ(ContentResolver cr, int page, IMediaTaskCallback<VideoMedia> callback) {
+        final List<VideoMedia> videoMedias = new ArrayList<>();
+
+        String[] mediaCol = new String[]{
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Media.TITLE,
+                MediaStore.Video.Media.MIME_TYPE,
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Video.Media.DATE_TAKEN,
+                MediaStore.Video.Media.DURATION
+        };
+
+        try (Cursor cursor = cr.query(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                mediaCol,
+                null, null,
+                MediaStore.Images.Media.DATE_MODIFIED + " desc" + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " + IMediaTask.PAGE_LIMIT)) {
+
+            int count;
+
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getCount();
+                do {
+                    String id = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media._ID));
+                    String title = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.TITLE));
+                    String type = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.MIME_TYPE));
+                    String size = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.SIZE));
+                    String date = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_TAKEN));
+                    String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(id));
+
+                    VideoMedia video = new VideoMedia.Builder(id, uri)
+                            .setTitle(title)
+                            .setDuration(duration)
+                            .setSize(size)
+                            .setDataTaken(date)
+                            .setMimeType(type)
+                            .build();
+
+                    videoMedias.add(video);
+
+                } while (!cursor.isLast() && cursor.moveToNext());
+                postMedias(callback, videoMedias, count);
+            } else {
+                postMedias(callback, videoMedias, 0);
             }
-        });
+        }
+    }
+
+
+    private void postMedias(
+            @NonNull final IMediaTaskCallback<VideoMedia> callback,
+            final List<VideoMedia> videoMedias,
+            final int count) {
+        BoxingExecutor.getInstance().runUI(() -> callback.postMedia(videoMedias, count));
     }
 
 }

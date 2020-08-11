@@ -18,38 +18,32 @@
 package com.bilibili.boxing.model.entity.impl;
 
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing.utils.BoxingExecutor;
-import com.bilibili.boxing.utils.BoxingExifHelper;
 import com.bilibili.boxing.utils.BoxingFileHelper;
-import com.bilibili.boxing.utils.CompressTask;
-import com.bilibili.boxing.utils.ImageCompressor;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
-
 /**
  * Id and absolute path is necessary.Builder Mode can be used too.
- * compress image through {@link #compress(ImageCompressor)}.
  *
  * @author ChenSL
  */
 public class ImageMedia extends BaseMedia implements Parcelable {
+
     private static final long MAX_GIF_SIZE = 1024 * 1024L;
-    private static final long MAX_IMAGE_SIZE = 1024 * 1024L;
 
     private boolean mIsSelected;
-    private String mThumbnailPath;
-    private String mCompressPath;
+    private Uri mThumbnailPath;
     private int mHeight;
     private int mWidth;
     private IMAGE_TYPE mImageType;
@@ -59,19 +53,19 @@ public class ImageMedia extends BaseMedia implements Parcelable {
         PNG, JPG, GIF
     }
 
-    public ImageMedia(String id, String imagePath) {
-        super(id, imagePath);
+    public ImageMedia(String id, Uri imageUri) {
+        super(id, imageUri);
     }
 
     public ImageMedia(@NonNull File file) {
         this.mId = String.valueOf(System.currentTimeMillis());
-        this.mPath = file.getAbsolutePath();
+        this.mUri = Uri.fromFile(file);
         this.mSize = String.valueOf(file.length());
         this.mIsSelected = true;
     }
 
     public ImageMedia(Builder builder) {
-        super(builder.mId, builder.mImagePath);
+        super(builder.mId, builder.mImageUri);
         this.mThumbnailPath = builder.mThumbnailPath;
         this.mSize = builder.mSize;
         this.mHeight = builder.mHeight;
@@ -100,18 +94,6 @@ public class ImageMedia extends BaseMedia implements Parcelable {
 
     public boolean isGif() {
         return getImageType() == IMAGE_TYPE.GIF;
-    }
-
-    public boolean compress(ImageCompressor imageCompressor) {
-        return CompressTask.compress(imageCompressor, this, MAX_IMAGE_SIZE);
-    }
-
-    /**
-     * @param maxSize the proximate max size for compression
-     * @return may be a little bigger than expected for performance.
-     */
-    public boolean compress(ImageCompressor imageCompressor, long maxSize) {
-        return CompressTask.compress(imageCompressor, this, maxSize);
     }
 
     /**
@@ -161,37 +143,6 @@ public class ImageMedia extends BaseMedia implements Parcelable {
         return mWidth;
     }
 
-    public String getCompressPath() {
-        return mCompressPath;
-    }
-
-    public void removeExif() {
-        BoxingExifHelper.removeExif(getPath());
-    }
-
-    /**
-     * save image to MediaStore.
-     */
-    public void saveMediaStore(final ContentResolver cr) {
-        BoxingExecutor.getInstance().runWorker(new Runnable() {
-            @Override
-            public void run() {
-                if (cr != null && !TextUtils.isEmpty(getId())) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, getId());
-                    values.put(MediaStore.Images.Media.MIME_TYPE, getMimeType());
-                    values.put(MediaStore.Images.Media.DATA, getPath());
-                    cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                }
-            }
-        });
-
-    }
-
-    public void setCompressPath(String compressPath) {
-        mCompressPath = compressPath;
-    }
-
     public void setSize(String size) {
         mSize = size;
     }
@@ -204,62 +155,95 @@ public class ImageMedia extends BaseMedia implements Parcelable {
         mWidth = width;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "ImageMedia{" +
                 ", mThumbnailPath='" + mThumbnailPath + '\'' +
-                ", mCompressPath='" + mCompressPath + '\'' +
                 ", mSize='" + mSize + '\'' +
                 ", mHeight=" + mHeight +
                 ", mWidth=" + mWidth;
     }
 
-    @Override
-    public int hashCode() {
-        int result = mId.hashCode();
-        result = 31 * result + (mPath != null ? mPath.hashCode() : 0);
-        return result;
-    }
-
     @NonNull
-    public String getThumbnailPath() {
+    public Uri getThumbnailPath() {
         if (BoxingFileHelper.isFileValid(mThumbnailPath)) {
             return mThumbnailPath;
-        } else if (BoxingFileHelper.isFileValid(mCompressPath)) {
-            return mCompressPath;
         }
-        return mPath;
+        return mUri;
     }
-
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ImageMedia other = (ImageMedia) obj;
-        return !(TextUtils.isEmpty(mPath) || TextUtils.isEmpty(other.mPath)) && this.mPath.equals(other.mPath);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImageMedia)) return false;
+        ImageMedia that = (ImageMedia) o;
+        return isSelected() == that.isSelected() &&
+                getHeight() == that.getHeight() &&
+                getWidth() == that.getWidth() &&
+                Objects.equals(getThumbnailPath(), that.getThumbnailPath()) &&
+                getImageType() == that.getImageType() &&
+                Objects.equals(getMimeType(), that.getMimeType());
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(isSelected(), getThumbnailPath(), getHeight(), getWidth(), getImageType(), getMimeType());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeByte(this.mIsSelected ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.mThumbnailPath, flags);
+        dest.writeInt(this.mHeight);
+        dest.writeInt(this.mWidth);
+        dest.writeInt(this.mImageType == null ? -1 : this.mImageType.ordinal());
+        dest.writeString(this.mMimeType);
+    }
+
+    protected ImageMedia(Parcel in) {
+        super(in);
+        this.mIsSelected = in.readByte() != 0;
+        this.mThumbnailPath = in.readParcelable(Uri.class.getClassLoader());
+        this.mHeight = in.readInt();
+        this.mWidth = in.readInt();
+        int tmpMImageType = in.readInt();
+        this.mImageType = tmpMImageType == -1 ? null : IMAGE_TYPE.values()[tmpMImageType];
+        this.mMimeType = in.readString();
+    }
+
+    public static final Creator<ImageMedia> CREATOR = new Creator<ImageMedia>() {
+        @Override
+        public ImageMedia createFromParcel(Parcel source) {
+            return new ImageMedia(source);
+        }
+
+        @Override
+        public ImageMedia[] newArray(int size) {
+            return new ImageMedia[size];
+        }
+    };
+
     public static class Builder {
+
         private String mId;
-        private String mImagePath;
+        private Uri mImageUri;
         private boolean mIsSelected;
-        private String mThumbnailPath;
+        private Uri mThumbnailPath;
         private String mSize;
         private int mHeight;
         private int mWidth;
         private String mMimeType;
 
-        public Builder(String id, String path) {
+        public Builder(String id, Uri imageUri) {
             this.mId = id;
-            this.mImagePath = path;
+            this.mImageUri = imageUri;
         }
 
         public Builder setSelected(boolean selected) {
@@ -267,7 +251,7 @@ public class ImageMedia extends BaseMedia implements Parcelable {
             return this;
         }
 
-        public Builder setThumbnailPath(String thumbnailPath) {
+        public Builder setThumbnailPath(Uri thumbnailPath) {
             mThumbnailPath = thumbnailPath;
             return this;
         }
@@ -295,46 +279,7 @@ public class ImageMedia extends BaseMedia implements Parcelable {
         public ImageMedia build() {
             return new ImageMedia(this);
         }
+
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeByte(this.mIsSelected ? (byte) 1 : (byte) 0);
-        dest.writeString(this.mThumbnailPath);
-        dest.writeString(this.mCompressPath);
-        dest.writeInt(this.mHeight);
-        dest.writeInt(this.mWidth);
-        dest.writeInt(this.mImageType == null ? -1 : this.mImageType.ordinal());
-        dest.writeString(this.mMimeType);
-    }
-
-    protected ImageMedia(Parcel in) {
-        super(in);
-        this.mIsSelected = in.readByte() != 0;
-        this.mThumbnailPath = in.readString();
-        this.mCompressPath = in.readString();
-        this.mHeight = in.readInt();
-        this.mWidth = in.readInt();
-        int tmpMImageType = in.readInt();
-        this.mImageType = tmpMImageType == -1 ? null : IMAGE_TYPE.values()[tmpMImageType];
-        this.mMimeType = in.readString();
-    }
-
-    public static final Creator<ImageMedia> CREATOR = new Creator<ImageMedia>() {
-        @Override
-        public ImageMedia createFromParcel(Parcel source) {
-            return new ImageMedia(source);
-        }
-
-        @Override
-        public ImageMedia[] newArray(int size) {
-            return new ImageMedia[size];
-        }
-    };
 }

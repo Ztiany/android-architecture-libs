@@ -19,6 +19,7 @@ package com.bilibili.boxing;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.widget.ImageView;
@@ -30,6 +31,8 @@ import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.presenter.PickerContract;
 import com.bilibili.boxing.presenter.PickerPresenter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * @author ChenSL
  */
 public abstract class AbsBoxingViewActivity extends AppCompatActivity implements PickerContract.View {
+
     ArrayList<BaseMedia> mSelectedImages;
     String mAlbumId;
     int mStartPos;
@@ -118,8 +122,8 @@ public abstract class AbsBoxingViewActivity extends AppCompatActivity implements
         return getApplicationContext().getContentResolver();
     }
 
-    public final void loadRawImage(@NonNull ImageView img, @NonNull String path, int width, int height, IBoxingCallback callback) {
-        BoxingMediaLoader.getInstance().displayRaw(img, path, width, height, callback);
+    public final void loadRawImage(@NonNull ImageView img, @NonNull Uri uri, int width, int height, IBoxingCallback callback) {
+        BoxingMediaLoader.getInstance().displayRaw(img, uri, width, height, callback);
     }
 
     /**
@@ -132,28 +136,6 @@ public abstract class AbsBoxingViewActivity extends AppCompatActivity implements
     public void onFinish(@NonNull List<BaseMedia> medias) {
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(Boxing.EXTRA_RESULT, (ArrayList<BaseMedia>) medias);
-    }
-
-    /**
-     * need crop or not
-     *
-     * @return true, need it.
-     */
-    public final boolean hasCropBehavior() {
-        BoxingConfig config = BoxingManager.getInstance().getBoxingConfig();
-        return config != null && config.isSingleImageMode() && config.getCropOption() != null;
-    }
-
-    /**
-     * to start the crop behavior, call it when {@link #hasCropBehavior()} return true.
-     *
-     * @param media       the media to be cropped.
-     * @param requestCode The integer request code originally supplied to
-     *                    startActivityForResult(), allowing you to identify who this
-     *                    result came from.
-     */
-    @Override
-    public final void startCrop(@NonNull BaseMedia media, int requestCode) {
     }
 
     /**
@@ -170,7 +152,7 @@ public abstract class AbsBoxingViewActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    public void onSaveInstanceState(@NotNull Bundle outState, @NotNull PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putParcelable(Boxing.EXTRA_CONFIG, BoxingManager.getInstance().getBoxingConfig());
     }
@@ -238,4 +220,5 @@ public abstract class AbsBoxingViewActivity extends AppCompatActivity implements
     public final int getStartPos() {
         return mStartPos;
     }
+
 }

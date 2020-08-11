@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.android.sdk.mediaselector.common.LogUtils
 import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.MediaUtils
+import com.android.sdk.mediaselector.common.newUriList
 import java.io.File
 import java.util.*
 
@@ -21,6 +22,7 @@ internal class LegacySystemMediaSelector : BaseSystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // Album
     ///////////////////////////////////////////////////////////////////////////
+
     override fun doTakePhotoFormSystem(): Boolean {
         return openContentSelector(REQUEST_ALBUM, MediaUtils.MIMETYPE_IMAGE)
     }
@@ -57,6 +59,7 @@ internal class LegacySystemMediaSelector : BaseSystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // File
     ///////////////////////////////////////////////////////////////////////////
+
     override fun doTakeFile(): Boolean {
         return openContentSelector(REQUEST_FILE, MediaUtils.MIMETYPE_ALL)
     }
@@ -84,6 +87,7 @@ internal class LegacySystemMediaSelector : BaseSystemMediaSelector {
     ///////////////////////////////////////////////////////////////////////////
     // Utils
     ///////////////////////////////////////////////////////////////////////////
+
     private fun openContentSelector(requestCode: Int, defaultType: String): Boolean {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)

@@ -2,10 +2,8 @@ package com.android.sdk.mediaselector.system
 
 import android.content.ClipData
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
-import android.provider.OpenableColumns
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,8 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.*
 
 /**
@@ -30,7 +26,7 @@ import java.util.*
  * - [document-provider](https://developer.android.com/guide/topics/providers/document-provider?hl=zh-cn)
  */
 @RequiresApi(Build.VERSION_CODES.O)
-internal class AndroidPSystemMediaSelector : BaseSystemMediaSelector {
+internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
 
     constructor(activity: AppCompatActivity, resultListener: ResultListener) : super(activity, resultListener)
 
@@ -60,13 +56,15 @@ internal class AndroidPSystemMediaSelector : BaseSystemMediaSelector {
         if (currentInstructor.isCopyToInternal || currentInstructor.needCrop()) {
 
             lifecycleOwner.lifecycleScope.launch {
+
                 val copied = withContext(Dispatchers.IO) {
-                    copySingleToInternal(uri)
+                    copySingleToInternal(context, uri)
                 }
-                if (currentInstructor.needCrop()) {
-                    toCrop(copied)
-                } else {
-                    mediaSelectorCallback.onTakeSuccess(newUriList(copied))
+
+                when {
+                    copied == null -> mediaSelectorCallback.onTakeFail()
+                    currentInstructor.needCrop() -> toCrop(copied)
+                    else -> mediaSelectorCallback.onTakeSuccess(newUriList(copied))
                 }
             }
 
@@ -126,37 +124,19 @@ internal class AndroidPSystemMediaSelector : BaseSystemMediaSelector {
             withContext(Dispatchers.IO) {
                 val list = mutableListOf<String>()
                 for (i in 0 until clipData.itemCount) {
-                    list.add(copySingleToInternal(clipData.getItemAt(i).uri))
+                    copySingleToInternal(context, clipData.getItemAt(i).uri)?.let(list::add)
                 }
                 list
             }.map {
                 Uri.fromFile(File(it))
-            }.let(mediaSelectorCallback::onTakeSuccess)
+            }.let {
+                if (it.isEmpty()) {
+                    mediaSelectorCallback.onTakeFail()
+                } else {
+                    mediaSelectorCallback.onTakeSuccess(it)
+                }
+            }
         }
-    }
-
-    private fun copySingleToInternal(uri: Uri): String {
-        val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null, null)
-        var postfix = cursor?.use {
-            if (it.moveToFirst()) {
-                StorageUtils.getFileExtension(it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME)))
-            } else ""
-        }
-
-        // TODO  get file extension by reading binary.
-        if (postfix.isNullOrBlank()) {
-            postfix = StorageUtils.JPEG
-        }
-
-        val target = StorageUtils.createInternalPicturePath(context, postfix)
-
-        LogUtils.d(target)
-
-        context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            Files.copy(inputStream, Paths.get(target))
-        }
-
-        return target
     }
 
 }

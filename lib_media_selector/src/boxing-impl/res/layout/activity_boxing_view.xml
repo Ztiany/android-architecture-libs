@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  Copyright (C) 2017 Bilibili
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,21 +27,9 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/nav_top_bar"
         android:layout_width="match_parent"
-        android:elevation="2dp"
         android:layout_height="?android:attr/actionBarSize"
-        app:theme="@style/Boxing.ToolbarTheme">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:drawablePadding="8dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:textAppearance="@style/Boxing.TextAppearance.App.Medium"/>
-    </androidx.appcompat.widget.Toolbar>
+        android:elevation="2dp"
+        app:theme="@style/Boxing.ToolbarTheme"/>
 
     <ProgressBar
         android:id="@+id/loading"
@@ -51,14 +38,14 @@
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:indeterminate="true"/>
+        android:indeterminate="true" />
 
     <com.bilibili.boxing_impl.view.HackyViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/item_choose_layout"
@@ -73,11 +60,13 @@
             android:layout_height="30dp"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="@dimen/boxing_item_spacing"
+            android:background="@drawable/selector_boxing_btn_solid"
             android:minWidth="60dp"
             android:paddingLeft="@dimen/boxing_item_half_spacing"
             android:paddingRight="@dimen/boxing_item_half_spacing"
             android:text="@string/boxing_ok"
-            android:background="@drawable/selector_boxing_btn_solid"
-            android:textColor="@color/boxing_white"/>
+            android:textColor="@color/boxing_white" />
+
     </FrameLayout>
+
 </LinearLayout>

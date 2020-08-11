@@ -18,8 +18,11 @@
 package com.bilibili.boxing.model.task.impl;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.TextUtils;
 
@@ -31,6 +34,9 @@ import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingExecutor;
 import com.bilibili.boxing.utils.BoxingLog;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,23 +52,37 @@ import androidx.collection.ArrayMap;
  */
 @WorkerThread
 public class ImageTask implements IMediaTask<ImageMedia> {
+
     private static final String CONJUNCTION_SQL = "=? or";
-    private static final String SELECTION_IMAGE_MIME_TYPE = Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " + Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " + Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " + Images.Media.MIME_TYPE + "=?";
-    private static final String SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF = Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " + Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " + Images.Media.MIME_TYPE + "=?";
+
+    private static final String SELECTION_IMAGE_MIME_TYPE =
+            Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " +
+                    Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " +
+                    Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " +
+                    Images.Media.MIME_TYPE + "=?";
+
+    private static final String SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF =
+            Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " +
+                    Images.Media.MIME_TYPE + CONJUNCTION_SQL + " " +
+                    Images.Media.MIME_TYPE + "=?";
+
     private static final String SELECTION_ID = Images.Media.BUCKET_ID + "=? and (" + SELECTION_IMAGE_MIME_TYPE + " )";
-    private static final String SELECTION_ID_WITHOUT_GIF = Images.Media.BUCKET_ID + "=? and (" + SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF + " )";
+
+    private static final String SELECTION_ID_WITHOUT_GIF =
+            Images.Media.BUCKET_ID + "=? and (" + SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF + " )";
 
     private static final String IMAGE_JPEG = "image/jpeg";
     private static final String IMAGE_PNG = "image/png";
     private static final String IMAGE_JPG = "image/jpg";
     private static final String IMAGE_GIF = "image/gif";
+
     private static final String[] SELECTION_ARGS_IMAGE_MIME_TYPE = {IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG, IMAGE_GIF};
     private static final String[] SELECTION_ARGS_IMAGE_MIME_TYPE_WITHOUT_GIF = {IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG};
 
     private static final String DESC = " desc";
 
     private BoxingConfig mPickerConfig;
-    private Map<String, String> mThumbnailMap;
+    private Map<String, Uri> mThumbnailMap;
 
     public ImageTask() {
         this.mThumbnailMap = new ArrayMap<>();
@@ -70,54 +90,139 @@ public class ImageTask implements IMediaTask<ImageMedia> {
     }
 
     @Override
-    public void load(@NonNull final ContentResolver cr, final int page, final String id,
-                     @NonNull final IMediaTaskCallback<ImageMedia> callback) {
+    public void load(@NonNull final ContentResolver cr, final int page, final String id, @NonNull final IMediaTaskCallback<ImageMedia> callback) {
         buildThumbnail(cr);
         buildAlbumList(cr, id, page, callback);
     }
 
     private void buildThumbnail(ContentResolver cr) {
-        String[] projection = {Images.Thumbnails.IMAGE_ID, Images.Thumbnails.DATA};
-        queryThumbnails(cr, projection);
+        buildThumbnailVersionChecked(cr);
     }
 
-    private void queryThumbnails(ContentResolver cr, String[] projection) {
-        Cursor cur = null;
-        try {
-            cur = Images.Thumbnails.queryMiniThumbnails(cr, Images.Thumbnails.EXTERNAL_CONTENT_URI,
-                    Images.Thumbnails.MINI_KIND, projection);
+    private void buildThumbnailVersionChecked(ContentResolver contentResolver) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            queryThumbnailsBelowAndroidQ(contentResolver);
+        } else {
+            queryThumbnailsAboveAndroidQ(contentResolver);
+        }
+    }
+
+    private void queryThumbnailsBelowAndroidQ(ContentResolver cr) {
+        String[] projection = {Images.Thumbnails.IMAGE_ID, Images.Thumbnails.DATA};
+        try (Cursor cur = Images.Thumbnails.queryMiniThumbnails(
+                cr,
+                Images.Thumbnails.EXTERNAL_CONTENT_URI,
+                Images.Thumbnails.MINI_KIND,
+                projection)) {
             if (cur != null && cur.moveToFirst()) {
                 do {
                     String imageId = cur.getString(cur.getColumnIndex(Images.Thumbnails.IMAGE_ID));
                     String imagePath = cur.getString(cur.getColumnIndex(Images.Thumbnails.DATA));
-                    mThumbnailMap.put(imageId, imagePath);
+                    mThumbnailMap.put(imageId, Uri.fromFile(new File(imagePath)));
                 } while (cur.moveToNext() && !cur.isLast());
-            }
-        } finally {
-            if (cur != null) {
-                cur.close();
             }
         }
     }
 
-    private List<ImageMedia> buildAlbumList(ContentResolver cr, String bucketId, int page,
-                                            @NonNull final IMediaTaskCallback<ImageMedia> callback) {
+    private void queryThumbnailsAboveAndroidQ(ContentResolver cr) {
+        //todo
+    }
+
+    private List<ImageMedia> buildAlbumList(
+            ContentResolver cr,
+            String bucketId,
+            int page,
+            @NonNull IMediaTaskCallback<ImageMedia> callback) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return buildAlbumListBelowAndroidQ(cr, bucketId, page, callback);
+        } else {
+            return buildAlbumListAboveAndroidQ(cr, bucketId, page, callback);
+        }
+    }
+
+    @NotNull
+    private List<ImageMedia> buildAlbumListBelowAndroidQ(
+            ContentResolver cr,
+            String bucketId,
+            int page,
+            @NonNull IMediaTaskCallback<ImageMedia> callback) {
+
         List<ImageMedia> result = new ArrayList<>();
-        String columns[] = getColumns();
+
+        String[] columns;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            columns = new String[]{Images.Media._ID, Images.Media.DATA,
+                    Images.Media.SIZE, Images.Media.MIME_TYPE,
+                    Images.Media.WIDTH, Images.Media.HEIGHT};
+        } else {
+            columns = new String[]{Images.Media._ID, Images.Media.DATA,
+                    Images.Media.SIZE, Images.Media.MIME_TYPE};
+        }
+
         Cursor cursor = null;
+
         try {
             boolean isDefaultAlbum = TextUtils.isEmpty(bucketId);
             boolean isNeedPaging = mPickerConfig == null || mPickerConfig.isNeedPaging();
             boolean isNeedGif = mPickerConfig != null && mPickerConfig.isNeedGif();
             int totalCount = getTotalCount(cr, bucketId, columns, isDefaultAlbum, isNeedGif);
 
-            String imageMimeType = isNeedGif ? SELECTION_IMAGE_MIME_TYPE : SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF;
-            String[] args = isNeedGif ? SELECTION_ARGS_IMAGE_MIME_TYPE : SELECTION_ARGS_IMAGE_MIME_TYPE_WITHOUT_GIF;
-            String order = isNeedPaging ? Images.Media.DATE_MODIFIED + DESC + " LIMIT "
-                    + page * IMediaTask.PAGE_LIMIT + " , " + IMediaTask.PAGE_LIMIT : Images.Media.DATE_MODIFIED + DESC;
+            String imageMimeType = isNeedGif ? SELECTION_IMAGE_MIME_TYPE :
+                    SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF;
+
+            String[] args = isNeedGif ? SELECTION_ARGS_IMAGE_MIME_TYPE :
+                    SELECTION_ARGS_IMAGE_MIME_TYPE_WITHOUT_GIF;
+
+            String order = isNeedPaging ? Images.Media.DATE_MODIFIED +
+                    DESC + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " +
+                    IMediaTask.PAGE_LIMIT : Images.Media.DATE_MODIFIED + DESC;
+
             String selectionId = isNeedGif ? SELECTION_ID : SELECTION_ID_WITHOUT_GIF;
+
             cursor = query(cr, bucketId, columns, isDefaultAlbum, isNeedGif, imageMimeType, args, order, selectionId);
-            addItem(totalCount, result, cursor, callback);
+
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String picPath = cursor.getString(cursor.getColumnIndex(Images.Media.DATA));
+                    Uri uri = Uri.fromFile(new File(picPath));
+
+                    if (callback.needFilter(uri)) {
+                        BoxingLog.d("path:" + picPath + " has been filter");
+                    } else {
+
+                        String id = cursor.getString(cursor.getColumnIndex(Images.Media._ID));
+                        String size = cursor.getString(cursor.getColumnIndex(Images.Media.SIZE));
+                        String mimeType = cursor.getString(cursor.getColumnIndex(Images.Media.MIME_TYPE));
+
+                        int width = 0;
+                        int height = 0;
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            width = cursor.getInt(cursor.getColumnIndex(Images.Media.WIDTH));
+                            height = cursor.getInt(cursor.getColumnIndex(Images.Media.HEIGHT));
+                        }
+
+                        ImageMedia imageItem = new ImageMedia.Builder(id, uri)
+                                .setThumbnailPath(mThumbnailMap.get(id))
+                                .setSize(size).setMimeType(mimeType)
+                                .setHeight(height)
+                                .setWidth(width)
+                                .build();
+
+                        if (!result.contains(imageItem)) {
+                            result.add(imageItem);
+                        }
+                    }
+                } while (!cursor.isLast() && cursor.moveToNext());
+                postMedias(result, totalCount, callback);
+            } else {
+                postMedias(result, 0, callback);
+            }
+            clear();
+
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -126,72 +231,122 @@ public class ImageTask implements IMediaTask<ImageMedia> {
         return result;
     }
 
-    private void addItem(final int allCount, final List<ImageMedia> result, Cursor cursor, @NonNull final IMediaTaskCallback<ImageMedia> callback) {
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                String picPath = cursor.getString(cursor.getColumnIndex(Images.Media.DATA));
-                if (callback.needFilter(picPath)) {
-                    BoxingLog.d("path:" + picPath + " has been filter");
-                } else {
+    private List<ImageMedia> buildAlbumListAboveAndroidQ(
+            ContentResolver cr,
+            String bucketId,
+            int page,
+            IMediaTaskCallback<ImageMedia> callback) {
+
+        List<ImageMedia> result = new ArrayList<>();
+
+        String[] columns = new String[]{Images.Media._ID,
+                Images.Media.SIZE, Images.Media.MIME_TYPE,
+                Images.Media.WIDTH, Images.Media.HEIGHT};
+
+        Cursor cursor = null;
+
+        try {
+            boolean isDefaultAlbum = TextUtils.isEmpty(bucketId);
+            boolean isNeedPaging = mPickerConfig == null || mPickerConfig.isNeedPaging();
+            boolean isNeedGif = mPickerConfig != null && mPickerConfig.isNeedGif();
+            int totalCount = getTotalCount(cr, bucketId, columns, isDefaultAlbum, isNeedGif);
+
+            String imageMimeType = isNeedGif ? SELECTION_IMAGE_MIME_TYPE :
+                    SELECTION_IMAGE_MIME_TYPE_WITHOUT_GIF;
+
+            String[] args = isNeedGif ? SELECTION_ARGS_IMAGE_MIME_TYPE :
+                    SELECTION_ARGS_IMAGE_MIME_TYPE_WITHOUT_GIF;
+
+            String order = isNeedPaging ? Images.Media.DATE_MODIFIED +
+                    DESC + " LIMIT " + page * IMediaTask.PAGE_LIMIT + " , " +
+                    IMediaTask.PAGE_LIMIT : Images.Media.DATE_MODIFIED + DESC;
+
+            String selectionId = isNeedGif ? SELECTION_ID : SELECTION_ID_WITHOUT_GIF;
+
+            cursor = query(cr, bucketId, columns, isDefaultAlbum, isNeedGif, imageMimeType, args, order, selectionId);
+
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+
                     String id = cursor.getString(cursor.getColumnIndex(Images.Media._ID));
-                    String size = cursor.getString(cursor.getColumnIndex(Images.Media.SIZE));
-                    String mimeType = cursor.getString(cursor.getColumnIndex(Images.Media.MIME_TYPE));
-                    int width = 0;
-                    int height = 0;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        width = cursor.getInt(cursor.getColumnIndex(Images.Media.WIDTH));
-                        height = cursor.getInt(cursor.getColumnIndex(Images.Media.HEIGHT));
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.parseInt(id));
+
+                    if (callback.needFilter(uri)) {
+                        BoxingLog.d("uri:" + uri + " has been filter");
+                    } else {
+
+                        String size = cursor.getString(cursor.getColumnIndex(Images.Media.SIZE));
+                        String mimeType = cursor.getString(cursor.getColumnIndex(Images.Media.MIME_TYPE));
+
+                        int width = 0;
+                        int height = 0;
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            width = cursor.getInt(cursor.getColumnIndex(Images.Media.WIDTH));
+                            height = cursor.getInt(cursor.getColumnIndex(Images.Media.HEIGHT));
+                        }
+
+                        ImageMedia imageItem = new ImageMedia.Builder(id, uri)
+                                .setThumbnailPath(mThumbnailMap.get(id))
+                                .setSize(size).setMimeType(mimeType)
+                                .setHeight(height)
+                                .setWidth(width)
+                                .build();
+
+                        if (!result.contains(imageItem)) {
+                            result.add(imageItem);
+                        }
                     }
-                    ImageMedia imageItem = new ImageMedia.Builder(id, picPath).setThumbnailPath(mThumbnailMap.get(id))
-                            .setSize(size).setMimeType(mimeType).setHeight(height).setWidth(width).build();
-                    if (!result.contains(imageItem)) {
-                        result.add(imageItem);
-                    }
-                }
-            } while (!cursor.isLast() && cursor.moveToNext());
-            postMedias(result, allCount, callback);
-        } else {
-            postMedias(result, 0, callback);
+                } while (!cursor.isLast() && cursor.moveToNext());
+                postMedias(result, totalCount, callback);
+            } else {
+                postMedias(result, 0, callback);
+            }
+            clear();
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        clear();
+
+        return null;
     }
 
     private void postMedias(final List<ImageMedia> result, final int count, @NonNull final IMediaTaskCallback<ImageMedia> callback) {
-        BoxingExecutor.getInstance().runUI(new Runnable() {
-            @Override
-            public void run() {
-                callback.postMedia(result, count);
-            }
-        });
+        BoxingExecutor.getInstance().runUI(() -> callback.postMedia(result, count));
     }
 
-    private Cursor query(ContentResolver cr, String bucketId, String[] columns, boolean isDefaultAlbum,
-                         boolean isNeedGif, String imageMimeType, String[] args, String order, String selectionId) {
+    private Cursor query(ContentResolver cr,
+                         String bucketId,
+                         String[] columns,
+                         boolean isDefaultAlbum,
+                         boolean isNeedGif,
+                         String imageMimeType,
+                         String[] args,
+                         String order,
+                         String selectionId) {
+
         Cursor resultCursor;
         if (isDefaultAlbum) {
-            resultCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, imageMimeType,
-                    args, order);
+            resultCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, imageMimeType, args, order);
         } else {
             if (isNeedGif) {
-                resultCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, selectionId,
+                resultCursor = cr.query(
+                        Images.Media.EXTERNAL_CONTENT_URI,
+                        columns,
+                        selectionId,
                         new String[]{bucketId, args[0], args[1], args[2], args[3]}, order);
             } else {
-                resultCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, selectionId,
+                resultCursor = cr.query(
+                        Images.Media.EXTERNAL_CONTENT_URI,
+                        columns,
+                        selectionId,
                         new String[]{bucketId, args[0], args[1], args[2]}, order);
             }
         }
         return resultCursor;
-    }
-
-    @NonNull
-    private String[] getColumns() {
-        String[] columns;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            columns = new String[]{Images.Media._ID, Images.Media.DATA, Images.Media.SIZE, Images.Media.MIME_TYPE, Images.Media.WIDTH, Images.Media.HEIGHT};
-        } else {
-            columns = new String[]{Images.Media._ID, Images.Media.DATA, Images.Media.SIZE, Images.Media.MIME_TYPE};
-        }
-        return columns;
     }
 
     private int getTotalCount(ContentResolver cr, String bucketId, String[] columns, boolean isDefaultAlbum, boolean isNeedGif) {
@@ -199,16 +354,26 @@ public class ImageTask implements IMediaTask<ImageMedia> {
         int result = 0;
         try {
             if (isDefaultAlbum) {
-                allCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns,
-                        SELECTION_IMAGE_MIME_TYPE, SELECTION_ARGS_IMAGE_MIME_TYPE,
+                allCursor = cr.query(
+                        Images.Media.EXTERNAL_CONTENT_URI,
+                        columns,
+                        SELECTION_IMAGE_MIME_TYPE,
+                        SELECTION_ARGS_IMAGE_MIME_TYPE,
                         Images.Media.DATE_MODIFIED + DESC);
             } else {
                 if (isNeedGif) {
-                    allCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, SELECTION_ID,
-                            new String[]{bucketId, IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG, IMAGE_GIF}, Images.Media.DATE_MODIFIED + DESC);
+                    allCursor = cr.query(
+                            Images.Media.EXTERNAL_CONTENT_URI,
+                            columns,
+                            SELECTION_ID,
+                            new String[]{bucketId, IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG, IMAGE_GIF},
+                            Images.Media.DATE_MODIFIED + DESC);
                 } else {
-                    allCursor = cr.query(Images.Media.EXTERNAL_CONTENT_URI, columns, SELECTION_ID_WITHOUT_GIF,
-                            new String[]{bucketId, IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG}, Images.Media.DATE_MODIFIED + DESC);
+                    allCursor = cr.query(
+                            Images.Media.EXTERNAL_CONTENT_URI,
+                            columns, SELECTION_ID_WITHOUT_GIF,
+                            new String[]{bucketId, IMAGE_JPEG, IMAGE_PNG, IMAGE_JPG},
+                            Images.Media.DATE_MODIFIED + DESC);
                 }
             }
             if (allCursor != null) {

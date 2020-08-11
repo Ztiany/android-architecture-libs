@@ -33,4 +33,5 @@ public interface IBoxingCallback {
      * Error happened when running a task;
      */
     void onFail(Throwable t);
+
 }

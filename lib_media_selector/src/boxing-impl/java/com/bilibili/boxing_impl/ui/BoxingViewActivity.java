@@ -36,6 +36,8 @@ import com.bilibili.boxing_impl.BoxingResHelper;
 import com.bilibili.boxing_impl.view.HackyViewPager;
 import com.ztiany.mediaselector.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +54,7 @@ import androidx.viewpager.widget.ViewPager;
  * @author ChenSL
  */
 public class BoxingViewActivity extends AbsBoxingViewActivity {
+
     public static final String EXTRA_TYPE_BACK = "com.bilibili.boxing_impl.ui.BoxingViewActivity.type_back";
 
     HackyViewPager mGallery;
@@ -87,7 +90,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     }
 
     private void createToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.nav_top_bar);
+        mToolbar = findViewById(R.id.nav_top_bar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -206,7 +209,6 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
         mCurrentImageItem.setSelected(false);
     }
 
-
     private void setMenuIcon(boolean isSelected) {
         if (mNeedEdit) {
             mSelectedMenuItem.setIcon(isSelected ? BoxingResHelper.getMediaCheckedRes(): BoxingResHelper.getMediaUncheckedRes());
@@ -281,7 +283,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         if (mSelectedImages != null) {
             outState.putParcelableArrayList(Boxing.EXTRA_SELECTED_MEDIA, mSelectedImages);
         }
@@ -296,12 +298,14 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     }
 
     private class ImagesAdapter extends FragmentStatePagerAdapter {
+
         private ArrayList<BaseMedia> mMedias;
 
         ImagesAdapter(FragmentManager fm) {
             super(fm);
         }
 
+        @NotNull
         @Override
         public Fragment getItem(int i) {
             return BoxingRawImageFragment.newInstance((ImageMedia) mMedias.get(i));
@@ -330,4 +334,5 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
             }
         }
     }
+
 }

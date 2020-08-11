@@ -17,6 +17,7 @@
 
 package com.bilibili.boxing.model.entity.impl;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -31,8 +32,9 @@ import java.util.Locale;
  * @author ChenSL
  */
 public class VideoMedia extends BaseMedia {
+
     private static final long MB = 1024 * 1024;
-    
+
     private String mTitle;
     private String mDuration;
     private String mDateTaken;
@@ -47,7 +49,7 @@ public class VideoMedia extends BaseMedia {
     }
 
     public VideoMedia(Builder builder) {
-        super(builder.mId, builder.mPath);
+        super(builder.mId, builder.mUri);
         this.mTitle = builder.mTitle;
         this.mDuration = builder.mDuration;
         this.mSize = builder.mSize;
@@ -68,15 +70,14 @@ public class VideoMedia extends BaseMedia {
         if (duration <= 0) {
             return String.format(Locale.US, "%02d:%02d", 0, 0);
         }
-        long totalSeconds = duration / 1000;
 
+        long totalSeconds = duration / 1000;
         long seconds = totalSeconds % 60;
         long minutes = (totalSeconds / 60) % 60;
         long hours = totalSeconds / 3600;
 
         if (hours > 0) {
-            return String.format(Locale.US, "%02d:%02d", hours * 60 + minutes,
-                    seconds);
+            return String.format(Locale.US, "%02d:%02d", hours * 60 + minutes, seconds);
         } else {
             return String.format(Locale.US, "%02d:%02d", minutes, seconds);
         }
@@ -118,15 +119,15 @@ public class VideoMedia extends BaseMedia {
     public static class Builder {
         private String mId;
         private String mTitle;
-        private String mPath;
+        private Uri mUri;
         private String mDuration;
         private String mSize;
         private String mDateTaken;
         private String mMimeType;
 
-        public Builder(String id, String path) {
+        public Builder(String id, Uri uri) {
             this.mId = id;
-            this.mPath = path;
+            this.mUri = uri;
         }
 
         public Builder setTitle(String title) {
@@ -193,4 +194,5 @@ public class VideoMedia extends BaseMedia {
             return new VideoMedia[size];
         }
     };
+
 }

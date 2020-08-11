@@ -18,7 +18,7 @@
 package com.bilibili.boxing.presenter;
 
 import android.content.ContentResolver;
-import android.text.TextUtils;
+import android.net.Uri;
 
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
@@ -27,8 +27,8 @@ import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.task.IMediaTask;
+import com.bilibili.boxing.utils.BoxingFileHelper;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +41,7 @@ import java.util.Map;
  * @author ChenSL
  */
 public class PickerPresenter implements PickerContract.Presenter {
+
     private PickerContract.View mTasksView;
 
     private int mTotalPage;
@@ -102,26 +103,31 @@ public class PickerPresenter implements PickerContract.Presenter {
         if (allMedias == null || allMedias.size() == 0) {
             return;
         }
+
         Map<String, ImageMedia> map = new HashMap<>(allMedias.size());
+
         for (BaseMedia allMedia : allMedias) {
             if (!(allMedia instanceof ImageMedia)) {
                 return;
             }
             ImageMedia media = (ImageMedia) allMedia;
             media.setSelected(false);
-            map.put(media.getPath(), media);
+            map.put(media.getUri().toString(), media);
         }
+
         if (selectedMedias == null || selectedMedias.size() < 0) {
             return;
         }
+
         for (BaseMedia media : selectedMedias) {
-            if (map.containsKey(media.getPath())) {
-                map.get(media.getPath()).setSelected(true);
+            if (map.containsKey(media.getUri())) {
+                map.get(media.getUri()).setSelected(true);
             }
         }
     }
 
     private static class LoadMediaCallback implements IMediaTaskCallback<BaseMedia> {
+
         private WeakReference<PickerPresenter> mWr;
 
         LoadMediaCallback(PickerPresenter presenter) {
@@ -147,12 +153,13 @@ public class PickerPresenter implements PickerContract.Presenter {
         }
 
         @Override
-        public boolean needFilter(String path) {
-            return TextUtils.isEmpty(path) || !(new File(path).exists());
+        public boolean needFilter(Uri path) {
+            return !BoxingFileHelper.isFileValid(path);
         }
     }
 
     private static class LoadAlbumCallback implements IAlbumTaskCallback {
+
         private WeakReference<PickerPresenter> mWr;
 
         LoadAlbumCallback(PickerPresenter presenter) {
@@ -173,6 +180,7 @@ public class PickerPresenter implements PickerContract.Presenter {
                 presenter.mTasksView.showAlbum(list);
             }
         }
+
     }
 
 }

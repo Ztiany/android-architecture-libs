@@ -22,20 +22,19 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import com.bilibili.boxing.model.BoxingBuilderConfig;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
-import com.bilibili.boxing.model.config.BoxingCropOption;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.presenter.PickerContract;
 import com.bilibili.boxing.utils.CameraPickerHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -58,8 +57,10 @@ import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
  * @author ChenSL
  */
 public abstract class AbsBoxingViewFragment extends Fragment implements PickerContract.View {
+
     public static final String[] STORAGE_PERMISSIONS =
             {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+
     public static final String[] CAMERA_PERMISSIONS = {Manifest.permission.CAMERA};
 
     private static final int REQUEST_CODE_PERMISSION = 233;
@@ -176,16 +177,16 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         checkPermissionAndLoad();
     }
 
     private void checkPermissionAndLoad() {
         try {
-            if (!BoxingBuilderConfig.TESTING && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && ContextCompat.checkSelfPermission(getActivity(), STORAGE_PERMISSIONS[0]) != PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(getActivity(), STORAGE_PERMISSIONS[1]) != PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && ContextCompat.checkSelfPermission(requireContext(), STORAGE_PERMISSIONS[0]) != PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(requireContext(), STORAGE_PERMISSIONS[1]) != PERMISSION_GRANTED) {
                 requestPermissions(STORAGE_PERMISSIONS, REQUEST_CODE_PERMISSION);
             } else {
                 startLoading();
@@ -193,9 +194,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
         } catch (IllegalArgumentException | IllegalStateException e) {
             onRequestPermissionError(STORAGE_PERMISSIONS, e);
         }
-
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -203,8 +202,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 onRequestPermissionSuc(requestCode, permissions, grantResults);
             } else {
-                onRequestPermissionError(permissions,
-                        new SecurityException("request android.permission.READ_EXTERNAL_STORAGE error."));
+                onRequestPermissionError(permissions, new SecurityException("request android.permission.READ_EXTERNAL_STORAGE error."));
             }
         }
     }
@@ -235,7 +233,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     @NonNull
     @Override
     public final ContentResolver getAppCr() {
-        return getActivity().getApplicationContext().getContentResolver();
+        return requireActivity().getApplicationContext().getContentResolver();
     }
 
     /**
@@ -261,31 +259,6 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
         if (mOnFinishListener != null) {
             mOnFinishListener.onBoxingFinish(intent, medias);
         }
-
-    }
-
-    /**
-     * need crop or not
-     *
-     * @return true, need it.
-     */
-    public final boolean hasCropBehavior() {
-        BoxingConfig config = BoxingManager.getInstance().getBoxingConfig();
-        return config != null && config.isSingleImageMode() && config.getCropOption() != null;
-    }
-
-    /**
-     * to start the crop behavior, call it when {@link #hasCropBehavior()} return true.
-     *
-     * @param media       the media to be cropped.
-     * @param requestCode The integer request code originally supplied to
-     *                    startActivityForResult(), allowing you to identify who this
-     *                    result came from.
-     */
-    @Override
-    public final void startCrop(@NonNull BaseMedia media, int requestCode) {
-        BoxingCropOption cropConfig = BoxingManager.getInstance().getBoxingConfig().getCropOption();
-        BoxingCrop.getInstance().onStartCrop(getActivity(), this, cropConfig, media.getPath(), requestCode);
     }
 
     /**
@@ -307,13 +280,10 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
         if (mCameraPicker != null && requestCode == CameraPickerHelper.REQ_CODE_CAMERA) {
             onCameraActivityResult(requestCode, resultCode);
         }
-        if (hasCropBehavior()) {
-            onCropActivityResult(requestCode, resultCode, data);
-        }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mCameraPicker != null) {
             mCameraPicker.onSaveInstanceState(outState);
@@ -401,7 +371,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     public final int getMaxCount() {
         BoxingConfig config = BoxingManager.getInstance().getBoxingConfig();
         if (config == null) {
-           return BoxingConfig.DEFAULT_SELECTED_COUNT;
+            return BoxingConfig.DEFAULT_SELECTED_COUNT;
         }
         return config.getMaxCount();
     }
@@ -415,19 +385,6 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     }
 
     /**
-     * successfully get result from crop in {@link #onActivityResult(int, int, Intent)}
-     */
-    public void onCropActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
-        Uri output = BoxingCrop.getInstance().onCropFinish(resultCode, data);
-        if (output != null) {
-            List<BaseMedia> medias = new ArrayList<>(1);
-            ImageMedia media = new ImageMedia(String.valueOf(System.currentTimeMillis()), output.getPath());
-            medias.add(media);
-            onFinish(medias);
-        }
-    }
-
-    /**
      * start camera to take a photo.
      *
      * @param activity      the caller activity.
@@ -436,7 +393,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
      */
     public final void startCamera(Activity activity, Fragment fragment, String subFolderPath) {
         try {
-            if (!BoxingBuilderConfig.TESTING && ContextCompat.checkSelfPermission(getActivity(), CAMERA_PERMISSIONS[0]) != PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(requireContext(), CAMERA_PERMISSIONS[0]) != PERMISSION_GRANTED) {
                 requestPermissions(CAMERA_PERMISSIONS, REQUEST_CODE_PERMISSION);
             } else {
                 if (!BoxingManager.getInstance().getBoxingConfig().isVideoMode()) {
@@ -449,6 +406,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
     }
 
     private static final class CameraListener implements CameraPickerHelper.Callback {
+
         private WeakReference<AbsBoxingViewFragment> mWr;
 
         CameraListener(AbsBoxingViewFragment fragment) {
@@ -468,7 +426,6 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
                 return;
             }
             ImageMedia cameraMedia = new ImageMedia(file);
-            cameraMedia.saveMediaStore(fragment.getAppCr());
             fragment.onCameraFinish(cameraMedia);
         }
 
@@ -480,6 +437,6 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
             }
             fragment.onCameraError();
         }
-
     }
+
 }

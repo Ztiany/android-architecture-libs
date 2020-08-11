@@ -37,7 +37,10 @@ import com.bilibili.boxing_impl.view.HackyGridLayoutManager;
 import com.bilibili.boxing_impl.view.SpacesItemDecoration;
 import com.ztiany.mediaselector.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -53,6 +56,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author ChenSL
  */
 public class BoxingBottomSheetFragment extends AbsBoxingViewFragment implements View.OnClickListener {
+
     public static final String TAG = "com.bilibili.boxing_impl.ui.BoxingBottomSheetFragment";
 
     private static final int GRID_COUNT = 3;
@@ -82,7 +86,7 @@ public class BoxingBottomSheetFragment extends AbsBoxingViewFragment implements 
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mEmptyTxt = (TextView) view.findViewById(R.id.empty_txt);
         mRecycleView = (RecyclerView) view.findViewById(R.id.media_recycleview);
@@ -98,8 +102,6 @@ public class BoxingBottomSheetFragment extends AbsBoxingViewFragment implements 
         mMediaAdapter.setOnCameraClickListener(new OnCameraClickListener());
         view.findViewById(R.id.finish_txt).setOnClickListener(this);
     }
-
-
 
     @Override
     public void onCameraActivityResult(int requestCode, int resultCode) {
@@ -192,21 +194,18 @@ public class BoxingBottomSheetFragment extends AbsBoxingViewFragment implements 
         }
     }
 
-
     @Override
     public void clearMedia() {
         mMediaAdapter.clearData();
     }
 
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (R.id.finish_txt == id) {
-            onFinish(null);
+            onFinish(Collections.emptyList());
         }
     }
-
 
     private class OnMediaClickListener implements View.OnClickListener {
 

@@ -90,4 +90,5 @@ public class BoxingActivity extends AbsBoxingActivity {
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
+
 }

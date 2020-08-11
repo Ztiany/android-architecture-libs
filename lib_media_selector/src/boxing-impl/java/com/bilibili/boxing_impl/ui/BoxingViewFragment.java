@@ -32,6 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.sdk.mediaselector.common.LogUtils;
 import com.bilibili.boxing.AbsBoxingViewFragment;
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.BoxingManager;
@@ -47,6 +48,8 @@ import com.bilibili.boxing_impl.view.HackyGridLayoutManager;
 import com.bilibili.boxing_impl.view.MediaItemLayout;
 import com.bilibili.boxing_impl.view.SpacesItemDecoration;
 import com.ztiany.mediaselector.R;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +69,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author ChenSL
  */
 public class BoxingViewFragment extends AbsBoxingViewFragment implements View.OnClickListener {
+
     public static final String TAG = "com.bilibili.boxing_impl.ui.BoxingViewFragment";
     private static final int IMAGE_PREVIEW_REQUEST_CODE = 9086;
     private static final int IMAGE_CROP_REQUEST_CODE = 9087;
@@ -112,7 +116,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Toast.makeText(getContext(), R.string.boxing_storage_permission_deny, Toast.LENGTH_SHORT).show();
                 showEmptyData();
-            } else if (permissions[0].equals(Manifest.permission.CAMERA)){
+            } else if (permissions[0].equals(Manifest.permission.CAMERA)) {
                 Toast.makeText(getContext(), R.string.boxing_camera_permission_deny, Toast.LENGTH_SHORT).show();
             }
         }
@@ -134,7 +138,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         initViews(view);
         super.onViewCreated(view, savedInstanceState);
     }
@@ -173,8 +177,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
     @Override
     public void showMedia(@Nullable List<BaseMedia> medias, int allCount) {
-        if (medias == null || isEmptyData(medias)
-                && isEmptyData(mMediaAdapter.getAllMedias())) {
+        if (medias == null || isEmptyData(medias) && isEmptyData(mMediaAdapter.getAllMedias())) {
             showEmptyData();
             return;
         }
@@ -201,8 +204,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
     @Override
     public void showAlbum(@Nullable List<AlbumEntity> albums) {
-        if ((albums == null || albums.isEmpty())
-                && mTitleTxt != null) {
+        if ((albums == null || albums.isEmpty()) && mTitleTxt != null) {
             mTitleTxt.setCompoundDrawables(null, null, null, null);
             mTitleTxt.setOnClickListener(null);
             return;
@@ -249,13 +251,10 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
         if (media == null) {
             return;
         }
-        if (hasCropBehavior()) {
-            startCrop(media, IMAGE_CROP_REQUEST_CODE);
-        } else if (mMediaAdapter != null && mMediaAdapter.getSelectedMedias() != null) {
-            List<BaseMedia> selectedMedias = mMediaAdapter.getSelectedMedias();
-            selectedMedias.add(media);
-            onFinish(selectedMedias);
-        }
+
+        List<BaseMedia> selectedMedias = mMediaAdapter.getSelectedMedias();
+        selectedMedias.add(media);
+        onFinish(selectedMedias);
     }
 
     @Override
@@ -275,7 +274,6 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
                 ArrayList<BaseMedia> medias = (ArrayList<BaseMedia>) mMediaAdapter.getSelectedMedias();
                 Boxing.get().withIntent(getActivity(), BoxingViewActivity.class, medias)
                         .start(this, BoxingViewFragment.IMAGE_PREVIEW_REQUEST_CODE, BoxingConfig.ViewMode.PRE_EDIT);
-
             }
         }
 
@@ -308,7 +306,6 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
         }
     }
 
-
     @Override
     public void onCameraActivityResult(int requestCode, int resultCode) {
         showProgressDialog();
@@ -321,9 +318,9 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             mDialog.setIndeterminate(true);
             mDialog.setMessage(getString(R.string.boxing_handling));
         }
-       if (!mDialog.isShowing()) {
-           mDialog.show();
-       }
+        if (!mDialog.isShowing()) {
+            mDialog.show();
+        }
     }
 
     private void dismissProgressDialog() {
@@ -334,9 +331,8 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         ArrayList<BaseMedia> medias = (ArrayList<BaseMedia>) getMediaAdapter().getSelectedMedias();
         onSaveMedias(outState, medias);
     }
@@ -410,6 +406,8 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
         @Override
         public void onClick(View v) {
+            LogUtils.d("onClick() called with: v = [" + v + "]");
+
             BaseMedia media = (BaseMedia) v.getTag();
             int pos = (int) v.getTag(R.id.media_item_check);
             BoxingConfig.Mode mode = BoxingManager.getInstance().getBoxingConfig().getMode();
@@ -437,22 +435,19 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
                 ArrayList<BaseMedia> medias = (ArrayList<BaseMedia>) mMediaAdapter.getSelectedMedias();
 
                 Boxing.get().withIntent(getContext(), BoxingViewActivity.class, medias, pos, albumId)
-                        .start(BoxingViewFragment.this, BoxingViewFragment.IMAGE_PREVIEW_REQUEST_CODE, BoxingConfig.ViewMode.EDIT);
-
+                        .start(
+                                BoxingViewFragment.this,
+                                BoxingViewFragment.IMAGE_PREVIEW_REQUEST_CODE,
+                                BoxingConfig.ViewMode.EDIT);
             }
         }
 
         private void singleImageClick(BaseMedia media) {
             ArrayList<BaseMedia> iMedias = new ArrayList<>();
             iMedias.add(media);
-            if (hasCropBehavior()) {
-                startCrop(media, IMAGE_CROP_REQUEST_CODE);
-            } else {
-                onFinish(iMedias);
-            }
+            onFinish(iMedias);
         }
     }
-
 
     private class OnCameraClickListener implements View.OnClickListener {
 

@@ -17,9 +17,7 @@
 
 package com.bilibili.boxing.utils;
 
-import android.util.Log;
-
-import com.bilibili.boxing.model.BoxingBuilderConfig;
+import com.android.sdk.mediaselector.common.LogUtils;
 
 /**
  * Debug log tool.
@@ -27,11 +25,9 @@ import com.bilibili.boxing.model.BoxingBuilderConfig;
  * @author ChenSL
  */
 public class BoxingLog {
-    private static final String TAG = "com.bilibili.boxing";
 
     public static void d(String log) {
-        if (BoxingBuilderConfig.DEBUG && !BoxingBuilderConfig.TESTING) {
-            Log.d(TAG, log);
-        }
+        LogUtils.d(log);
     }
+
 }

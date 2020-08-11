@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @author ChenSL
  */
 public class BoxingMediaAdapter extends RecyclerView.Adapter {
+
     private static final int CAMERA_TYPE = 0;
     private static final int NORMAL_TYPE = 1;
 
@@ -172,7 +173,7 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
 
         ImageViewHolder(View itemView) {
             super(itemView);
-            mItemLayout = (MediaItemLayout) itemView.findViewById(R.id.media_layout);
+            mItemLayout = itemView.findViewById(R.id.media_layout);
             mItemChecked = itemView.findViewById(R.id.media_item_check);
         }
     }
@@ -184,7 +185,7 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
         CameraViewHolder(final View itemView) {
             super(itemView);
             mCameraLayout = itemView.findViewById(R.id.camera_layout);
-            mCameraImg = (ImageView) itemView.findViewById(R.id.camera_img);
+            mCameraImg = itemView.findViewById(R.id.camera_img);
         }
     }
 

@@ -18,6 +18,8 @@
 package com.bilibili.boxing.model.callback;
 
 
+import android.net.Uri;
+
 import com.bilibili.boxing.model.entity.BaseMedia;
 
 import java.util.List;
@@ -30,6 +32,7 @@ import androidx.annotation.Nullable;
  * @author ChenSL
  */
 public interface IMediaTaskCallback<T extends BaseMedia> {
+
     /**
      * get a page of medias in a album
      *
@@ -41,8 +44,9 @@ public interface IMediaTaskCallback<T extends BaseMedia> {
     /**
      * judge the path needing filer
      *
-     * @param path photo path
+     * @param uri photo path
      * @return true:be filter
      */
-    boolean needFilter(String path);
+    boolean needFilter(Uri uri);
+
 }

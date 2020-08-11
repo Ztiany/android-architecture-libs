@@ -23,13 +23,10 @@ package com.bilibili.boxing.model;
  * @author ChenSL
  */
 public class BoxingBuilderConfig {
+
     /**
      * mark for debug
      */
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
-    /**
-     * mark for unit testing
-     */
-    public static final boolean TESTING = false;
 }

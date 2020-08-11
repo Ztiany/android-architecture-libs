@@ -26,7 +26,6 @@ import java.io.IOException;
 /**
  * @author ChenSL
  */
-
 public class BoxingExifHelper {
 
     public static void removeExif(String path) {
@@ -57,10 +56,9 @@ public class BoxingExifHelper {
         exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, "");
 
         exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, "");
-
     }
 
-    static int getRotateDegree(String path) {
+    public static int getRotateDegree(String path) {
         int result = 0;
         try {
             ExifInterface exif = new ExifInterface(path);

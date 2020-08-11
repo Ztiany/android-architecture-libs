@@ -29,6 +29,7 @@ import com.bilibili.boxing.model.entity.BaseMedia;
  * @author ChenSL
  */
 public interface IMediaTask<T extends BaseMedia> {
+
     int PAGE_LIMIT = 1000;
 
     void load(ContentResolver cr, int page, String id, IMediaTaskCallback<T> callback);

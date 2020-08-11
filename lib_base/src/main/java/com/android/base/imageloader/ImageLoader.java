@@ -15,34 +15,24 @@ import androidx.fragment.app.Fragment;
 // @formatter:off
 public interface ImageLoader {
 
-    void display(Fragment fragment, ImageView imageView, String url, LoadListener<Drawable> loadListener);
-
-    void display(Fragment fragment, ImageView imageView, String url, DisplayConfig displayConfig, LoadListener<Drawable> loadListener);
-
+    void display(ImageView imageView, String url);
+    void display(ImageView imageView, Source source);
+    void display(ImageView imageView, String url, DisplayConfig config);
+    void display(ImageView imageView, Source source, DisplayConfig config);
     void display(ImageView imageView, String url, LoadListener<Drawable> loadListener);
-
     void display(ImageView imageView, String url, DisplayConfig config, LoadListener<Drawable> loadListener);
 
     void display(Fragment fragment, ImageView imageView, String url);
-
-    void display(Fragment fragment, ImageView imageView, String url, DisplayConfig displayConfig);
-
     void display(Fragment fragment, ImageView imageView, Source source);
-
+    void display(Fragment fragment, ImageView imageView, String url, DisplayConfig displayConfig);
     void display(Fragment fragment, ImageView imageView, Source source, DisplayConfig displayConfig);
-
-    void display(ImageView imageView, String url);
-
-    void display(ImageView imageView, String url, DisplayConfig config);
-
-    void display(ImageView imageView, Source source);
-
-    void display(ImageView imageView, Source source, DisplayConfig config);
-
+    void display(Fragment fragment, ImageView imageView, String url, LoadListener<Drawable> loadListener);
+    void display(Fragment fragment, ImageView imageView, String url, DisplayConfig displayConfig, LoadListener<Drawable> loadListener);
 
     ///////////////////////////////////////////////////////////////////////////
     // pause and resume
     ///////////////////////////////////////////////////////////////////////////
+
     void pause(Fragment fragment);
 
     void resume(Fragment fragment);
@@ -54,6 +44,7 @@ public interface ImageLoader {
     ///////////////////////////////////////////////////////////////////////////
     // preload
     ///////////////////////////////////////////////////////////////////////////
+
     void preload(Context context, Source source);
 
     void preload(Context context, Source source, int width, int height);
@@ -75,6 +66,7 @@ public interface ImageLoader {
     ///////////////////////////////////////////////////////////////////////////
     // clear
     ///////////////////////////////////////////////////////////////////////////
+
     @WorkerThread
     void clear(Context context);
 

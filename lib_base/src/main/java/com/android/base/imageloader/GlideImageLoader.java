@@ -81,7 +81,7 @@ class GlideImageLoader implements ImageLoader {
         ProgressManager.getInstance().setListener(url, progressListener);
     }
 
-    private class InnerImageTarget extends ImageViewTarget<Drawable> {
+    private static class InnerImageTarget extends ImageViewTarget<Drawable> {
 
         private final LoadListener<Drawable> mLoadListener;
 

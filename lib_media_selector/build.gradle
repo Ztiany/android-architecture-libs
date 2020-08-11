@@ -46,6 +46,7 @@ dependencies {
     //support
     implementation androidLibraries.appcompat
     implementation androidLibraries.material
+    implementation androidLibraries.documentfile
     implementation androidLibraries.lifecycleRuntimeKtx
     implementation kotlinLibraries.kotlinStdlib
     implementation kotlinLibraries.kotlinCoroutines

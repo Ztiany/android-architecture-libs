@@ -15,15 +15,17 @@
  *
  */
 
-package com.bilibili.boxing.utils;
+package com.android.sdk.mediaselector.compress;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.bilibili.boxing.utils.BoxingExifHelper;
+import com.bilibili.boxing.utils.BoxingFileHelper;
+import com.bilibili.boxing.utils.BoxingLog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,6 +37,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 /**
  * A compress for image.
@@ -42,9 +47,10 @@ import java.util.Locale;
  * @author ChenSL
  */
 public class ImageCompressor {
+
     public static final long MAX_LIMIT_SIZE_LONG = 1024 * 1024L;
 
-    private static final char HEX_DIGITS[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static final int MAX_WIDTH = 3024;
     private static final int MAX_HEIGHT = 4032;
     private static final long MAX_LIMIT_SIZE = 300 * 1024L;
@@ -54,19 +60,15 @@ public class ImageCompressor {
     private File mOutFileFile;
 
     public ImageCompressor(@NonNull File cachedRootDir) {
-        if (cachedRootDir != null) {
-            mOutFileFile = new File(cachedRootDir.getAbsolutePath() + File.separator + ".compress" + File.separator);
-        }
+        mOutFileFile = new File(cachedRootDir.getAbsolutePath() + File.separator + ".compress" + File.separator);
     }
 
     public ImageCompressor(@NonNull Context context) {
-        if (context != null) {
-            String rootDir = BoxingFileHelper.getCacheDir(context);
-            if (TextUtils.isEmpty(rootDir)) {
-                throw new IllegalStateException("the cache dir is null");
-            }
-            mOutFileFile = new File(rootDir + File.separator + ".compress" + File.separator);
+        String rootDir = BoxingFileHelper.getCacheDir(context);
+        if (TextUtils.isEmpty(rootDir)) {
+            throw new IllegalStateException("the cache dir is null");
         }
+        mOutFileFile = new File(rootDir + File.separator + ".compress" + File.separator);
     }
 
     public File compress(@NonNull File file) throws IOException, NullPointerException, IllegalArgumentException {
@@ -100,9 +102,7 @@ public class ImageCompressor {
         int width = checkOptions.outWidth;
         int height = checkOptions.outHeight;
         File outFile = createCompressFile(file);
-        if (outFile == null) {
-            throw new NullPointerException("the compressed file create fail, the compressed path is null.");
-        }
+
         if (!isLargeRatio(width, height)) {
             int[] display = getCompressDisplay(width, height);
             Bitmap bitmap = compressDisplay(absPath, display[0], display[1]);
@@ -127,6 +127,7 @@ public class ImageCompressor {
             rotatedBitmap.recycle();
             compressQuality(outFile, MAX_LIMIT_SIZE_LONG, 50);
         }
+
         BoxingLog.d("compress suc: " + outFile.getAbsolutePath());
         return outFile;
     }
@@ -135,6 +136,7 @@ public class ImageCompressor {
         if (angle == 0) {
             return bitmap;
         }
+
         //rotate image
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
@@ -150,9 +152,7 @@ public class ImageCompressor {
             fos.flush();
         } finally {
             try {
-                if (fos != null) {
-                    fos.close();
-                }
+                fos.close();
             } catch (IOException e) {
                 BoxingLog.d("IOException when saving a bitmap");
             }
@@ -348,4 +348,5 @@ public class ImageCompressor {
     private boolean isLegalFile(File file) {
         return file != null && file.exists() && file.isFile() && file.length() > 0;
     }
+
 }

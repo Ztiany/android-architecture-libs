@@ -1,6 +1,7 @@
 package com.android.sdk.mediaselector.common;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
@@ -16,7 +17,7 @@ import com.ztiany.mediaselector.R;
 public class MediaSelectorConfiguration {
 
     private static String sAuthority = "";
-    private static boolean sOpenLog = false;
+    private static boolean sOpenLog = true;
 
     /**
      * @see <a href='https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically'>how-to-get-accent-color-programmatically</>
@@ -27,7 +28,8 @@ public class MediaSelectorConfiguration {
             context.getTheme().resolveAttribute(R.attr.colorPrimary, outValue, true);
         } else {
             // get color defined for AppCompat
-            int appCompatAttribute = context.getResources().getIdentifier("colorPrimary", "attr", context.getPackageName());
+            Resources resources = context.getResources();
+            int appCompatAttribute = resources.getIdentifier("colorPrimary", "attr", context.getPackageName());
             context.getTheme().resolveAttribute(appCompatAttribute, outValue, true);
         }
         String color = String.format("#%06X", (0xFFFFFF & outValue.data));

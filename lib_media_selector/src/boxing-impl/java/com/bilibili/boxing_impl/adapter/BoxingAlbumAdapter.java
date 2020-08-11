@@ -31,6 +31,8 @@ import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.ztiany.mediaselector.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,8 @@ import androidx.recyclerview.widget.RecyclerView;
  *
  * @author ChenSL
  */
-public class BoxingAlbumAdapter extends RecyclerView.Adapter implements View.OnClickListener {
+public class BoxingAlbumAdapter extends RecyclerView.Adapter<BoxingAlbumAdapter.AlbumViewHolder> implements View.OnClickListener {
+
     private static final String UNKNOW_ALBUM_NAME = "?";
 
     private int mCurrentAlbumPos;
@@ -63,32 +66,30 @@ public class BoxingAlbumAdapter extends RecyclerView.Adapter implements View.OnC
         this.mAlbumOnClickListener = albumOnClickListener;
     }
 
+    @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AlbumViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         return new AlbumViewHolder(mInflater.inflate(R.layout.layout_boxing_album_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        final AlbumViewHolder albumViewHolder = (AlbumViewHolder) holder;
+    public void onBindViewHolder(AlbumViewHolder albumViewHolder, int position) {
         albumViewHolder.mCoverImg.setImageResource(mDefaultRes);
-        final int adapterPos = holder.getAdapterPosition();
+        final int adapterPos = albumViewHolder.getAdapterPosition();
         final AlbumEntity album = mAlums.get(adapterPos);
 
         if (album != null && album.hasImages()) {
-            String albumName = TextUtils.isEmpty(album.mBucketName) ?
-                    albumViewHolder.mNameTxt.getContext().getString(R.string.boxing_default_album_name) :album.mBucketName;
+            String albumName = TextUtils.isEmpty(album.mBucketName) ? albumViewHolder.mNameTxt.getContext().getString(R.string.boxing_default_album_name) : album.mBucketName;
             albumViewHolder.mNameTxt.setText(albumName);
             ImageMedia media = (ImageMedia) album.mImageList.get(0);
             if (media != null) {
-                BoxingMediaLoader.getInstance().displayThumbnail(albumViewHolder.mCoverImg, media.getPath(), 50, 50);
-                albumViewHolder.mCoverImg.setTag(R.string.boxing_app_name, media.getPath());
+                BoxingMediaLoader.getInstance().displayThumbnail(albumViewHolder.mCoverImg, media.getUri(), 50, 50);
+                albumViewHolder.mCoverImg.setTag(R.string.boxing_app_name, media.getUri());
             }
             albumViewHolder.mLayout.setTag(adapterPos);
             albumViewHolder.mLayout.setOnClickListener(this);
             albumViewHolder.mCheckedImg.setVisibility(album.mIsSelected ? View.VISIBLE : View.GONE);
-            albumViewHolder.mSizeTxt.setText(albumViewHolder.mSizeTxt.
-                    getResources().getString(R.string.boxing_album_images_fmt, album.mCount));
+            albumViewHolder.mSizeTxt.setText(albumViewHolder.mSizeTxt.getResources().getString(R.string.boxing_album_images_fmt, album.mCount));
         } else {
             albumViewHolder.mNameTxt.setText(UNKNOW_ALBUM_NAME);
             albumViewHolder.mSizeTxt.setVisibility(View.GONE);
@@ -135,7 +136,8 @@ public class BoxingAlbumAdapter extends RecyclerView.Adapter implements View.OnC
         }
     }
 
-    private static class AlbumViewHolder extends RecyclerView.ViewHolder {
+    static class AlbumViewHolder extends RecyclerView.ViewHolder {
+
         ImageView mCoverImg;
         TextView mNameTxt;
         TextView mSizeTxt;
@@ -144,15 +146,16 @@ public class BoxingAlbumAdapter extends RecyclerView.Adapter implements View.OnC
 
         AlbumViewHolder(final View itemView) {
             super(itemView);
-            mCoverImg = (ImageView) itemView.findViewById(R.id.album_thumbnail);
-            mNameTxt = (TextView) itemView.findViewById(R.id.album_name);
-            mSizeTxt = (TextView) itemView.findViewById(R.id.album_size);
+            mCoverImg = itemView.findViewById(R.id.album_thumbnail);
+            mNameTxt = itemView.findViewById(R.id.album_name);
+            mSizeTxt = itemView.findViewById(R.id.album_size);
             mLayout = itemView.findViewById(R.id.album_layout);
-            mCheckedImg = (ImageView) itemView.findViewById(R.id.album_checked);
+            mCheckedImg = itemView.findViewById(R.id.album_checked);
         }
     }
 
     public interface OnAlbumClickListener {
         void onClick(View view, int pos);
     }
+
 }

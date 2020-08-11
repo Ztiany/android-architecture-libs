@@ -18,7 +18,7 @@ internal const val REQUEST_ALBUM = 198
 internal const val REQUEST_FILE = 199
 internal const val REQUEST_UCROP = 200
 
-private const val INSTRUCTOR_KEY = "instructor_key"
+private const val INSTRUCTOR_KEY = "system_instructor_key"
 
 /**
  * @author Ztiany
@@ -33,31 +33,26 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
 
     protected lateinit var currentInstructor: Instructor
 
+    val context: Context
+        get() = actFragWrapper.context
+
+    protected val lifecycleOwner: LifecycleOwner
+
     constructor(activity: AppCompatActivity, resultListener: ResultListener) {
         actFragWrapper = ActFragWrapper.create(activity)
+        lifecycleOwner = activity
         mediaSelectorCallback = resultListener
     }
 
     constructor(fragment: Fragment, resultListener: ResultListener) {
         mediaSelectorCallback = resultListener
+        lifecycleOwner = fragment
         actFragWrapper = ActFragWrapper.create(fragment)
     }
-
-    val context: Context
-        get() = actFragWrapper.context
-
-    protected val lifecycleOwner: LifecycleOwner
-        get() = context as LifecycleOwner
 
     protected fun startActivityForResult(intent: Intent?, code: Int) {
         actFragWrapper.startActivityForResult(intent, code, null)
     }
-
-    private val cropOptions: CropOptions
-        get() {
-            val cropOptions = currentInstructor.cropOptions
-            return cropOptions ?: CropOptions()
-        }
 
     @CallSuper
     override fun onSaveInstanceState(outState: Bundle) {
@@ -105,7 +100,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
                 actFragWrapper.context,
                 actFragWrapper.fragment,
                 src,
-                cropOptions,
+                currentInstructor.cropOptions,
                 REQUEST_UCROP)
     }
 

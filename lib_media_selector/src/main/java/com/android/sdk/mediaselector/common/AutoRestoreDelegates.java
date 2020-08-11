@@ -1,4 +1,4 @@
-package com.android.sdk.mediaselector.system;
+package com.android.sdk.mediaselector.common;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import com.android.base.foundation.fragment.FragmentDelegateOwner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -18,45 +19,46 @@ import androidx.fragment.app.Fragment;
  * Email: ztiany3@gmail.com
  * Date : 2020-08-07 21:56
  */
-class AutoRestoreDelegates {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class AutoRestoreDelegates {
 
-    static void autoCallback(AppCompatActivity appCompatActivity, SystemMediaSelector systemMediaSelector) {
+    public static void autoCallback(AppCompatActivity appCompatActivity, ActivityStateHandler stateHandler) {
         if (appCompatActivity instanceof ActivityDelegateOwner) {
             ((ActivityDelegateOwner) appCompatActivity).addDelegate(new ActivityDelegate() {
                 @Override
                 public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-                    systemMediaSelector.onSaveInstanceState(savedInstanceState);
+                    stateHandler.onSaveInstanceState(savedInstanceState);
                 }
 
                 @Override
                 public void onRestoreInstanceState(Bundle savedInstanceState) {
-                    systemMediaSelector.onRestoreInstanceState(savedInstanceState);
+                    stateHandler.onRestoreInstanceState(savedInstanceState);
                 }
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-                    systemMediaSelector.onActivityResult(requestCode, resultCode, data);
+                    stateHandler.onActivityResult(requestCode, resultCode, data);
                 }
             });
         }
     }
 
-    static void autoCallback(Fragment fragment, SystemMediaSelector systemMediaSelector) {
+    public static void autoCallback(Fragment fragment, ActivityStateHandler stateHandler) {
         if (fragment instanceof FragmentDelegateOwner) {
             ((FragmentDelegateOwner) fragment).addDelegate(new FragmentDelegate() {
                 @Override
                 public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-                    systemMediaSelector.onRestoreInstanceState(savedInstanceState);
+                    stateHandler.onRestoreInstanceState(savedInstanceState);
                 }
 
                 @Override
                 public void onSaveInstanceState(Bundle savedInstanceState) {
-                    systemMediaSelector.onSaveInstanceState(savedInstanceState);
+                    stateHandler.onSaveInstanceState(savedInstanceState);
                 }
 
                 @Override
                 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-                    systemMediaSelector.onActivityResult(requestCode, resultCode, data);
+                    stateHandler.onActivityResult(requestCode, resultCode, data);
                 }
 
             });

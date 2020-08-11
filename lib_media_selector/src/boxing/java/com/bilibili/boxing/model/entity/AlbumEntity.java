@@ -20,6 +20,8 @@ package com.bilibili.boxing.model.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import java.util.List;
  * @author ChenSL
  */
 public class AlbumEntity implements Parcelable {
+
     public static final String DEFAULT_NAME = "";
 
     public int mCount;
@@ -56,6 +59,7 @@ public class AlbumEntity implements Parcelable {
         return mImageList != null && mImageList.size() > 0;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "AlbumEntity{" +
@@ -99,4 +103,5 @@ public class AlbumEntity implements Parcelable {
             return new AlbumEntity[size];
         }
     };
+
 }

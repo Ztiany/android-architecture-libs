@@ -23,9 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.config.BoxingConfig;
@@ -35,17 +32,22 @@ import com.bilibili.boxing.presenter.PickerPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 /**
  * An entry for {@link AbsBoxingActivity} and {@link AbsBoxingViewFragment}.<br/>
- * 1.call {@link #of(BoxingConfig)} to pick a mode.<br/>
- * 2.to use {@link AbsBoxingActivity} + {@link AbsBoxingViewFragment} combination,
- * call {@link #withIntent(Context, Class)} to make a intent and {@link #start(Activity)} to start a new Activity.<br/>
- * to use {@link AbsBoxingViewFragment} only, just call {@link #setupFragment(AbsBoxingViewFragment, OnBoxingFinishListener)}.<br/>
- * 3 4.to get result from a new Activity, call {@link #getResult(Intent)} in {@link Activity#onActivityResult(int, int, Intent)}.
+ *
+ * to use {@link AbsBoxingActivity} + {@link AbsBoxingViewFragment} combination,
+ * call {@link #withIntent(Context, Class)} to make a intent and {@link #start(Activity)} to start a new Activity.<br/><br/>
+ * to use {@link AbsBoxingViewFragment} only, just call {@link #setupFragment(AbsBoxingViewFragment, OnBoxingFinishListener)}.<br/><br/>
+ * to get result from a new Activity, call {@link #getResult(Intent)} in {@link Activity#onActivityResult(int, int, Intent)}.<br/><br/>
  *
  * @author ChenSL
  */
 public class Boxing {
+
     public static final String EXTRA_SELECTED_MEDIA = "com.bilibili.boxing.Boxing.selected_media";
     public static final String EXTRA_ALBUM_ID = "com.bilibili.boxing.Boxing.album_id";
 
@@ -144,7 +146,6 @@ public class Boxing {
         withIntent(context, cls, medias, pos, "");
         return this;
     }
-
 
     /**
      * use to start image viewer.

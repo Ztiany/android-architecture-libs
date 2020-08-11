@@ -46,6 +46,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * @author ChenSL
  */
 public class BoxingRawImageFragment extends BoxingBaseFragment {
+
     private static final String BUNDLE_IMAGE = "com.bilibili.boxing_impl.ui.BoxingRawImageFragment.image";
     private static final int MAX_SCALE = 15;
     private static final long MAX_IMAGE1 = 1024 * 1024L;
@@ -90,7 +91,7 @@ public class BoxingRawImageFragment extends BoxingBaseFragment {
     void setUserVisibleCompat(boolean isVisibleToUser) {
         if (isVisibleToUser) {
             Point point = getResizePointer(mMedia.getSize());
-            ((AbsBoxingViewActivity) getActivity()).loadRawImage(mImageView, mMedia.getPath(), point.x, point.y, new BoxingCallback(this));
+            ((AbsBoxingViewActivity) getActivity()).loadRawImage(mImageView, mMedia.getUri(), point.x, point.y, new BoxingCallback(this));
         }
     }
 

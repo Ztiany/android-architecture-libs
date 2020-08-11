@@ -37,7 +37,6 @@ import com.bilibili.boxing.AbsBoxingViewFragment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -53,6 +52,7 @@ import androidx.fragment.app.Fragment;
  * @author ChenSL
  */
 public class CameraPickerHelper {
+
     private static final int MAX_CAMER_PHOTO_SIZE = 4 * 1024 * 1024;
     public static final int REQ_CODE_CAMERA = 0x2001;
     private static final String STATE_SAVED_KEY = "com.bilibili.boxing.utils.CameraPickerHelper.saved_state";
@@ -97,19 +97,16 @@ public class CameraPickerHelper {
      */
     public void startCamera(final Activity activity, final Fragment fragment, final String subFolderPath) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || !takePhotoSecure(activity, fragment, subFolderPath)) {
-            FutureTask<Boolean> task = BoxingExecutor.getInstance().runWorker(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    try {
-                        // try...try...try
-                        Camera camera = Camera.open();
-                        camera.release();
-                    } catch (Exception e) {
-                        BoxingLog.d("camera is not available.");
-                        return false;
-                    }
-                    return true;
+            FutureTask<Boolean> task = BoxingExecutor.getInstance().runWorker(() -> {
+                try {
+                    // try...try...try
+                    Camera camera = Camera.open();
+                    camera.release();
+                } catch (Exception e) {
+                    BoxingLog.d("camera is not available.");
+                    return false;
                 }
+                return true;
             });
             try {
                 if (task != null && task.get()) {
@@ -120,8 +117,8 @@ public class CameraPickerHelper {
             } catch (InterruptedException | ExecutionException ignore) {
                 callbackError();
             }
-
         }
+
     }
 
     private boolean takePhotoSecure(Activity activity, Fragment fragment, String subDir) {
@@ -156,9 +153,8 @@ public class CameraPickerHelper {
         }
     }
 
-    private void startCameraIntent(final Activity activity, final Fragment fragment, String subFolder,
-                                   final String action, final int requestCode) {
-        final String cameraOutDir = BoxingFileHelper.getExternalDCIM(subFolder);
+    private void startCameraIntent(final Activity activity, final Fragment fragment, String subFolder, final String action, final int requestCode) {
+        final String cameraOutDir = BoxingFileHelper.getInternalDCIM(activity, subFolder);
         try {
             if (BoxingFileHelper.createFile(cameraOutDir)) {
                 mOutputFile = new File(cameraOutDir, System.currentTimeMillis() + ".jpg");
@@ -171,18 +167,15 @@ public class CameraPickerHelper {
                 } catch (ActivityNotFoundException ignore) {
                     callbackError();
                 }
-
             }
         } catch (ExecutionException | InterruptedException e) {
             BoxingLog.d("create file" + cameraOutDir + " error.");
         }
-
     }
 
     private Uri getFileUri(@NonNull Context context, @NonNull File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(context,
-                    context.getApplicationContext().getPackageName() + ".file.provider", mOutputFile);
+            return FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".file.provider", mOutputFile);
         } else {
             return Uri.fromFile(file);
         }
@@ -203,12 +196,7 @@ public class CameraPickerHelper {
             callbackError();
             return false;
         }
-        FutureTask<Boolean> task = BoxingExecutor.getInstance().runWorker(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return rotateImage(resultCode);
-            }
-        });
+        FutureTask<Boolean> task = BoxingExecutor.getInstance().runWorker(() -> rotateImage(resultCode));
         try {
             if (task != null && task.get()) {
                 callbackFinish();
