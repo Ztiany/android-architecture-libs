@@ -1,129 +1,129 @@
 package com.android.base.rx.autodispose
 
 import androidx.lifecycle.MutableLiveData
-import com.android.base.data.State
+import com.android.base.data.Resource
 import com.github.dmstocking.optional.java.util.Optional
 import com.uber.autodispose.*
 
 
-fun <T> ObservableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<State<T>>) {
-    liveData.postValue(State.loading())
+fun <T> ObservableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<Resource<T>>) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(it))
+                liveData.postValue(Resource.success(it))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T, R> ObservableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
-    liveData.postValue(State.loading())
+fun <T, R> ObservableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<Resource<R>>, map: (T) -> R) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(map(it)))
+                liveData.postValue(Resource.success(map(it)))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<T>>) {
-    liveData.postValue(State.loading())
+fun <T> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<Resource<T>>) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(it.orElse(null)))
+                liveData.postValue(Resource.success(it.orElse(null)))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T, R> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
-    liveData.postValue(State.loading())
+fun <T, R> ObservableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<Resource<R>>, map: (T?) -> R?) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
                 val value = map(it.orElse(null))
-                liveData.postValue(State.success(value))
+                liveData.postValue(Resource.success(value))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T> FlowableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<State<T>>) {
-    liveData.postValue(State.loading())
+fun <T> FlowableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<Resource<T>>) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(it))
+                liveData.postValue(Resource.success(it))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T, R> FlowableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<State<R>>, map: (T) -> R) {
-    liveData.postValue(State.loading())
+fun <T, R> FlowableSubscribeProxy<T>.subscribeByLiveData(liveData: MutableLiveData<Resource<R>>, map: (T) -> R) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(map(it)))
+                liveData.postValue(Resource.success(map(it)))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<T>>) {
-    liveData.postValue(State.loading())
+fun <T> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<Resource<T>>) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(it.orElse(null)))
+                liveData.postValue(Resource.success(it.orElse(null)))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T, R> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<State<R>>, map: (T?) -> R?) {
-    liveData.postValue(State.loading())
+fun <T, R> FlowableSubscribeProxy<Optional<T>>.subscribeOptionalByLiveData(liveData: MutableLiveData<Resource<R>>, map: (T?) -> R?) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
                 val value = map(it.orElse(null))
-                liveData.postValue(State.success(value))
+                liveData.postValue(Resource.success(value))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun CompletableSubscribeProxy.subscribeByLiveData(liveData: MutableLiveData<State<Any>>) {
-    liveData.postValue(State.loading())
+fun CompletableSubscribeProxy.subscribeByLiveData(liveData: MutableLiveData<Resource<Any>>) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success())
+                liveData.postValue(Resource.success())
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }
 
-fun <T> CompletableSubscribeProxy.subscribeByLiveData(liveData: MutableLiveData<State<T>>, provider: () -> T) {
-    liveData.postValue(State.loading())
+fun <T> CompletableSubscribeProxy.subscribeByLiveData(liveData: MutableLiveData<Resource<T>>, provider: () -> T) {
+    liveData.postValue(Resource.loading())
     this.subscribe(
             {
-                liveData.postValue(State.success(provider()))
+                liveData.postValue(Resource.success(provider()))
             },
             {
-                liveData.postValue(State.error(it))
+                liveData.postValue(Resource.error(it))
             }
     )
 }

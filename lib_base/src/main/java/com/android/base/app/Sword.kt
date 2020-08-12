@@ -41,6 +41,13 @@ object Sword {
     /** 用于创建 LoadingView*/
     var loadingViewFactory: ((Context) -> LoadingView)? = null
 
+    /**[Throwable] 到可读的[CharSequence]转换*/
+    var errorConvert: ErrorConvert = object : ErrorConvert {
+        override fun convert(throwable: Throwable): CharSequence {
+            return throwable.message.toString()
+        }
+    }
+
     /**网络状态监听器*/
     fun networkState(): Flowable<NetworkState> = NetworkState.observableState()
 
@@ -125,4 +132,8 @@ interface DelegateInjector {
 
     fun injectActivityDelegate(activity: ActivityDelegateOwner)
 
+}
+
+interface ErrorConvert {
+    fun convert(throwable: Throwable): CharSequence
 }

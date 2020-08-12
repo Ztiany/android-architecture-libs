@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
  * Email: ztiany3@gmail.com
  * Date : 2018-05-15 16:23
  */
-class State<T> private constructor(
+class Resource<T> private constructor(
         private val error: Throwable?,
         //data or default data
         private val data: T?,
@@ -95,34 +95,34 @@ class State<T> private constructor(
         private const val SUCCESS = 3
         private const val NOT_CHANGED = 4
 
-        fun <T> success(): State<T> {
-            return State(null, null, SUCCESS)
+        fun <T> success(): Resource<T> {
+            return Resource(null, null, SUCCESS)
         }
 
-        fun <T> success(data: T?): State<T> {
-            return State(null, data, SUCCESS)
+        fun <T> success(data: T?): Resource<T> {
+            return Resource(null, data, SUCCESS)
         }
 
-        fun <T> error(error: Throwable): State<T> {
+        fun <T> error(error: Throwable): Resource<T> {
             return error(error, null)
         }
 
         /**
          * 创建一个 error 状态，且设置一个默认的数据
          */
-        fun <T> error(error: Throwable, defaultValue: T?): State<T> {
-            return State(error, defaultValue, ERROR)
+        fun <T> error(error: Throwable, defaultValue: T?): Resource<T> {
+            return Resource(error, defaultValue, ERROR)
         }
 
-        fun <T> loading(): State<T> {
+        fun <T> loading(): Resource<T> {
             return loading(null)
         }
 
         /**
          * 创建一个 loading 状态，且设置一个默认的数据
          */
-        fun <T> loading(defaultValue: T?): State<T> {
-            return State(null, defaultValue, LOADING)
+        fun <T> loading(defaultValue: T?): Resource<T> {
+            return Resource(null, defaultValue, LOADING)
         }
 
         /**
@@ -130,14 +130,14 @@ class State<T> private constructor(
          *
          * @return State
          */
-        fun <T> noChange(): State<T> {
-            return State(null, null, NOT_CHANGED)
+        fun <T> noChange(): Resource<T> {
+            return Resource(null, null, NOT_CHANGED)
         }
     }
 
 }
 
-class StateHandler<T> {
+class ResourceHandler<T> {
     var onError: ((Throwable) -> Unit)? = null
     var onLoading: (() -> Unit)? = null
     var onSuccess: ((T?) -> Unit)? = null
@@ -146,8 +146,8 @@ class StateHandler<T> {
 }
 
 /**handle all state*/
-inline fun <T> State<T>.handleState(handler: StateHandler<T>.() -> Unit) {
-    val stateHandler = StateHandler<T>()
+inline fun <T> Resource<T>.handleResource(handler: ResourceHandler<T>.() -> Unit) {
+    val stateHandler = ResourceHandler<T>()
     handler(stateHandler)
     when {
         isError -> stateHandler.onError?.invoke(error())
@@ -164,7 +164,7 @@ inline fun <T> State<T>.handleState(handler: StateHandler<T>.() -> Unit) {
 }
 
 /**when in loading*/
-inline fun <T> State<T>.onLoading(onLoading: () -> Unit): State<T> {
+inline fun <T> Resource<T>.onLoading(onLoading: () -> Unit): Resource<T> {
     if (this.isLoading) {
         onLoading()
     }
@@ -172,7 +172,7 @@ inline fun <T> State<T>.onLoading(onLoading: () -> Unit): State<T> {
 }
 
 /**when error occurred*/
-inline fun <T> State<T>.onError(onError: (error: Throwable) -> Unit): State<T> {
+inline fun <T> Resource<T>.onError(onError: (error: Throwable) -> Unit): Resource<T> {
     if (this.isError) {
         onError(error())
     }
@@ -180,7 +180,7 @@ inline fun <T> State<T>.onError(onError: (error: Throwable) -> Unit): State<T> {
 }
 
 /**when no change*/
-inline fun <T> State<T>.onNoChange(onNoChange: () -> Unit): State<T> {
+inline fun <T> Resource<T>.onNoChange(onNoChange: () -> Unit): Resource<T> {
     if (this.isNoChange) {
         onNoChange()
     }
@@ -188,7 +188,7 @@ inline fun <T> State<T>.onNoChange(onNoChange: () -> Unit): State<T> {
 }
 
 /**when succeeded*/
-inline fun <T> State<T>.onSuccess(onSuccess: (data: T?) -> Unit): State<T> {
+inline fun <T> Resource<T>.onSuccess(onSuccess: (data: T?) -> Unit): Resource<T> {
     if (this.isSuccess) {
         onSuccess(this.orElse(null))
     }
@@ -196,7 +196,7 @@ inline fun <T> State<T>.onSuccess(onSuccess: (data: T?) -> Unit): State<T> {
 }
 
 /**when succeeded and has data*/
-inline fun <T> State<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): State<T> {
+inline fun <T> Resource<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): Resource<T> {
     val t = this.get()
     if (this.isSuccess && t != null) {
         onSuccess(t)
@@ -204,10 +204,10 @@ inline fun <T> State<T>.onSuccessWithData(onSuccess: (data: T) -> Unit): State<T
     return this
 }
 
-fun <T : Any?> MutableLiveData<State<T>>.postLoading() {
-    postValue(State.loading())
+fun <T : Any?> MutableLiveData<Resource<T>>.postLoading() {
+    postValue(Resource.loading())
 }
 
-fun <T : Any?> MutableLiveData<State<T>>.postError(error: Throwable) {
-    postValue(State.error(error))
+fun <T : Any?> MutableLiveData<Resource<T>>.postError(error: Throwable) {
+    postValue(Resource.error(error))
 }
