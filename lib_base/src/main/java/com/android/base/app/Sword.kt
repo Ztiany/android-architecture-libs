@@ -81,11 +81,6 @@ object Sword {
         return this
     }
 
-    fun enableAutoInject(): Sword {
-        androidComponentLifecycleInjector.enableAutoInject()
-        return this
-    }
-
     fun setDelegateInjector(delegateInjector: DelegateInjector): Sword {
         androidComponentLifecycleInjector.delegateInjector = delegateInjector
         return this

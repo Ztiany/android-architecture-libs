@@ -107,14 +107,6 @@ dependencies {
     api thirdLibraries.autoDisposeLifecycle
     api thirdLibraries.autoDisposeLifecycleArchcomponents
 
-    /*Dagger2*/
-    api thirdLibraries.dagger2
-    api thirdLibraries.jsr305
-    api thirdLibraries.dagger2Android
-    api thirdLibraries.dagger2AndroidSupport
-    kapt thirdLibraries.dagger2Apt
-    kapt thirdLibraries.dagger2AndroidApt
-
     //LoadMore
     api uiLibraries.wrapperAdapter
 

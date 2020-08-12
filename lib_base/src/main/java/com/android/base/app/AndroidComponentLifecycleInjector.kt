@@ -7,24 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.android.base.foundation.activity.ActivityDelegateOwner
-import com.android.base.app.dagger.Injectable
 import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.interfaces.ActivityLifecycleCallbacksAdapter
-import dagger.android.AndroidInjection
-import dagger.android.support.AndroidSupportInjection
 
 internal class AndroidComponentLifecycleInjector : ActivityLifecycleCallbacksAdapter {
 
-    private var isAutoInjectEnable = false
-
     var delegateInjector: DelegateInjector? = null
 
-    fun enableAutoInject() {
-        isAutoInjectEnable = true
-    }
-
-    override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-        handleAutoInjectActivity(activity)
+     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
         handleAutoInstallActivityDelegate(activity)
         if (activity is FragmentActivity) {
             injectFragmentLifecycle(activity)
@@ -34,7 +24,6 @@ internal class AndroidComponentLifecycleInjector : ActivityLifecycleCallbacksAda
     private fun injectFragmentLifecycle(activity: FragmentActivity) {
         activity.supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentAttached(fm: FragmentManager, fragment: Fragment, context: Context) {
-                handleAutoInjectFragment(fragment)
                 handleAutoInstallFragmentDelegate(fragment)
             }
         }, true)
@@ -49,18 +38,6 @@ internal class AndroidComponentLifecycleInjector : ActivityLifecycleCallbacksAda
     private fun handleAutoInstallActivityDelegate(activity: Activity?) {
         if (activity is ActivityDelegateOwner) {
             delegateInjector?.injectActivityDelegate(activity)
-        }
-    }
-
-    private fun handleAutoInjectActivity(activity: Activity?) {
-        if (isAutoInjectEnable && activity is Injectable) {
-            AndroidInjection.inject(activity)
-        }
-    }
-
-    private fun handleAutoInjectFragment(fragment: Fragment) {
-        if (isAutoInjectEnable && fragment is Injectable) {
-            AndroidSupportInjection.inject(fragment)
         }
     }
 

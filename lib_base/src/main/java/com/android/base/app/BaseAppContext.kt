@@ -3,9 +3,6 @@ package com.android.base.app
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
 
 open class BaseAppContext : Application() {
 
@@ -38,18 +35,5 @@ open class BaseAppContext : Application() {
         super.onTerminate()
         Sword.applicationDelegate.onTerminate()
     }
-
-}
-
-/**
- *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2019-10-12 10:59
- */
-open class InjectorBaseAppContext : BaseAppContext(), HasAndroidInjector {
-
-    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-    override fun androidInjector() = androidInjector
 
 }

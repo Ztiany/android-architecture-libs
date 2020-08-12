@@ -11,8 +11,7 @@ import com.android.base.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
 /**
