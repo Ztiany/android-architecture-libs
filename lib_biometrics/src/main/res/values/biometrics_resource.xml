@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="biometrics_authenticate_failed">验证失败</string>
+    <string name="biometrics_authenticate_failed_retry">指纹验证失败，请再重试！</string>
+    <string name="biometrics_dialog_cancel">取消</string>
+    <string name="biometrics_dialog_title">请验证已有指纹</string>
+    <string name="biometrics_unsupported_tips">该设备不支持指纹识别</string>
+
+</resources>

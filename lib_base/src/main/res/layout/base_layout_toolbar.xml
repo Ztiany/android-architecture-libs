@@ -8,6 +8,4 @@
     android:background="?colorPrimary"
     android:elevation="4dp"
     android:minHeight="?actionBarSize"
-    tools:ignore="PrivateResource,UnusedAttribute">
-
-</androidx.appcompat.widget.Toolbar>
+    tools:ignore="PrivateResource,UnusedAttribute"/>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="1.4%p"
+    android:keyWidth="8.5%p"
+    android:keyHeight="6%p"
+    android:verticalGap="1.2%p">
+
+    <Row>
+        <Key
+            android:codes="49"
+            android:keyEdgeFlags="left"
+            android:keyLabel="1" />
+        <Key
+            android:codes="50"
+            android:keyLabel="2" />
+        <Key
+            android:codes="51"
+            android:keyLabel="3" />
+        <Key
+            android:codes="52"
+            android:keyLabel="4" />
+        <Key
+            android:codes="53"
+            android:keyLabel="5" />
+        <Key
+            android:codes="54"
+            android:keyLabel="6" />
+        <Key
+            android:codes="55"
+            android:keyLabel="7" />
+        <Key
+            android:codes="56"
+            android:keyLabel="8" />
+        <Key
+            android:codes="57"
+            android:keyLabel="9" />
+        <Key
+            android:codes="48"
+            android:keyEdgeFlags="right"
+            android:keyLabel="0" />
+    </Row>
+
+    <Row>
+        <Key
+            android:codes="81"
+            android:keyEdgeFlags="left"
+            android:keyLabel="Q" />
+        <Key
+            android:codes="87"
+            android:keyLabel="W" />
+        <Key
+            android:codes="69"
+            android:keyLabel="E" />
+        <Key
+            android:codes="82"
+            android:keyLabel="R" />
+        <Key
+            android:codes="84"
+            android:keyLabel="T" />
+        <Key
+            android:codes="89"
+            android:keyLabel="Y" />
+        <Key
+            android:codes="85"
+            android:keyLabel="U" />
+        <Key
+            android:codes="73"
+            android:keyLabel="I" />
+        <Key
+            android:codes="79"
+            android:keyLabel="O" />
+        <Key
+            android:codes="80"
+            android:keyEdgeFlags="right"
+            android:keyLabel="P" />
+    </Row>
+
+    <Row>
+        <Key
+            android:codes="65"
+            android:horizontalGap="5%p"
+            android:keyEdgeFlags="left"
+            android:keyLabel="A" />
+        <Key
+            android:codes="83"
+            android:keyLabel="S" />
+        <Key
+            android:codes="68"
+            android:keyLabel="D" />
+        <Key
+            android:codes="70"
+            android:keyLabel="F" />
+        <Key
+            android:codes="71"
+            android:keyLabel="G" />
+        <Key
+            android:codes="72"
+            android:keyLabel="H" />
+        <Key
+            android:codes="74"
+            android:keyLabel="J" />
+        <Key
+            android:codes="75"
+            android:keyLabel="K" />
+        <Key
+            android:codes="76"
+            android:keyEdgeFlags="right"
+            android:keyLabel="L" />
+    </Row>
+
+    <Row>
+        <Key
+            android:codes="20200220"
+            android:isModifier="true"
+            android:isSticky="true"
+            android:keyWidth="13%p"
+            android:keyEdgeFlags="left"
+            android:keyLabel="小写" />
+        <Key
+            android:codes="90"
+            android:keyLabel="Z" />
+        <Key
+            android:codes="88"
+            android:keyLabel="X" />
+        <Key
+            android:codes="67"
+            android:keyLabel="C" />
+        <Key
+            android:codes="86"
+            android:keyLabel="V" />
+        <Key
+            android:codes="66"
+            android:keyLabel="B" />
+        <Key
+            android:codes="78"
+            android:keyLabel="N" />
+        <Key
+            android:codes="77"
+            android:keyLabel="M" />
+        <Key
+            android:codes="-5"
+            android:isRepeatable="true"
+            android:keyWidth="13%p"
+            android:keyLabel="删除" />
+    </Row>
+
+    <Row android:rowEdgeFlags="bottom">
+
+        <Key
+            android:codes="20200223"
+            android:horizontalGap="2.5%p"
+            android:keyWidth="15%p"
+            android:keyLabel="12#" />
+
+        <Key
+            android:codes="44"
+            android:keyWidth="15%p"
+            android:keyLabel="," />
+
+        <Key
+            android:codes="32"
+            android:isRepeatable="true"
+            android:keyWidth="30%p"
+            android:keyLabel="空格" />
+
+        <Key
+            android:codes="46"
+            android:keyWidth="15%p"
+            android:keyLabel="." />
+
+        <Key
+            android:codes="-4"
+            android:keyWidth="15%p"
+            android:keyEdgeFlags="right"
+            android:keyLabel="完成" />
+
+    </Row>
+
+</Keyboard>

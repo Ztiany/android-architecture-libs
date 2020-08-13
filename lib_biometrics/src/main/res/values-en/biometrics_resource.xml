@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="biometrics_authenticate_failed">Authentication failed</string>
+    <string name="biometrics_authenticate_failed_retry">Authentication failed. Try again!</string>
+    <string name="biometrics_dialog_cancel">Cancel</string>
+    <string name="biometrics_dialog_title">Please authenticating enrolled fingerprint</string>
+    <string name="biometrics_unsupported_tips">Authentication unsupported</string>
+
+</resources>

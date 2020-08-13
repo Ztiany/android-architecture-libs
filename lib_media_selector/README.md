@@ -23,6 +23,7 @@
 
 ### 其他可选方案
 
+-  [EasyPhotos](https://github.com/HuanTanSheng/EasyPhotos)
 -  [Matisse](https://github.com/zhihu/Matisse)
 -  [ImagePicker](https://github.com/jeasonlzy/ImagePicker)
 -  [PictureSelector](https://github.com/LuckSiege/PictureSelector)
