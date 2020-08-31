@@ -34,6 +34,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
         super.notifyDataSetChanged();
     }
 
+    @NotNull
     @Override
     public final Object instantiateItem(@NotNull ViewGroup container, int position) {
         int viewType = getItemViewType(position);
