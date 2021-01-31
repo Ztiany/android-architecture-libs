@@ -2,10 +2,10 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.android.base.foundation.adapter.DataManager
-import com.android.base.app.ui.AutoPageNumber
-import com.android.base.app.ui.PageNumber
+import com.android.base.app.ui.AutoPaging
+import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshListLayout
+import com.android.base.foundation.adapter.DataManager
 import com.ztiany.loadmore.adapter.ILoadMore
 import com.ztiany.loadmore.adapter.OnLoadMoreListener
 import com.ztiany.loadmore.adapter.WrapperAdapter
@@ -27,12 +27,12 @@ abstract class BaseListFragment<T> : BaseStateFragment(), RefreshListLayout<T> {
     private lateinit var dataManager: DataManager<T>
 
     /**分页页码*/
-    private var pageNumber: PageNumber? = null
+    private var paging: Paging? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (!::dataManager.isInitialized) {
-            throw NullPointerException("you need set DataManager")
+            throw NullPointerException("you need to set DataManager")
         }
     }
 
@@ -40,10 +40,14 @@ abstract class BaseListFragment<T> : BaseStateFragment(), RefreshListLayout<T> {
         this.dataManager = dataManager
     }
 
-    protected fun setupLoadMore(recyclerAdapter: Adapter<*>, pageNumber: PageNumber = AutoPageNumber(this, dataManager)): Adapter<*> {
-        this.pageNumber = pageNumber
+    protected fun setupLoadMore(
+            recyclerAdapter: Adapter<*>,
+            standardPagingNumber: Boolean = true,
+            paging: Paging = AutoPaging(this, dataManager)
+    ): Adapter<*> {
+        this.paging = paging
 
-        return WrapperAdapter.wrap(recyclerAdapter).apply {
+        return WrapperAdapter.wrap(recyclerAdapter, !standardPagingNumber).apply {
             setOnLoadMoreListener(object : OnLoadMoreListener {
                 override fun onLoadMore() {
                     this@BaseListFragment.onLoadMore()
@@ -64,19 +68,26 @@ abstract class BaseListFragment<T> : BaseStateFragment(), RefreshListLayout<T> {
 
     protected fun onLoadMore() = onStartLoad()
 
-    override fun canRefresh() = !isLoadingMore
+    override fun canRefresh() = !isLoadingMore()
 
-    override fun replaceData(data: List<T>)=  dataManager.replaceAll(data)
+    override fun replaceData(data: List<T>) = dataManager.replaceAll(data)
 
-    override fun addData(data: List<T>) =   dataManager.addItems(data)
+    override fun addData(data: List<T>) = dataManager.addItems(data)
 
-    override fun isEmpty(): Boolean = dataManager.isEmpty
+    override fun isEmpty(): Boolean {
+        return dataManager.isEmpty()
+    }
 
-    override fun isLoadingMore(): Boolean = loadMore != null && loadMore?.isLoadingMore ?: false
+    override fun isLoadingMore(): Boolean {
+        return loadMore != null && loadMore?.isLoadingMore ?: false
+    }
 
-    override fun getPager(): PageNumber = pageNumber ?: throw NullPointerException("you need to call setupLoadMore to init pageNumber")
+    override fun getPager(): Paging {
+        return paging ?: throw NullPointerException("you need to call setupLoadMore first")
+    }
 
-    fun loadMoreController(): ILoadMore = loadMore ?: throw NullPointerException("you need to call setupLoadMore to init loadMoreController")
+    val loadMoreController: ILoadMore
+        get() = loadMore ?: throw NullPointerException("you need to call setupLoadMore first")
 
     override fun loadMoreCompleted(hasMore: Boolean) {
         loadMore?.loadCompleted(hasMore)

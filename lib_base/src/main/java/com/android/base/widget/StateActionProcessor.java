@@ -3,7 +3,6 @@ package com.android.base.widget;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -104,9 +103,7 @@ public class StateActionProcessor extends StateProcessor {
         private final int mState;
         private Drawable mDrawable;
         private CharSequence mMessage;
-        private int mMessageGravity = Gravity.CENTER;
         private CharSequence mActionText;
-        private View mStateView;
         private TextView mMessageTv;
         private ImageView mIconTv;
         private Button mActionBtn;
@@ -116,10 +113,9 @@ public class StateActionProcessor extends StateProcessor {
         }
 
         void setStateView(View stateView) {
-            mStateView = stateView;
-            mIconTv = mStateView.findViewById(CommonId.RETRY_IV_ID);
-            mMessageTv = mStateView.findViewById(CommonId.RETRY_TV_ID);
-            mActionBtn = mStateView.findViewById(CommonId.RETRY_BTN_ID);
+            mIconTv = stateView.findViewById(CommonId.RETRY_IV_ID);
+            mMessageTv = stateView.findViewById(CommonId.RETRY_TV_ID);
+            mActionBtn = stateView.findViewById(CommonId.RETRY_BTN_ID);
             mActionBtn.setOnClickListener(v -> {
                 if (mOnRetryActionListener != null) {
                     mOnRetryActionListener.onRetry(mState);
@@ -128,7 +124,6 @@ public class StateActionProcessor extends StateProcessor {
             setActionText(mActionText);
             setMessage(mMessage);
             setDrawable(mDrawable);
-            setMessageGravity(mMessageGravity);
         }
 
         void setDrawable(Drawable drawable) {
@@ -142,13 +137,6 @@ public class StateActionProcessor extends StateProcessor {
             mMessage = message;
             if (mMessageTv != null) {
                 mMessageTv.setText(mMessage);
-            }
-        }
-
-        void setMessageGravity(int gravity) {
-            mMessageGravity = gravity;
-            if (mMessageTv != null) {
-                mMessageTv.setGravity(mMessageGravity);
             }
         }
 
@@ -171,12 +159,6 @@ public class StateActionProcessor extends StateProcessor {
         @Override
         public StateLayoutConfig setStateMessage(@ViewState int state, CharSequence message) {
             getViewInfoForState(state).setMessage(message);
-            return this;
-        }
-
-        @Override
-        public StateLayoutConfig setMessageGravity(int state, int gravity) {
-            getViewInfoForState(state).setMessageGravity(gravity);
             return this;
         }
 

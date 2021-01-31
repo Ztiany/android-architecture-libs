@@ -45,7 +45,10 @@ class GlideImageLoader implements ImageLoader {
         RequestBuilder<Drawable> requestBuilder = Glide.with(fragment).load(url);
         if (displayConfig != null) {
             RequestOptions requestOptions = buildRequestOptions(displayConfig);
-            requestBuilder.apply(requestOptions);
+            requestBuilder = requestBuilder.apply(requestOptions);
+            if (displayConfig.getThumbnail() != 0) {
+                requestBuilder = requestBuilder.thumbnail(displayConfig.getThumbnail());
+            }
         }
         requestBuilder.into(new InnerImageTarget(imageView, url, loadListener));
     }
@@ -60,7 +63,10 @@ class GlideImageLoader implements ImageLoader {
         RequestBuilder<Drawable> requestBuilder = Glide.with(imageView.getContext()).load(url);
         if (config != null) {
             RequestOptions requestOptions = buildRequestOptions(config);
-            requestBuilder.apply(requestOptions);
+            requestBuilder = requestBuilder.apply(requestOptions);
+            if (config.getThumbnail() != 0) {
+                requestBuilder = requestBuilder.thumbnail(config.getThumbnail());
+            }
         }
         requestBuilder.into(new InnerImageTarget(imageView, url, loadListener));
     }
@@ -85,7 +91,7 @@ class GlideImageLoader implements ImageLoader {
 
         private final LoadListener<Drawable> mLoadListener;
 
-        InnerImageTarget(ImageView view, @SuppressWarnings("unused") String url, LoadListener<Drawable> loadListener) {
+        InnerImageTarget(ImageView view, String url, LoadListener<Drawable> loadListener) {
             super(view);
             mLoadListener = loadListener;
         }
@@ -170,7 +176,10 @@ class GlideImageLoader implements ImageLoader {
     private void display(ImageView imageView, RequestBuilder request, DisplayConfig displayConfig) {
         if (displayConfig != null) {
             RequestOptions requestOptions = buildRequestOptions(displayConfig);
-            request.apply(requestOptions);
+            request = request.apply(requestOptions);
+            if (displayConfig.getThumbnail() != 0) {
+                request = request.thumbnail(displayConfig.getThumbnail());
+            }
         }
         request.into(imageView);
     }
@@ -178,6 +187,7 @@ class GlideImageLoader implements ImageLoader {
     ///////////////////////////////////////////////////////////////////////////
     // pause and resume
     ///////////////////////////////////////////////////////////////////////////
+
     @Override
     public void pause(Fragment fragment) {
         Glide.with(fragment).pauseRequests();
@@ -198,9 +208,8 @@ class GlideImageLoader implements ImageLoader {
         Glide.with(context).resumeRequests();
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
-    //Load Bitmap
+    //Preload
     ///////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -214,6 +223,28 @@ class GlideImageLoader implements ImageLoader {
         RequestManager requestManager = Glide.with(context);
         setToRequest(requestManager, source).preload(width, height);
     }
+
+    @Override
+    public void clear(Context context) {
+        Glide.get(context).clearDiskCache();
+    }
+
+    @Override
+    public void clear(View view) {
+        Context context = view.getContext();
+        if (context != null) {
+            Glide.with(context).clear(view);
+        }
+    }
+
+    @Override
+    public void clear(Fragment fragment, View view) {
+        Glide.with(fragment).clear(view);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //Load Bitmap
+    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public void loadBitmap(Context context, Source source, boolean cache, final LoadListener<Bitmap> bitmapLoadListener) {
@@ -258,14 +289,12 @@ class GlideImageLoader implements ImageLoader {
     private void loadBitmapInternal(RequestManager requestManager, Source source, boolean cache, int width, int height, LoadListener<Bitmap> bitmapLoadListener) {
         RequestOptions requestOptions = new RequestOptions();
         if (cache) {
-            requestOptions.skipMemoryCache(false);
-            requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            requestOptions = requestOptions.skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.ALL);
         } else {
-            requestOptions.skipMemoryCache(true);
-            requestOptions.diskCacheStrategy(DiskCacheStrategy.NONE);
+            requestOptions = requestOptions.skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);
         }
         if (width > 0 && height > 0) {
-            requestOptions.override(width, height);
+            requestOptions = requestOptions.override(width, height);
         }
 
         RequestBuilder<Bitmap> requestBuilder = requestManager.asBitmap().apply(requestOptions);
@@ -283,28 +312,9 @@ class GlideImageLoader implements ImageLoader {
 
             @Override
             public void onLoadStarted(@Nullable Drawable placeholder) {
-                super.onLoadStarted(placeholder);
                 bitmapLoadListener.onLoadStart();
             }
         });
-    }
-
-    @Override
-    public void clear(Context context) {
-        Glide.get(context).clearDiskCache();
-    }
-
-    @Override
-    public void clear(View view) {
-        Context context = view.getContext();
-        if (context != null) {
-            Glide.with(context).clear(view);
-        }
-    }
-
-    @Override
-    public void clear(Fragment fragment, View view) {
-        Glide.with(fragment).clear(view);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -315,49 +325,54 @@ class GlideImageLoader implements ImageLoader {
         RequestOptions requestOptions = new RequestOptions();
         /*DiskCache*/
         if (displayConfig.isCacheDisk()) {
-            requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            requestOptions = requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         } else {
-            requestOptions.diskCacheStrategy(DiskCacheStrategy.NONE);
+            requestOptions = requestOptions.diskCacheStrategy(DiskCacheStrategy.NONE);
         }
 
         /*MemoryCache*/
         if (displayConfig.isCacheMemory()) {
-            requestOptions.skipMemoryCache(false);
+            requestOptions = requestOptions.skipMemoryCache(false);
         } else {
-            requestOptions.skipMemoryCache(true);
+            requestOptions = requestOptions.skipMemoryCache(true);
         }
 
         /*SCALE_TYPE*/
         if (displayConfig.getScaleType() == DisplayConfig.SCALE_CENTER_CROP) {
-            requestOptions.centerCrop();
+            requestOptions = requestOptions.centerCrop();
         } else if (displayConfig.getScaleType() == DisplayConfig.SCALE_FIT_CENTER) {
-            requestOptions.fitCenter();
+            requestOptions = requestOptions.fitCenter();
         }
 
         /*transform*/
         if (displayConfig.getTransform() == DisplayConfig.TRANSFORM_CIRCLE) {
-            requestOptions.circleCrop();
+            requestOptions = requestOptions.circleCrop();
         } else if (displayConfig.getTransform() == DisplayConfig.TRANSFORM_ROUNDED_CORNERS) {
-            requestOptions.transform(new RoundedCorners(displayConfig.getRoundedCornersRadius()));
+            requestOptions = requestOptions.transform(new RoundedCorners(displayConfig.getRoundedCornersRadius()));
         } else if (displayConfig.getTransform() == DisplayConfig.TRANSFORM_NONE) {
-            requestOptions.dontTransform();//不做渐入渐出的转换
+            requestOptions = requestOptions.dontTransform();//不做渐入渐出的转换
         }
 
         /*Placeholder*/
         if (displayConfig.getErrorPlaceholder() != DisplayConfig.NO_PLACE_HOLDER) {
-            requestOptions.error(displayConfig.getErrorPlaceholder());
+            requestOptions = requestOptions.error(displayConfig.getErrorPlaceholder());
         }
         if (displayConfig.getErrorDrawable() != null) {
-            requestOptions.error(displayConfig.getErrorDrawable());
+            requestOptions = requestOptions.error(displayConfig.getErrorDrawable());
         }
 
         if (displayConfig.getLoadingPlaceholder() != DisplayConfig.NO_PLACE_HOLDER) {
-            requestOptions.placeholder(displayConfig.getLoadingPlaceholder());
+            requestOptions = requestOptions.placeholder(displayConfig.getLoadingPlaceholder());
         }
 
         if (displayConfig.getLoadingDrawable() != null) {
-            requestOptions.placeholder(displayConfig.getLoadingDrawable());
+            requestOptions = requestOptions.placeholder(displayConfig.getLoadingDrawable());
         }
+
+        if (displayConfig.getHeight() > 0 && displayConfig.getWidth() > 0) {
+            requestOptions = requestOptions.override(displayConfig.getWidth(), displayConfig.getHeight());
+        }
+
         return requestOptions;
     }
 
@@ -372,7 +387,7 @@ class GlideImageLoader implements ImageLoader {
             return requestManager.load(source.mUri);
         } else if (source.mBytes != null) {
             return requestManager.load(source.mBytes);
-        }  else {
+        } else {
             throw new IllegalArgumentException("UnSupport source");
         }
     }

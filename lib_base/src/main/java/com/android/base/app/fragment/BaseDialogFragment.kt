@@ -12,11 +12,10 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.android.base.app.Sword
 import com.android.base.app.activity.BackHandlerHelper
 import com.android.base.app.activity.OnBackPressListener
+import com.android.base.app.ui.LoadingView
 import com.android.base.foundation.fragment.FragmentDelegate
 import com.android.base.foundation.fragment.FragmentDelegateOwner
-import com.android.base.app.ui.LoadingView
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
-import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber
 
 /**
@@ -177,16 +176,17 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
     }
 
     @UiThread
-    override fun addDelegate(fragmentDelegate: FragmentDelegate<*>?) {
+    override fun addDelegate(fragmentDelegate: FragmentDelegate<*>) {
         fragmentDelegates.addDelegate(fragmentDelegate)
     }
 
     @UiThread
-    override fun removeDelegate(fragmentDelegate: FragmentDelegate<*>?): Boolean {
+    override fun removeDelegate(fragmentDelegate: FragmentDelegate<*>): Boolean {
         return fragmentDelegates.removeDelegate(fragmentDelegate)
     }
 
-    override fun findDelegate(predicate: Predicate<FragmentDelegate<*>?>?): FragmentDelegate<*>? {
+    @UiThread
+    override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         return fragmentDelegates.findDelegate(predicate)
     }
 
@@ -241,7 +241,7 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
         loadingView?.dismissLoadingDialog()
     }
 
-    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: () -> Unit) {
+    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)?) {
         dismissDialog(recentShowingDialogTime, minimumMills, onDismiss)
     }
 

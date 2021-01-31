@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.android.base.foundation.common.ActFragWrapper
-import com.android.sdk.mediaselector.common.LogUtils
 import com.android.sdk.mediaselector.common.MediaUtils
 import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.newUriList
@@ -19,11 +18,12 @@ import com.bilibili.boxing.model.config.BoxingConfig
 import com.bilibili.boxing.model.entity.BaseMedia
 import com.bilibili.boxing_impl.ui.BoxingActivity
 import com.ztiany.mediaselector.R
+import timber.log.Timber
 import java.util.ArrayList
 
-private const val REQUEST_BOXING = 10098;
-internal const val REQUEST_UCROP = 10099
-private const val INSTRUCTOR_KEY = "instructor_key"
+private const val REQUEST_BOXING = 10715;
+internal const val REQUEST_UCROP = 10716
+private const val INSTRUCTOR_KEY = "custom_instructor_key"
 
 /**
  *@author Ztiany
@@ -71,6 +71,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
     }
 
     private fun start(boxingConfig: BoxingConfig): Boolean {
+        Timber.d(" -start(boxingConfig)")
         val fragment = actFragWrapper.fragment
         return try {
             if (fragment != null) {
@@ -82,6 +83,7 @@ internal abstract class BaseMediaSelector : MediaSelector {
             }
             true
         } catch (e: Exception) {
+            Timber.e(e, "start(boxingConfig) ")
             e.printStackTrace()
             false
         }
@@ -95,7 +97,9 @@ internal abstract class BaseMediaSelector : MediaSelector {
                 BoxingConfig(BoxingConfig.Mode.SINGLE_IMG)
             }
         } else {
-            BoxingConfig(BoxingConfig.Mode.MULTI_IMG)
+            BoxingConfig(BoxingConfig.Mode.VIDEO)
+        }.also {
+            it.mediaFilter = currentInstructor.mediaFilter
         }
     }
 
@@ -104,7 +108,11 @@ internal abstract class BaseMediaSelector : MediaSelector {
     ///////////////////////////////////////////////////////////////////////////
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        LogUtils.d("onActivityResult() called with: requestCode = [$requestCode], resultCode = [$resultCode], data = [$data]")
+        Timber.d("onActivityResult() called with: requestCode = [$requestCode], resultCode = [$resultCode], data = [$data]")
+        if (requestCode != REQUEST_BOXING && requestCode != REQUEST_UCROP) {
+            return
+        }
+
         if (resultCode != Activity.RESULT_OK) {
             mediaSelectorCallback.onCancel()
             return

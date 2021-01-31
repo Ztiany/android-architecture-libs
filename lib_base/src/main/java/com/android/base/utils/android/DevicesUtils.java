@@ -2,10 +2,11 @@ package com.android.base.utils.android;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import timber.log.Timber;
 
 public class DevicesUtils {
 
@@ -69,10 +70,11 @@ public class DevicesUtils {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                 sb.append("\nSERIAL             :").append(Build.SERIAL);
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        Log.i("DEVICES", sb.toString());
+        Timber.tag("DEVICES").i(sb.toString());
     }
 
 }

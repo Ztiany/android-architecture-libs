@@ -12,5 +12,5 @@ data class UpgradeInfo(
         val downloadUrl: String,
         val description: String,
         val digitalAbstract: String,
-        val raw: Any?
+        val raw: Any?,
 )

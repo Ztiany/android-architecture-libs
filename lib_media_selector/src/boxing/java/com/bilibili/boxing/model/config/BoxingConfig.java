@@ -20,6 +20,8 @@ package com.bilibili.boxing.model.config;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bilibili.boxing.model.callback.MediaFilter;
+
 import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.DrawableRes;
@@ -54,6 +56,8 @@ public class BoxingConfig implements Parcelable {
 
     private int mMaxCount = DEFAULT_SELECTED_COUNT;
 
+    private MediaFilter mMediaFilter;
+
     public enum Mode {
         SINGLE_IMG, MULTI_IMG, VIDEO
     }
@@ -67,6 +71,14 @@ public class BoxingConfig implements Parcelable {
 
     public BoxingConfig(Mode mode) {
         this.mMode = mode;
+    }
+
+    public void setMediaFilter(MediaFilter mediaFilter) {
+        mMediaFilter = mediaFilter;
+    }
+
+    public MediaFilter getMediaFilter() {
+        return mMediaFilter;
     }
 
     public boolean isNeedCamera() {
@@ -97,6 +109,7 @@ public class BoxingConfig implements Parcelable {
 
     /**
      * get the image drawable resource by {@link BoxingConfig#withMediaPlaceHolderRes(int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
     public @DrawableRes
@@ -106,41 +119,51 @@ public class BoxingConfig implements Parcelable {
 
     /**
      * get the media checked drawable resource by {@link BoxingConfig#withMediaCheckedRes(int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes  int getMediaCheckedRes() {
+    public @DrawableRes
+    int getMediaCheckedRes() {
         return mMediaCheckedRes;
     }
 
     /**
      * get the media unchecked drawable resource by {@link BoxingConfig#withMediaUncheckedRes(int)} (int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes int getMediaUnCheckedRes() {
+    public @DrawableRes
+    int getMediaUnCheckedRes() {
         return mMediaUnCheckedRes;
     }
 
     /**
      * get the media unchecked drawable resource by {@link BoxingConfig#withMediaPlaceHolderRes(int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes int getCameraRes() {
+    public @DrawableRes
+    int getCameraRes() {
         return mCameraRes;
     }
 
     /**
      * get the album drawable resource by {@link BoxingConfig#withAlbumPlaceHolderRes(int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes int getAlbumPlaceHolderRes() {
+    public @DrawableRes
+    int getAlbumPlaceHolderRes() {
         return mAlbumPlaceHolderRes;
     }
 
     /**
      * get the video drawable resource by {@link BoxingConfig#withVideoDurationRes(int)}.
+     *
      * @return >0, set a valid drawable resource; otherwise without a placeholder.
      */
-    public @DrawableRes int getVideoDurationRes() {
+    public @DrawableRes
+    int getVideoDurationRes() {
         return mVideoDurationRes;
     }
 
@@ -200,6 +223,7 @@ public class BoxingConfig implements Parcelable {
 
     /**
      * set the max count of selected medias in {@link Mode#MULTI_IMG}
+     *
      * @param count max count
      */
     public BoxingConfig withMaxCount(int count) {
@@ -278,6 +302,7 @@ public class BoxingConfig implements Parcelable {
         dest.writeByte(this.mNeedGif ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mNeedPaging ? (byte) 1 : (byte) 0);
         dest.writeInt(this.mMaxCount);
+        dest.writeParcelable(mMediaFilter, flags);
     }
 
     protected BoxingConfig(Parcel in) {
@@ -295,6 +320,7 @@ public class BoxingConfig implements Parcelable {
         this.mNeedGif = in.readByte() != 0;
         this.mNeedPaging = in.readByte() != 0;
         this.mMaxCount = in.readInt();
+        this.mMediaFilter = in.readParcelable(MediaFilter.class.getClassLoader());
     }
 
     public static final Creator<BoxingConfig> CREATOR = new Creator<BoxingConfig>() {

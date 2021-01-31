@@ -72,11 +72,6 @@ internal class RefreshLoadMoreStateLayoutImpl private constructor(layout: View) 
         return checkMultiStateView().stateLayoutConfig.processor
     }
 
-    override fun setMessageGravity(state: Int, gravity: Int): StateLayoutConfig {
-        checkMultiStateView().stateLayoutConfig.setMessageGravity(state, gravity)
-        return this
-    }
-
     private fun checkMultiStateView(): StateLayout {
         return _multiStateView
                 ?: throw IllegalStateException("Calling this function requires defining a view that implements StateLayout in the Layout")

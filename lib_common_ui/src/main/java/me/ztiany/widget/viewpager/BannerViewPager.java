@@ -12,8 +12,6 @@ import com.android.sdk.ui.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -24,15 +22,18 @@ import androidx.viewpager.widget.ViewPager;
 public class BannerViewPager extends FrameLayout {
 
     private final ViewPager mViewPager;
+
     private IPagerNumberView mPageNumberView;
-    private ImageLoader mImageLoader;
 
     private List<Uri> mImageUrlList = new ArrayList<>();
 
     private OnBannerPositionChangedListener mOnBannerPositionChangedListener;
 
     private String mTransitionName;
+
     private OnPageClickListener mOnPageClickListener;
+
+    private boolean mEnableLopper = false;
 
     public BannerViewPager(Context context) {
         this(context, null);
@@ -66,17 +67,6 @@ public class BannerViewPager extends FrameLayout {
         }
     }
 
-    ImageLoader getImageLoader() {
-        if (mImageLoader == null) {
-            throw new NullPointerException("you should provide ImageLoader");
-        }
-        return mImageLoader;
-    }
-
-    public void setImageLoader(@NonNull ImageLoader imageLoader) {
-        mImageLoader = imageLoader;
-    }
-
     public void setOnBannerPositionChangedListener(OnBannerPositionChangedListener onBannerPositionChangedListener) {
         mOnBannerPositionChangedListener = onBannerPositionChangedListener;
     }
@@ -85,28 +75,26 @@ public class BannerViewPager extends FrameLayout {
         mPageNumberView = pageNumberView;
     }
 
-    public void setImages(List<Uri> entities, @Nullable BannerPagerAdapter adapter) {
+    public void setImages(List<Uri> entities, BannerViewPagerAdapter adapter) {
         if (entities == null || entities.isEmpty()) {
             mImageUrlList.clear();
             mViewPager.setAdapter(null);
             setPageSize(0);
             return;
         }
+
         mImageUrlList.clear();
         setPageSize(entities.size());
 
-        if (entities.size() > 1) {
+        if (entities.size() > 1 && mEnableLopper) {
             addExtraPage(entities);
             showBanner(adapter);
-            setLooper();
+            setLooperListener();
         } else {
             mImageUrlList.addAll(entities);
             showBanner(adapter);
+            setNormalListener();
         }
-    }
-
-    public void setImages(List<Uri> entities) {
-        setImages(entities, null);
     }
 
     private void setPageSize(int pageSize) {
@@ -121,10 +109,23 @@ public class BannerViewPager extends FrameLayout {
         }
     }
 
+    public void setEnableLooper(boolean enableLooper) {
+        mEnableLopper = enableLooper;
+    }
+
     public void setCurrentPosition(int position) {
         if (position < 0) {
             return;
         }
+
+        if (!mEnableLopper) {
+            mViewPager.setCurrentItem(position);
+            if (mOnBannerPositionChangedListener != null) {
+                mOnBannerPositionChangedListener.onPagePositionChanged(position);
+            }
+            return;
+        }
+
         if (mImageUrlList.size() > 1) {
             int realSize = mImageUrlList.size() - 2;
             if (position >= realSize) {
@@ -139,10 +140,29 @@ public class BannerViewPager extends FrameLayout {
                 mOnBannerPositionChangedListener.onPagePositionChanged(0);
             }
         }
+
         mViewPager.setCurrentItem(position);
     }
 
-    private void setLooper() {
+    private void setNormalListener() {
+        mViewPager.clearOnPageChangeListeners();
+        mViewPager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                        if (positionOffsetPixels == 0.0) {
+                            setPageScrolled(position, positionOffset);
+                        }
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        mOnBannerPositionChangedListener.onPagePositionChanged(position);
+                    }
+                });
+    }
+
+    private void setLooperListener() {
         mViewPager.setCurrentItem(1, false);
         mViewPager.clearOnPageChangeListeners();
 
@@ -195,18 +215,12 @@ public class BannerViewPager extends FrameLayout {
         mImageUrlList.add(entities.get(0));
     }
 
-    private void showBanner(BannerPagerAdapter adapter) {
-        if (adapter != null) {
-            adapter.setContext(getContext());
-            adapter.setEntities(mImageUrlList);
-            adapter.setTransitionName(mTransitionName);
-            adapter.setOnBannerClickListener(mOnPageClickListener);
-            mViewPager.setAdapter(adapter);
-        } else {
-            OptimizeBannerPagerAdapter optimizeBannerPagerAdapter = new OptimizeBannerPagerAdapter(this, mImageUrlList, mTransitionName);
-            optimizeBannerPagerAdapter.setOnBannerClickListener(mOnPageClickListener);
-            mViewPager.setAdapter(optimizeBannerPagerAdapter);
-        }
+    private void showBanner(BannerViewPagerAdapter adapter) {
+        adapter.setContext(getContext());
+        adapter.setTransitionName(mTransitionName);
+        adapter.setEntities(mImageUrlList, mEnableLopper);
+        adapter.setOnBannerClickListener(mOnPageClickListener);
+        mViewPager.setAdapter(adapter);
     }
 
     public void setOnPageClickListener(OnPageClickListener onPageClickListener) {

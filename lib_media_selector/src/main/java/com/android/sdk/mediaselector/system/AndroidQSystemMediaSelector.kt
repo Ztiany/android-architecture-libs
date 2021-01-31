@@ -12,6 +12,7 @@ import com.android.sdk.mediaselector.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -102,7 +103,7 @@ internal class AndroidQSystemMediaSelector : BaseSystemMediaSelector {
             startActivityForResult(intent, requestCode)
             true
         } catch (e: Exception) {
-            LogUtils.e("doTakePhotoFormSystem", e)
+            Timber.d(e, "doTakePhotoFormSystem")
             false
         }
     }

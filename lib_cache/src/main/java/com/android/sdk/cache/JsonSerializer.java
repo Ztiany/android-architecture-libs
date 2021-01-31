@@ -1,7 +1,15 @@
 package com.android.sdk.cache;
 
+import android.net.Uri;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -15,11 +23,10 @@ import timber.log.Timber;
  */
 public class JsonSerializer implements Serializer {
 
-    private final String TAG = JsonSerializer.class.getSimpleName();
-
     private final Gson GSON = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT)
             .excludeFieldsWithModifiers(Modifier.STATIC)
+            .registerTypeAdapter(Uri.class, new UriInOut())
             .create();
 
     @Override
@@ -45,9 +52,25 @@ public class JsonSerializer implements Serializer {
                 return GSON.fromJson(json, clazz);
             }
         } catch (Exception e) {
-            Timber.e(e, "JsonSerializer fromJson error with: json = " + json + " class = " + clazz);
+            Timber.e(e, "JsonSerializer fromJson error with: json %s, class= %s ", json, clazz.toString());
         }
         return null;
+    }
+
+    private static class UriInOut implements JsonDeserializer<Uri>, com.google.gson.JsonSerializer<Uri> {
+        @Override
+        public Uri deserialize(final JsonElement src, final Type srcType, final JsonDeserializationContext context) throws JsonParseException {
+            try {
+                return Uri.parse(src.getAsString());
+            } catch (Exception e) {
+                return Uri.EMPTY;
+            }
+        }
+
+        @Override
+        public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.toString());
+        }
     }
 
 }

@@ -14,14 +14,14 @@ private interface ExampleApi {
 
 private suspend fun example(api: ExampleApi) {
 
-    apiCall({ api.loadData() }).ifSuccessful {
+    apiCall({ api.loadData() }).ifSucceeded {
 
     } ifFailed {
 
     }
 
     val callResult = apiCall({ api.loadData2() })
-    callResult.ifSuccessful {
+    callResult.ifSucceeded {
 
     } ifFailed {
 

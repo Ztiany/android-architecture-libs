@@ -12,49 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.PagerAdapter;
 import timber.log.Timber;
 
-/**
- * Implementation of {@link PagerAdapter} that
- * represents each page as a {@link Fragment} that is persistently
- * kept in the fragment manager as long as the user can return to the page.
- *
- * <p>This version of the pager is best for use when there are a handful of
- * typically more static fragments to be paged through, such as a set of tabs.
- * The fragment of each page the user visits will be kept in memory, though its
- * view hierarchy may be destroyed when not visible.  This can result in using
- * a significant amount of memory since fragment instances can hold on to an
- * arbitrary amount of state.  For larger sets of pages, consider
- * {@link FragmentStatePagerAdapter}.
- *
- * <p>When using FragmentPagerAdapter the host ViewPager must have a
- * valid ID set.</p>
- *
- * <p>Subclasses only need to implement {@link #getItem(int)}
- * and {@link #getCount()} to have a working adapter.
- *
- * <p>Here is an example implementation of a pager containing fragments of
- * lists:
- * <p>
- * {@sample frameworks/support/samples/Support4Demos/src/main/java/com/example/android/supportv4/app/FragmentPagerSupport.java
- * complete}
- *
- * <p>The <code>R.layout.fragment_pager</code> resource of the top-level fragment is:
- * <p>
- * {@sample frameworks/support/samples/Support4Demos/src/main/res/layout/fragment_pager.xml
- * complete}
- *
- * <p>The <code>R.layout.fragment_pager_list</code> resource containing each
- * individual fragment's layout is:
- * <p>
- * {@sample frameworks/support/samples/Support4Demos/src/main/res/layout/fragment_pager_list.xml
- * complete}
- */
-@SuppressWarnings("deprecation")
 public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
 
     private static final String TAG = "FixedFragmentPagerAdapter";
@@ -64,25 +26,9 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
     private @interface Behavior {
     }
 
-    /**
-     * Indicates that {@link Fragment#setUserVisibleHint(boolean)} will be called when the current
-     * fragment changes.
-     *
-     * @see #FixedFragmentPagerAdapter(FragmentManager, int)
-     * @deprecated This behavior relies on the deprecated
-     * {@link Fragment#setUserVisibleHint(boolean)} API. Use
-     * {@link #BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT} to switch to its replacement,
-     * {@link FragmentTransaction#setMaxLifecycle}.
-     */
     @Deprecated
     public static final int BEHAVIOR_SET_USER_VISIBLE_HINT = 0;
 
-    /**
-     * Indicates that only the current fragment will be in the {@link Lifecycle.State#RESUMED}
-     * state. All other Fragments are capped at {@link Lifecycle.State#STARTED}.
-     *
-     * @see #FixedFragmentPagerAdapter(FragmentManager, int)
-     */
     public static final int BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT = 1;
 
     private final FragmentManager mFragmentManager;
@@ -91,43 +37,16 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
     private Fragment mCurrentPrimaryItem = null;
     private boolean mExecutingFinishUpdate;
 
-    /**
-     * Constructor for {@link FixedFragmentPagerAdapter} that sets the fragment manager for the adapter.
-     * This is the equivalent of calling {@link #FixedFragmentPagerAdapter(FragmentManager, int)} and
-     * passing in {@link #BEHAVIOR_SET_USER_VISIBLE_HINT}.
-     *
-     * <p>Fragments will have {@link Fragment#setUserVisibleHint(boolean)} called whenever the
-     * current Fragment changes.</p>
-     *
-     * @param fm fragment manager that will interact with this adapter
-     * @deprecated use {@link #FixedFragmentPagerAdapter(FragmentManager, int)} with
-     * {@link #BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT}
-     */
     @Deprecated
     public FixedFragmentPagerAdapter(@NonNull FragmentManager fm) {
         this(fm, BEHAVIOR_SET_USER_VISIBLE_HINT);
     }
 
-    /**
-     * Constructor for {@link FixedFragmentPagerAdapter}.
-     * <p>
-     * If {@link #BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT} is passed in, then only the current
-     * Fragment is in the {@link Lifecycle.State#RESUMED} state. All other fragments are capped at
-     * {@link Lifecycle.State#STARTED}. If {@link #BEHAVIOR_SET_USER_VISIBLE_HINT} is passed, all
-     * fragments are in the {@link Lifecycle.State#RESUMED} state and there will be callbacks to
-     * {@link Fragment#setUserVisibleHint(boolean)}.
-     *
-     * @param fm       fragment manager that will interact with this adapter
-     * @param behavior determines if only current fragments are in a resumed state
-     */
     public FixedFragmentPagerAdapter(@NonNull FragmentManager fm, @Behavior int behavior) {
         mFragmentManager = fm;
         mBehavior = behavior;
     }
 
-    /**
-     * Return the Fragment associated with a specified position.
-     */
     @NonNull
     public abstract Fragment getItem(int position);
 
@@ -138,7 +57,6 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
         }
     }
 
-    @SuppressWarnings({"ReferenceEquality", "deprecation"})
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
@@ -148,7 +66,6 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
 
         final long itemId = getItemId(position);
 
-        // Do we already have this fragment?
         String name = makeFragmentName(container.getId(), itemId);
         Fragment fragment = mFragmentManager.findFragmentByTag(name);
         if (fragment != null) {
@@ -171,8 +88,6 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
         return fragment;
     }
 
-    // TODO(b/141958824): Suppressed during upgrade to AGP 3.6.
-    @SuppressWarnings("ReferenceEquality")
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Fragment fragment = (Fragment) object;
@@ -196,7 +111,6 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
         }
     }
 
-    @SuppressWarnings({"ReferenceEquality", "deprecation"})
     @Override
     public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Fragment fragment = (Fragment) object;
@@ -261,15 +175,6 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
     public void restoreState(@Nullable Parcelable state, @Nullable ClassLoader loader) {
     }
 
-    /**
-     * Return a unique identifier for the item at the given position.
-     *
-     * <p>The default implementation returns the given position.
-     * Subclasses should override this method if the positions of items can change.</p>
-     *
-     * @param position Position within this adapter
-     * @return Unique identifier for the item at position
-     */
     public long getItemId(int position) {
         return position;
     }

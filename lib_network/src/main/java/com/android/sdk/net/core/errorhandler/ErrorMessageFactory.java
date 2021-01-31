@@ -33,7 +33,8 @@ public class ErrorMessageFactory {
         if (exception instanceof CompositeException) {
             List<Throwable> exceptions = ((CompositeException) exception).getExceptions();
             if (exceptions != null && !exceptions.isEmpty()) {
-                exception = exceptions.get(0);
+                exception = findBestException(exceptions);
+                Timber.d("createMessage with CompositeException, all exception = ：%s", exceptions.toString());
             }
         }
 
@@ -83,6 +84,20 @@ public class ErrorMessageFactory {
         }
 
         return message;
+    }
+
+    private static Throwable findBestException(List<Throwable> exceptions) {
+        for (Throwable exception : exceptions) {
+            if(exception instanceof IOException||
+                    exception instanceof NetworkErrorException||
+                    exception instanceof ServerErrorException||
+                    exception instanceof HttpException||
+                    exception instanceof ApiErrorException||
+                    exception instanceof NoSuchElementException){
+                return exception;
+            }
+        }
+        return exceptions.get(0);
     }
 
     private static boolean isEmpty(CharSequence str) {

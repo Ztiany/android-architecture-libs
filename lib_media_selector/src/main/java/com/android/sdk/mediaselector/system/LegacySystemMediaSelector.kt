@@ -6,10 +6,10 @@ import android.net.Uri
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.sdk.mediaselector.common.LogUtils
-import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.MediaUtils
+import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.newUriList
+import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -98,7 +98,7 @@ internal class LegacySystemMediaSelector : BaseSystemMediaSelector {
             startActivityForResult(intent, requestCode)
             true
         } catch (e: Exception) {
-            LogUtils.e("doTakePhotoFormSystem", e)
+            Timber.e(e, "doTakePhotoFormSystem")
             false
         }
     }

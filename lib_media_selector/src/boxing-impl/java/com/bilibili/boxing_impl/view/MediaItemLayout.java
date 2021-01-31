@@ -47,7 +47,7 @@ import androidx.annotation.NonNull;
  */
 public class MediaItemLayout extends FrameLayout {
 
-    private ImageView mCheckImg;
+    private TextView mCheckTxt;
     private View mVideoLayout;
     private View mFontLayout;
     private ImageView mCoverImg;
@@ -79,7 +79,7 @@ public class MediaItemLayout extends FrameLayout {
         super(context, attrs, defStyleAttr);
         View view = LayoutInflater.from(context).inflate(R.layout.layout_boxing_media_item, this, true);
         mCoverImg = view.findViewById(R.id.media_item);
-        mCheckImg = view.findViewById(R.id.media_item_check);
+        mCheckTxt = view.findViewById(R.id.media_item_check_txt);
         mVideoLayout = view.findViewById(R.id.video_layout);
         mFontLayout = view.findViewById(R.id.media_font_layout);
         mScreenType = getScreenType(context);
@@ -148,13 +148,15 @@ public class MediaItemLayout extends FrameLayout {
         BoxingMediaLoader.getInstance().displayThumbnail(mCoverImg, path, mScreenType.getValue(), mScreenType.getValue());
     }
 
-    public void setChecked(boolean isChecked) {
+    public void setChecked(boolean isChecked, int index) {
         if (isChecked) {
             mFontLayout.setVisibility(View.VISIBLE);
-            mCheckImg.setImageDrawable(getResources().getDrawable(BoxingResHelper.getMediaCheckedRes()));
+            mCheckTxt.setBackground(getResources().getDrawable(BoxingResHelper.getMediaCheckedIndexRes()));
+            mCheckTxt.setText(String.valueOf(index));
         } else {
             mFontLayout.setVisibility(View.GONE);
-            mCheckImg.setImageDrawable(getResources().getDrawable(BoxingResHelper.getMediaUncheckedRes()));
+            mCheckTxt.setBackground(getResources().getDrawable(BoxingResHelper.getMediaUncheckedRes()));
+            mCheckTxt.setText("");
         }
     }
 

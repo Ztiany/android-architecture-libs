@@ -21,6 +21,7 @@
 
     <corners
         android:radius="@dimen/boxing_corner_radius" />
+
     <solid
         android:color="#fafafa" />
 

@@ -113,3 +113,11 @@ fun closeIOQuietly(vararg closeables: Closeable?) {
         closeIOQuietly(closeable)
     }
 }
+
+fun <T> List<T>.toMutableListChecked(): MutableList<T> {
+    return if (this is MutableList) {
+        this
+    } else {
+        this.toMutableList()
+    }
+}

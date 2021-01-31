@@ -73,6 +73,7 @@
             android:text="@string/boxing_ok"
             android:textAppearance="@style/Boxing.TextAppearance.App.Medium"
             android:textColor="@color/boxing_white"/>
+
     </FrameLayout>
 
 </LinearLayout>

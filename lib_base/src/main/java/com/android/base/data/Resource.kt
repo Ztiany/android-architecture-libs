@@ -1,6 +1,7 @@
 package com.android.base.data
 
 import androidx.lifecycle.MutableLiveData
+import com.github.dmstocking.optional.java.util.Optional
 
 
 /**
@@ -137,32 +138,6 @@ class Resource<T> private constructor(
 
 }
 
-class ResourceHandler<T> {
-    var onError: ((Throwable) -> Unit)? = null
-    var onLoading: (() -> Unit)? = null
-    var onSuccess: ((T?) -> Unit)? = null
-    var onSuccessWithData: ((T) -> Unit)? = null
-    var onEmpty: (() -> Unit)? = null
-}
-
-/**handle all state*/
-inline fun <T> Resource<T>.handleResource(handler: ResourceHandler<T>.() -> Unit) {
-    val stateHandler = ResourceHandler<T>()
-    handler(stateHandler)
-    when {
-        isError -> stateHandler.onError?.invoke(error())
-        isLoading -> stateHandler.onLoading?.invoke()
-        isSuccess -> {
-            stateHandler.onSuccess?.invoke(get())
-            if (hasData()) {
-                stateHandler.onSuccessWithData?.invoke(data())
-            } else {
-                stateHandler.onEmpty?.invoke()
-            }
-        }
-    }
-}
-
 /**when in loading*/
 inline fun <T> Resource<T>.onLoading(onLoading: () -> Unit): Resource<T> {
     if (this.isLoading) {
@@ -210,4 +185,22 @@ fun <T : Any?> MutableLiveData<Resource<T>>.postLoading() {
 
 fun <T : Any?> MutableLiveData<Resource<T>>.postError(error: Throwable) {
     postValue(Resource.error(error))
+}
+
+fun <T : Any?> MutableLiveData<Resource<T>>.postSuccess(t: T? = null) {
+    if (t == null) {
+        postValue(Resource.success())
+    } else {
+        postValue(Resource.success(t))
+    }
+}
+
+fun <T : Any?> MutableLiveData<Resource<T>>.postOptional(optional: Optional<T>) {
+    optional.ifPresentOrElse(
+            {
+                postValue(Resource.success(it))
+            },
+            {
+                postValue(Resource.success())
+            })
 }

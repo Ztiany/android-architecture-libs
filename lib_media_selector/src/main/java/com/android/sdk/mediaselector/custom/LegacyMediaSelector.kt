@@ -8,7 +8,8 @@ import com.android.sdk.mediaselector.common.MediaUtils
 import com.android.sdk.mediaselector.common.ResultListener
 import com.android.sdk.mediaselector.common.newUriList
 import com.bilibili.boxing.model.entity.BaseMedia
-import java.util.ArrayList
+import java.io.File
+import java.util.*
 
 /**
  *@author Ztiany
@@ -36,9 +37,17 @@ internal class LegacyMediaSelector : BaseMediaSelector {
     }
 
     override fun handleMultiResult(medias: ArrayList<BaseMedia>) {
-        medias.map {
-            it.uri
-        }.let(mediaSelectorCallback::onTakeSuccess)
+        val result = medias.mapNotNull {
+            MediaUtils.getAbsolutePath(context, it.uri)?.run {
+                Uri.fromFile(File(this))
+            }
+        }
+
+        if (result.isEmpty()) {
+            mediaSelectorCallback.onTakeFail()
+        } else {
+            mediaSelectorCallback.onTakeSuccess(result)
+        }
     }
 
     private fun returnSingleDataChecked(uri: Uri) {

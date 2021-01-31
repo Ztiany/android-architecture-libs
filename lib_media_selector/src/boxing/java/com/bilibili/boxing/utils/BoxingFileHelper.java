@@ -97,7 +97,6 @@ public class BoxingFileHelper {
         String scheme = uri.getScheme();
 
         if (scheme != null && scheme.contains("file")) {
-
             String filePath = uri.getPath();
             if (TextUtils.isEmpty(filePath)) {
                 return false;

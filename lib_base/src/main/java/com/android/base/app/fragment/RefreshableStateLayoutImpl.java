@@ -157,12 +157,6 @@ final class RefreshableStateLayoutImpl implements RefreshStateLayout, StateLayou
     }
 
     @Override
-    public StateLayoutConfig setMessageGravity(int state, int gravity) {
-        checkMultiStateView().getStateLayoutConfig().setMessageGravity(state, gravity);
-        return this;
-    }
-
-    @Override
     public StateLayoutConfig setStateIcon(@RetryableState int state, Drawable drawable) {
         checkMultiStateView().getStateLayoutConfig().setStateIcon(state, drawable);
         return this;

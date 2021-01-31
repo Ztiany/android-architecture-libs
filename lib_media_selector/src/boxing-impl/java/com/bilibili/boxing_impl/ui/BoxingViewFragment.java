@@ -32,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.sdk.mediaselector.common.LogUtils;
 import com.bilibili.boxing.AbsBoxingViewFragment;
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.BoxingManager;
@@ -60,6 +59,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import timber.log.Timber;
 
 /**
  * A full implement for {@link com.bilibili.boxing.presenter.PickerContract.View} supporting all the mode
@@ -71,6 +71,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class BoxingViewFragment extends AbsBoxingViewFragment implements View.OnClickListener {
 
     public static final String TAG = "com.bilibili.boxing_impl.ui.BoxingViewFragment";
+
     private static final int IMAGE_PREVIEW_REQUEST_CODE = 9086;
     private static final int IMAGE_CROP_REQUEST_CODE = 9087;
 
@@ -144,19 +145,18 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
     }
 
     private void initViews(View view) {
-        mEmptyTxt = (TextView) view.findViewById(R.id.empty_txt);
-        mRecycleView = (RecyclerView) view.findViewById(R.id.media_recycleview);
+        mEmptyTxt = view.findViewById(R.id.empty_txt);
+        mRecycleView = view.findViewById(R.id.media_recycleview);
         mRecycleView.setHasFixedSize(true);
-        mLoadingView = (ProgressBar) view.findViewById(R.id.loading);
+        mLoadingView = view.findViewById(R.id.loading);
         initRecycleView();
 
         boolean isMultiImageMode = BoxingManager.getInstance().getBoxingConfig().isMultiImageMode();
         View multiImageLayout = view.findViewById(R.id.multi_picker_layout);
         multiImageLayout.setVisibility(isMultiImageMode ? View.VISIBLE : View.GONE);
         if (isMultiImageMode) {
-            mPreBtn = (Button) view.findViewById(R.id.choose_preview_btn);
-            mOkBtn = (Button) view.findViewById(R.id.choose_ok_btn);
-
+            mPreBtn = view.findViewById(R.id.choose_preview_btn);
+            mOkBtn = view.findViewById(R.id.choose_ok_btn);
             mPreBtn.setOnClickListener(this);
             mOkBtn.setOnClickListener(this);
             updateMultiPickerLayoutState(mMediaAdapter.getSelectedMedias());
@@ -177,6 +177,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
     @Override
     public void showMedia(@Nullable List<BaseMedia> medias, int allCount) {
+        Timber.d("showMedia count = %d", allCount);
         if (medias == null || isEmptyData(medias) && isEmptyData(mMediaAdapter.getAllMedias())) {
             showEmptyData();
             return;
@@ -191,12 +192,14 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
     }
 
     private void showEmptyData() {
+        Timber.d("showEmptyData()");
         mLoadingView.setVisibility(View.GONE);
         mEmptyTxt.setVisibility(View.VISIBLE);
         mRecycleView.setVisibility(View.GONE);
     }
 
     private void showData() {
+        Timber.d("showData()");
         mLoadingView.setVisibility(View.GONE);
         mEmptyTxt.setVisibility(View.GONE);
         mRecycleView.setVisibility(View.VISIBLE);
@@ -362,17 +365,12 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             @NonNull
             private View createWindowView() {
                 View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_boxing_album, null);
-                RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.album_recycleview);
+                RecyclerView recyclerView = view.findViewById(R.id.album_recycleview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
                 recyclerView.addItemDecoration(new SpacesItemDecoration(2, 1));
 
                 View albumShadowLayout = view.findViewById(R.id.album_shadow);
-                albumShadowLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dismissAlbumWindow();
-                    }
-                });
+                albumShadowLayout.setOnClickListener(v -> dismissAlbumWindow());
                 mAlbumWindowAdapter.setAlbumOnClickListener(new OnAlbumItemOnClickListener());
                 recyclerView.setAdapter(mAlbumWindowAdapter);
                 return view;
@@ -406,8 +404,6 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
 
         @Override
         public void onClick(View v) {
-            LogUtils.d("onClick() called with: v = [" + v + "]");
-
             BaseMedia media = (BaseMedia) v.getTag();
             int pos = (int) v.getTag(R.id.media_item_check);
             BoxingConfig.Mode mode = BoxingManager.getInstance().getBoxingConfig().getMode();
@@ -433,7 +429,6 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
                 mIsPreview = true;
 
                 ArrayList<BaseMedia> medias = (ArrayList<BaseMedia>) mMediaAdapter.getSelectedMedias();
-
                 Boxing.get().withIntent(getContext(), BoxingViewActivity.class, medias, pos, albumId)
                         .start(
                                 BoxingViewFragment.this,
@@ -460,6 +455,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
         }
     }
 
+    //todo
     private class OnMediaCheckedListener implements BoxingMediaAdapter.OnMediaCheckedListener {
 
         @Override
@@ -471,6 +467,7 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
             boolean isSelected = !photoMedia.isSelected();
             MediaItemLayout layout = (MediaItemLayout) view;
             List<BaseMedia> selectedMedias = mMediaAdapter.getSelectedMedias();
+
             if (isSelected) {
                 if (selectedMedias.size() >= mMaxCount) {
                     String warning = getString(R.string.boxing_too_many_picture_fmt, mMaxCount);
@@ -486,11 +483,16 @@ public class BoxingViewFragment extends AbsBoxingViewFragment implements View.On
                 }
             } else {
                 if (selectedMedias.size() >= 1 && selectedMedias.contains(photoMedia)) {
+                    boolean isLast = selectedMedias.indexOf(photoMedia) == selectedMedias.size() - 1;
                     selectedMedias.remove(photoMedia);
+                    if (!isLast) {
+                        mMediaAdapter.notifyDataSetChanged();
+                    }
                 }
             }
+
             photoMedia.setSelected(isSelected);
-            layout.setChecked(isSelected);
+            layout.setChecked(isSelected, selectedMedias.indexOf(photoMedia) + 1);
             updateMultiPickerLayoutState(selectedMedias);
         }
     }

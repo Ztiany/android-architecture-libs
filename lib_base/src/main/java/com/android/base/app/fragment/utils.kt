@@ -13,10 +13,10 @@ import kotlinx.coroutines.launch
  *      Email: ztiany3@gmail.com
  *      Date : 2019-10-16 17:28
  */
-internal fun <T> T.dismissDialog(recentShowingDialogTime: Long, minimumMills: Long, onDismiss: () -> Unit) where T : LoadingView, T : LifecycleOwner {
+internal fun <T> T.dismissDialog(recentShowingDialogTime: Long, minimumMills: Long, onDismiss: (() -> Unit)?) where T : LoadingView, T : LifecycleOwner {
 
     if (!isLoadingDialogShowing()) {
-        onDismiss()
+        onDismiss?.invoke()
         return
     }
 
@@ -24,15 +24,16 @@ internal fun <T> T.dismissDialog(recentShowingDialogTime: Long, minimumMills: Lo
 
     if (dialogShowingTime >= minimumMills) {
         dismissLoadingDialog()
-        onDismiss()
+        onDismiss?.invoke()
+
     } else {
         lifecycleScope.launch {
             try {
                 delay(minimumMills - dialogShowingTime)
                 dismissLoadingDialog()
-                onDismiss()
+                onDismiss?.invoke()
             } catch (e: CancellationException) {
-                onDismiss()
+                onDismiss?.invoke()
             }
         }
     }

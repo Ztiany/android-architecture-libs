@@ -2,18 +2,18 @@ package com.android.sdk.mediaselector.custom
 
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.android.sdk.mediaselector.common.MediaUtils
-import com.android.sdk.mediaselector.common.ResultListener
+import com.android.sdk.mediaselector.common.*
 import com.android.sdk.mediaselector.common.copySingleToInternal
-import com.android.sdk.mediaselector.common.newUriList
 import com.bilibili.boxing.model.entity.BaseMedia
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.util.ArrayList
 
@@ -30,24 +30,26 @@ internal class AndroidQMediaSelector : BaseMediaSelector {
     constructor(fragment: Fragment, resultListener: ResultListener) : super(fragment, resultListener)
 
     override fun handleSingleResult(baseMedia: BaseMedia) {
+        Timber.d("handleMultiResult() called with: medias = $baseMedia")
 
         if (currentInstructor.isCopyToInternal || currentInstructor.isNeedCrop) {
 
-            val absolutePath = MediaUtils.getAbsolutePath(context, baseMedia.uri)?:""
+            val absolutePath = MediaUtils.getAbsolutePath(context, baseMedia.uri) ?: ""
             val alreadyInternal = absolutePath.contains("Android/data/${context.packageName}")
+
+            Timber.d("handleSingleResult alreadyInternal = $alreadyInternal")
 
             if (alreadyInternal) {
                 when {
                     currentInstructor.isNeedCrop -> toCrop(absolutePath)
                     else -> mediaSelectorCallback.onTakeSuccess(newUriList(absolutePath))
                 }
-            }else{
+            } else {
                 copyAndHandleSingleResult(baseMedia)
             }
 
             return
         }
-
         mediaSelectorCallback.onTakeSuccess(listOf(baseMedia.uri))
     }
 
@@ -67,6 +69,7 @@ internal class AndroidQMediaSelector : BaseMediaSelector {
     }
 
     override fun handleMultiResult(medias: ArrayList<BaseMedia>) {
+        Timber.d("handleMultiResult() called with: medias = $medias")
         if (currentInstructor.isCopyToInternal) {
             copyToInternalAndReturn(medias)
         } else {

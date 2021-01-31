@@ -3,27 +3,25 @@ package com.android.base.adapter.recycler;
 import android.content.Context;
 import android.view.View;
 
-import androidx.annotation.IdRes;
-import androidx.recyclerview.widget.RecyclerView;
+import com.android.base.adapter.ItemHelper;
 
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
 
+    private final ItemHelper mHelper;
+
+    public ItemHelper helper() {
+        return mHelper;
+    }
+
     public ViewHolder(View itemView) {
         super(itemView);
+        mHelper = new ItemHelper(itemView);
     }
 
     protected Context getContext() {
         return itemView.getContext();
-    }
-
-    public <V extends View> V findView(@IdRes int viewId) {
-        return itemView.findViewById(viewId);
-    }
-
-    public ViewHolder setItemClickListener(View.OnClickListener onClickListener) {
-        itemView.setOnClickListener(onClickListener);
-        return this;
     }
 
 }

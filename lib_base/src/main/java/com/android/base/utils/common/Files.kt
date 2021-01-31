@@ -7,7 +7,7 @@ import timber.log.Timber
 import java.io.File
 
 fun File.makeParentPath(): Boolean {
-    val path = this.parentFile
+    val path = this.parentFile ?: return false
     return path.exists() || makeDir(path)
 }
 
@@ -21,7 +21,8 @@ fun File.sizeOf(): Long {
     }
     return if (this.isDirectory) {
         var length: Long = 0
-        for (subFile in this.listFiles()) {
+        val listFiles = this.listFiles() ?: return 0
+        for (subFile in listFiles) {
             length += subFile.sizeOf()
         }
         length
@@ -32,7 +33,8 @@ fun File.sizeOf(): Long {
 
 fun File.deleteSelf() {
     if (this.isDirectory) {
-        for (subFile in this.listFiles()) {
+        val listFiles = this.listFiles() ?: return
+        for (subFile in listFiles) {
             subFile.deleteSelf()
         }
     } else {

@@ -194,7 +194,7 @@ sealed class CallResult<out T> {
 
 }
 
-inline infix fun <T> CallResult<T>.ifSuccessful(onSuccess: (T) -> Unit): CallResult<T> {
+inline infix fun <T> CallResult<T>.ifSucceeded(onSuccess: (T) -> Unit): CallResult<T> {
     if (this is CallResult.Success) {
         onSuccess(this.data)
     }

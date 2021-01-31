@@ -5,10 +5,8 @@ package com.android.sdk.mediaselector.system
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.sdk.mediaselector.common.ActivityStateHandler
-import com.android.sdk.mediaselector.common.AutoRestoreDelegates
-import com.android.sdk.mediaselector.common.LogUtils
-import com.android.sdk.mediaselector.common.ResultListener
+import com.android.sdk.mediaselector.common.*
+import timber.log.Timber
 
 /**
  * 通过系统相机或者系统 SAF 获取照片、文件。
@@ -18,7 +16,7 @@ import com.android.sdk.mediaselector.common.ResultListener
  * Email: ztiany3@gmail.com
  * Date : 2020-08-06 18:03
  */
-interface SystemMediaSelector: ActivityStateHandler {
+interface SystemMediaSelector : ActivityStateHandler {
 
     fun takePhotoFromCamera(): Instructor
 
@@ -29,29 +27,29 @@ interface SystemMediaSelector: ActivityStateHandler {
 }
 
 fun newSystemMediaSelector(activity: AppCompatActivity, resultListener: ResultListener): SystemMediaSelector {
-    return if (Build.VERSION.SDK_INT < 29) {
-        LogUtils.d("newSystemMediaSelector LegacySystemMediaSelector")
+    return if (Build.VERSION.SDK_INT < 29 || MediaSelectorConfiguration.isForceUseLegacyApi()) {
+        Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
         val legacySystemMediaSelector = LegacySystemMediaSelector(activity, resultListener)
-        AutoRestoreDelegates.autoCallback(activity, legacySystemMediaSelector)
+        autoCallback(activity, legacySystemMediaSelector)
         legacySystemMediaSelector
     } else {
-        LogUtils.d("newSystemMediaSelector AndroidPSystemMediaSelector")
+        Timber.d("newSystemMediaSelector AndroidPSystemMediaSelector")
         val androidPSystemMediaSelector = AndroidQSystemMediaSelector(activity, resultListener)
-        AutoRestoreDelegates.autoCallback(activity, androidPSystemMediaSelector)
+        autoCallback(activity, androidPSystemMediaSelector)
         androidPSystemMediaSelector
     }
 }
 
 fun newSystemMediaSelector(fragment: Fragment, resultListener: ResultListener): SystemMediaSelector {
-    return if (Build.VERSION.SDK_INT < 29) {
-        LogUtils.d("newSystemMediaSelector LegacySystemMediaSelector")
+    return if (Build.VERSION.SDK_INT < 29 || MediaSelectorConfiguration.isForceUseLegacyApi()) {
+        Timber.d("newSystemMediaSelector LegacySystemMediaSelector")
         val legacySystemMediaSelector = LegacySystemMediaSelector(fragment, resultListener)
-        AutoRestoreDelegates.autoCallback(fragment, legacySystemMediaSelector)
+        autoCallback(fragment, legacySystemMediaSelector)
         legacySystemMediaSelector
     } else {
-        LogUtils.d("newSystemMediaSelectorAndroidPSystemMediaSelector")
+        Timber.d("newSystemMediaSelectorAndroidPSystemMediaSelector")
         val androidPSystemMediaSelector = AndroidQSystemMediaSelector(fragment, resultListener)
-        AutoRestoreDelegates.autoCallback(fragment, androidPSystemMediaSelector)
+        autoCallback(fragment, androidPSystemMediaSelector)
         androidPSystemMediaSelector
     }
 }

@@ -188,16 +188,17 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
     }
 
     @UiThread
-    override fun addDelegate(fragmentDelegate: FragmentDelegate<*>?) {
+    override fun addDelegate(fragmentDelegate: FragmentDelegate<*>) {
         fragmentDelegates.addDelegate(fragmentDelegate)
     }
 
     @UiThread
-    override fun removeDelegate(fragmentDelegate: FragmentDelegate<*>?): Boolean {
+    override fun removeDelegate(fragmentDelegate: FragmentDelegate<*>): Boolean {
         return fragmentDelegates.removeDelegate(fragmentDelegate)
     }
 
-    override fun findDelegate(predicate: Predicate<FragmentDelegate<*>?>?): FragmentDelegate<*>? {
+    @UiThread
+    override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         return fragmentDelegates.findDelegate(predicate)
     }
 
@@ -252,7 +253,7 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         loadingView?.dismissLoadingDialog()
     }
 
-    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: () -> Unit) {
+    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)?) {
         dismissDialog(recentShowingDialogTime, minimumMills, onDismiss)
     }
 

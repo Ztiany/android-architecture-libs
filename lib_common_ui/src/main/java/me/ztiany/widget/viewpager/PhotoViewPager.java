@@ -23,7 +23,7 @@ public class PhotoViewPager extends ViewPager {
         try {
             return super.onInterceptTouchEvent(ev);
         } catch (Exception e) {
-            Timber.d("onInterceptTouchEvent() called with: ev = [" + ev + "]");
+            Timber.e(e, "onInterceptTouchEvent()");
         }
         return false;
     }
@@ -33,8 +33,8 @@ public class PhotoViewPager extends ViewPager {
     public boolean onTouchEvent(MotionEvent ev) {
         try {
             return super.onTouchEvent(ev);
-        } catch (IllegalArgumentException ex) {
-            Timber.d("onTouchEvent() called with: ev = [" + ev + "]");
+        } catch (IllegalArgumentException e) {
+            Timber.e(e, "onTouchEvent()");
         }
         return false;
     }

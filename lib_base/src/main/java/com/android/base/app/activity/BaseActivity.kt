@@ -11,7 +11,6 @@ import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.activity.ActivityState
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
 import com.android.base.utils.android.compat.AndroidVersion
-import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber
 
 /**
@@ -41,7 +40,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
         super.onCreate(savedInstanceState)
         Timber.tag(tag()).d("---->onCreate after call super  bundle = $savedInstanceState")
 
-        when (val layout = layout()) {
+        when (val layout = provideLayout()) {
             is View -> setContentView(layout)
             is Int -> setContentView(layout)
             null -> Timber.d("layout() return null layout")
@@ -50,7 +49,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
 
         activityState = ActivityState.CREATE
         activityDelegates.callOnCreateAfterSetContentView(savedInstanceState)
-        setUpView(savedInstanceState)
+        setUpLayout(savedInstanceState)
     }
 
     override fun onRestart() {
@@ -144,7 +143,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
     }
 
     @UiThread
-    final override fun findDelegate(predicate: Predicate<ActivityDelegate<*>?>?): ActivityDelegate<*>? {
+    final override fun findDelegate(predicate: (ActivityDelegate<*>) -> Boolean): ActivityDelegate<*>? {
         return activityDelegates.findDelegate(predicate)
     }
 
@@ -164,12 +163,12 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
      *
      * @return layoutId
      */
-    protected abstract fun layout(): Any?
+    protected abstract fun provideLayout(): Any?
 
     /**
      * after calling setContentView
      */
-    protected abstract fun setUpView(savedInstanceState: Bundle?)
+    protected abstract fun setUpLayout(savedInstanceState: Bundle?)
 
     override fun onBackPressed() {
         if (BackHandlerHelper.handleBackPress(this)) {
@@ -187,7 +186,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
         return if (AndroidVersion.atLeast(17)) {
             super.isDestroyed()
         } else {
-            status === ActivityState.DESTROY
+            activityState === ActivityState.DESTROY
         }
     }
 

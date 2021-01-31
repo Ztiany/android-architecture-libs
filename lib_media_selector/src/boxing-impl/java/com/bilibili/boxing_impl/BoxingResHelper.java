@@ -1,6 +1,7 @@
 package com.bilibili.boxing_impl;
 
 import com.bilibili.boxing.model.BoxingManager;
+import com.bilibili.boxing.model.callback.MediaFilter;
 import com.ztiany.mediaselector.R;
 
 import androidx.annotation.DrawableRes;
@@ -12,6 +13,11 @@ import androidx.annotation.DrawableRes;
  */
 
 public class BoxingResHelper {
+
+    @DrawableRes
+    public static int getMediaCheckedIndexRes() {
+        return R.drawable.shape_boxing_checked;
+    }
 
     @DrawableRes
     public static int getMediaCheckedRes() {
@@ -29,4 +35,9 @@ public class BoxingResHelper {
     public static int getCameraRes() {
         return BoxingManager.getInstance().getBoxingConfig().getCameraRes();
     }
+
+    public static MediaFilter getMediaFilter() {
+        return BoxingManager.getInstance().getBoxingConfig().getMediaFilter();
+    }
+
 }

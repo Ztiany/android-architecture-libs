@@ -107,7 +107,7 @@ public class BoxingMediaAdapter extends RecyclerView.Adapter {
             vh.mItemLayout.setMedia(media);
             vh.mItemChecked.setVisibility(mMultiImageMode ? View.VISIBLE : View.GONE);
             if (mMultiImageMode && media instanceof ImageMedia) {
-                vh.mItemLayout.setChecked(((ImageMedia) media).isSelected());
+                vh.mItemLayout.setChecked(((ImageMedia) media).isSelected(), mSelectedMedias.indexOf(media) + 1);
                 vh.mItemChecked.setTag(R.id.media_layout, vh.mItemLayout);
                 vh.mItemChecked.setTag(media);
                 vh.mItemChecked.setOnClickListener(mOnCheckListener);

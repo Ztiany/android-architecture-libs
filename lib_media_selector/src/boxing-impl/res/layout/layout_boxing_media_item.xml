@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  Copyright (C) 2017 Bilibili
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,28 +15,38 @@
   ~
   -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/media_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
-    <ImageView
+    <FrameLayout
         android:id="@+id/media_item_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
+        android:paddingStart="12dp"
         android:paddingTop="6dp"
-        android:paddingRight="6dp"
-        android:paddingBottom="12dp"
-        android:paddingLeft="12dp"
-        android:src="@drawable/shape_boxing_unchecked"/>
+        android:paddingEnd="6dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:id="@+id/media_item_check_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/shape_boxing_unchecked"
+            android:textColor="@color/boxing_white" />
+
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/video_layout"
@@ -45,8 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/boxing_colorPrimaryAlpha"
-        android:paddingBottom="2dp"
         android:paddingTop="4dp"
+        android:paddingBottom="2dp"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -60,7 +69,7 @@
             android:paddingLeft="4dp"
             android:textAppearance="@style/Boxing.TextAppearance.App.Medium"
             android:textColor="@color/boxing_white"
-            tools:text="00:30"/>
+            tools:text="00:30" />
 
         <TextView
             android:id="@+id/video_size_txt"
@@ -71,13 +80,13 @@
             android:paddingRight="4dp"
             android:textAppearance="@style/Boxing.TextAppearance.App.Medium"
             android:textColor="@color/boxing_white"
-            tools:text="20M"/>
+            tools:text="20M" />
     </FrameLayout>
 
     <View
         android:id="@+id/media_font_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/boxing_black_alpha15"/>
+        android:background="@color/boxing_black_alpha15"
+        android:visibility="gone" />
 </merge>

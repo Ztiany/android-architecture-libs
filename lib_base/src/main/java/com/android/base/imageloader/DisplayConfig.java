@@ -9,11 +9,15 @@ public class DisplayConfig {
     private boolean mCacheDisk = true;
     private int mTransform;
     private int mScaleType;
+    private int mErrorPlaceholder = NO_PLACE_HOLDER;
+    private int mLoadingPlaceholder = NO_PLACE_HOLDER;
+    private int mRoundedCornersRadius;
+    private float thumbnail;
+    private int height;
+    private int width;
 
     /*placeholder*/
     static final int NO_PLACE_HOLDER = -1;
-    private int mErrorPlaceholder = NO_PLACE_HOLDER;
-    private int mLoadingPlaceholder = NO_PLACE_HOLDER;
     private Drawable mErrorDrawable = null;
     private Drawable mLoadingDrawable = null;
 
@@ -21,11 +25,12 @@ public class DisplayConfig {
     public static final int SCALE_NONE = 0;
     public static final int SCALE_CENTER_CROP = 1;
     public static final int SCALE_FIT_CENTER = 2;
+
     /*transform*/
     public static final int TRANSFORM_NONE = 1;
     public static final int TRANSFORM_CIRCLE = 2;
     public static final int TRANSFORM_ROUNDED_CORNERS = 3;
-    private int mRoundedCornersRadius;
+
     /*animation*/
     public static final int ANIM_NONE = 1;
 
@@ -75,6 +80,11 @@ public class DisplayConfig {
         return this;
     }
 
+    public DisplayConfig setThumbnail(float thumbnail) {
+        this.thumbnail = thumbnail;
+        return this;
+    }
+
     public DisplayConfig setErrorDrawable(Drawable errorDrawable) {
         mErrorDrawable = errorDrawable;
         mErrorPlaceholder = NO_PLACE_HOLDER;
@@ -98,6 +108,12 @@ public class DisplayConfig {
 
     public DisplayConfig setRoundedCornersRadius(int roundedCornersRadius) {
         mRoundedCornersRadius = roundedCornersRadius;
+        return this;
+    }
+
+    public DisplayConfig setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
         return this;
     }
 
@@ -131,6 +147,18 @@ public class DisplayConfig {
 
     int getRoundedCornersRadius() {
         return mRoundedCornersRadius;
+    }
+
+    public float getThumbnail() {
+        return thumbnail;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
 }

@@ -18,11 +18,3 @@
 
 - AndroidStudio 3+
 - Java8 with desugar
-
-## 3 How do we make Dagger2 working with SavedStateViewModel?
-
-refer
-
-- [saving-ui-state-with-viewmodel-savedstate-and-dagger](https://proandroiddev.com/saving-ui-state-with-viewmodel-savedstate-and-dagger-f77bcaeb8b08#7f89)
-- [AssistedInject](https://github.com/square/AssistedInject/issues/81)
-- [github-commit-browser](https://github.com/Nimrodda/github-commit-browser)

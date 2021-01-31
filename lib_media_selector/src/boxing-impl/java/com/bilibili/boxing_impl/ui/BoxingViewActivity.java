@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -92,14 +93,12 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
     private void createToolbar() {
         mToolbar = findViewById(R.id.nav_top_bar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            mToolbar.setNavigationOnClickListener(v -> onBackPressed());
+            supportActionBar.setDisplayShowTitleEnabled(false);
+        }
     }
 
     private void initData() {
@@ -127,12 +126,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
             chooseLayout.setVisibility(View.GONE);
         } else {
             setOkTextNumber();
-            mOkBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finishByBackPressed(false);
-                }
-            });
+            mOkBtn.setOnClickListener(v -> finishByBackPressed(false));
         }
     }
 
@@ -211,7 +205,7 @@ public class BoxingViewActivity extends AbsBoxingViewActivity {
 
     private void setMenuIcon(boolean isSelected) {
         if (mNeedEdit) {
-            mSelectedMenuItem.setIcon(isSelected ? BoxingResHelper.getMediaCheckedRes(): BoxingResHelper.getMediaUncheckedRes());
+            mSelectedMenuItem.setIcon(isSelected ? BoxingResHelper.getMediaCheckedRes() : BoxingResHelper.getMediaUncheckedRes());
         }
     }
 

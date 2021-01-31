@@ -7,7 +7,7 @@ import com.android.base.app.fragment.animator.FragmentAnimator
 import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
-import com.android.base.app.ui.PageNumber
+import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshLoadViewFactory
 import com.android.base.app.ui.RefreshLoadViewFactory.Factory
 import com.android.base.app.ui.RefreshViewFactory
@@ -57,12 +57,12 @@ object Sword {
     }
 
     fun setDefaultPageStart(pageStart: Int): Sword {
-        PageNumber.setDefaultPageStart(pageStart)
+        Paging.setDefaultPageStart(pageStart)
         return this
     }
 
     fun setDefaultPageSize(defaultPageSize: Int): Sword {
-        PageNumber.setDefaultPageSize(defaultPageSize)
+        Paging.setDefaultPageSize(defaultPageSize)
         return this
     }
 
@@ -93,7 +93,7 @@ object Sword {
         return this
     }
 
-    /** 获取可观察的 app 生命周期，发射 tue 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
+    /** 获取可观察的 app 生命周期，发射 true 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
     val appState: Flowable<Boolean>
         get() = applicationDelegate.appStatus
 

@@ -4,15 +4,27 @@ package com.android.base.app.ui
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.android.base.app.Sword
 import com.android.base.data.Resource
-import com.android.base.data.ResourceHandler
-import com.android.base.utils.common.isEmpty
+import timber.log.Timber
+import androidx.lifecycle.observe as xObserve
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------
-fun LoadingView.dismissLoadingDialogDelayed(onDismiss: () -> Unit) {
+fun LoadingView.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
     dismissLoadingDialog(Sword.minimumShowingDialogMills, onDismiss)
+}
+
+class ResourceHandlerBuilder<T> {
+    var onError: ((Throwable) -> Unit)? = null
+    var onLoading: (() -> Unit)? = null
+    var onSuccess: ((T?) -> Unit)? = null
+    var onSuccessWithData: ((T) -> Unit)? = null
+    var onEmpty: (() -> Unit)? = null
+
+    //configuration
+    var loadingMessage: CharSequence = ""
+    var showLoading: Boolean = true
+    var forceLoading: Boolean = true
 }
 
 /**
@@ -27,56 +39,18 @@ fun LoadingView.dismissLoadingDialogDelayed(onDismiss: () -> Unit) {
 fun <H, T> H.handleLiveData(
         /**core: data*/
         liveData: LiveData<Resource<T>>,
-        //configuration
-        loadingMessage: CharSequence = "",
-        forceLoading: Boolean = true,
-        onError: ((Throwable) -> Unit)? = null,
-        onSuccess: (T?) -> Unit
-) where  H : LoadingView, H : LifecycleOwner {
-
-    liveData.observe(this, Observer { state ->
-        when {
-            state.isError -> {
-                dismissLoadingDialogDelayed {
-                    if (onError != null) {
-                        onError(state.error())
-                    } else {
-                        showMessage(Sword.errorConvert.convert(state.error()))
-                    }
-                }
-            }
-            state.isLoading -> {
-                showLoadingDialog(loadingMessage, !forceLoading)
-            }
-            state.isSuccess -> {
-                dismissLoadingDialog(Sword.minimumShowingDialogMills) {
-                    onSuccess(state.get())
-                }
-            }//success end
-        }
-    })
-
-}
-
-/** enhanced version of [handleLiveData]*/
-fun <H, T> H.handleLiveData2(
-        /**core: data*/
-        liveData: LiveData<Resource<T>>,
-        //configuration
-        loadingMessage: CharSequence = "",
-        forceLoading: Boolean = true,
-        handler: ResourceHandler<T>.() -> Unit
+        handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
 ) where H : LoadingView, H : LifecycleOwner {
 
-    val stateHandler = ResourceHandler<T>()
+    val builder = ResourceHandlerBuilder<T>()
 
-    handler(stateHandler)
+    handlerBuilder(builder)
 
-    liveData.observe(this, Observer { state ->
+    liveData.xObserve(this, { state ->
         when {
             state.isError -> {
                 dismissLoadingDialogDelayed {
-                    val onError = stateHandler.onError
+                    val onError = builder.onError
                     if (onError != null) {
                         onError(state.error())
                     } else {
@@ -84,22 +58,25 @@ fun <H, T> H.handleLiveData2(
                     }
                 }
             }
-            state.isLoading -> {
-                showLoadingDialog(loadingMessage, !forceLoading)
+            state.isLoading && builder.showLoading -> {
+                if (builder.onLoading == null) {
+                    showLoadingDialog(builder.loadingMessage, !builder.forceLoading)
+                } else {
+                    builder.onLoading?.invoke()
+                }
             }
             state.isSuccess -> {
                 dismissLoadingDialogDelayed {
-                    stateHandler.onSuccess?.invoke(state.get())
+                    builder.onSuccess?.invoke(state.get())
                     if (state.hasData()) {
-                        stateHandler.onSuccessWithData?.invoke(state.data())
+                        builder.onSuccessWithData?.invoke(state.data())
                     } else {
-                        stateHandler.onEmpty?.invoke()
+                        builder.onEmpty?.invoke()
                     }
                 }
             }//success end
         }
     })
-
 }
 
 //----------------------------------------------Loading In StateView----------------------------------------------
@@ -109,17 +86,11 @@ private fun <T> newDefaultChecker(): ((T) -> Boolean)? {
     }
 }
 
-fun <T> RefreshStateLayout.handleStateResult(resource: Resource<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+fun <T> RefreshStateLayout.handleResultState(resource: Resource<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
     when {
-        resource.isLoading -> {
-            showLoadingLayout()
-        }
-        resource.isError -> {
-            handleResultError(resource.error())
-        }
-        resource.isSuccess -> {
-            handleResult(resource.get(), isEmpty, onEmpty, onResult)
-        }
+        resource.isLoading -> showLoadingLayout()
+        resource.isError -> handleResultError(resource.error())
+        resource.isSuccess -> handleResult(resource.get(), isEmpty, onEmpty, onResult)
     }
 }
 
@@ -146,12 +117,8 @@ fun RefreshStateLayout.handleResultError(throwable: Throwable) {
     val errorTypeClassifier = Sword.errorClassifier
     if (errorTypeClassifier != null) {
         when {
-            errorTypeClassifier.isNetworkError(throwable) -> {
-                showNetErrorLayout()
-            }
-            errorTypeClassifier.isServerError(throwable) -> {
-                showServerErrorLayout()
-            }
+            errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
+            errorTypeClassifier.isServerError(throwable) -> showServerErrorLayout()
             else -> showErrorLayout()
         }
     } else {
@@ -160,21 +127,23 @@ fun RefreshStateLayout.handleResultError(throwable: Throwable) {
 }
 
 //----------------------------------------------Loading In List----------------------------------------------
-fun <T> RefreshListLayout<T>.handleListResult(list: List<T>?, onEmpty: (() -> Unit)? = null) {
-    if (isLoadingMore) {
-        if (!isEmpty(list)) {
+fun <T> RefreshListLayout<T>.handleListResult(list: List<T>?, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
+    if (isLoadingMore()) {
+        if (!list.isNullOrEmpty()) {
             addData(list)
         }
     } else {
-        replaceData(list)
+        replaceData(list ?: emptyList())
         refreshCompleted()
     }
 
-    if (pager != null) {
-        loadMoreCompleted(list != null && pager.hasMore(list.size))
+    if (hasMore == null) {
+        loadMoreCompleted(list != null && getPager().hasMore(list.size))
+    } else {
+        loadMoreCompleted(hasMore())
     }
 
-    if (isEmpty) {
+    if (isEmpty()) {
         if (onEmpty == null) {
             showEmptyLayout()
         } else {
@@ -189,10 +158,10 @@ fun RefreshListLayout<*>.handleListError(throwable: Throwable) {
     if (isRefreshing) {
         refreshCompleted()
     }
-    if (isLoadingMore) {
+    if (isLoadingMore()) {
         loadMoreFailed()
     }
-    if (isEmpty) {
+    if (isEmpty()) {
         val errorTypeClassifier = Sword.errorClassifier
         if (errorTypeClassifier != null) {
             when {
@@ -213,10 +182,10 @@ fun <T> RefreshListLayout<T>.submitListResult(list: List<T>?, hasMore: Boolean, 
         refreshCompleted()
     }
 
-    replaceData(list)
+    replaceData(list ?: emptyList())
     loadMoreCompleted(hasMore)
 
-    if (isEmpty) {
+    if (isEmpty()) {
         if (onEmpty == null) {
             showEmptyLayout()
         } else {
@@ -227,36 +196,24 @@ fun <T> RefreshListLayout<T>.submitListResult(list: List<T>?, hasMore: Boolean, 
     }
 }
 
-fun <T> RefreshListLayout<T>.handleStateList(resource: Resource<List<T>>, onEmpty: (() -> Unit)? = null) {
+fun <T> RefreshListLayout<T>.handleListState(resource: Resource<List<T>>, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
     when {
-        resource.isLoading -> {
-            showLoadingIfEmpty()
-        }
-        resource.isError -> {
-            handleListError(resource.error())
-        }
-        resource.isSuccess -> {
-            handleListResult(resource.get(), onEmpty)
-        }
+        resource.isLoading -> showLoadingIfEmpty()
+        resource.isError -> handleListError(resource.error())
+        resource.isSuccess -> handleListResult(resource.get(), hasMore, onEmpty)
     }
 }
 
-fun <T> RefreshListLayout<T>.handleStateFullList(resource: Resource<List<T>>, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
+fun <T> RefreshListLayout<T>.submitListState(resource: Resource<List<T>>, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
     when {
-        resource.isLoading -> {
-            showLoadingIfEmpty()
-        }
-        resource.isError -> {
-            handleListError(resource.error())
-        }
-        resource.isSuccess -> {
-            submitListResult(resource.get(), hasMore, onEmpty)
-        }
+        resource.isLoading -> showLoadingIfEmpty()
+        resource.isError -> handleListError(resource.error())
+        resource.isSuccess -> submitListResult(resource.get(), hasMore, onEmpty)
     }
 }
 
 fun RefreshListLayout<*>.showLoadingIfEmpty() {
-    if (isEmpty) {
+    if (isEmpty()) {
         if (isRefreshing) {
             showBlank()
         } else {
@@ -266,31 +223,32 @@ fun RefreshListLayout<*>.showLoadingIfEmpty() {
 }
 
 //----------------------------------------------Loading In List And Without State----------------------------------------------
-fun <T> RefreshListLayout<T>.handleListResultWithoutState(list: List<T>?, onEmpty: (() -> Unit)? = null) {
-    if (isLoadingMore) {
-        if (!isEmpty(list)) {
+fun <T> RefreshListLayout<T>.handleListResultWithoutState(list: List<T>?, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
+    if (isLoadingMore()) {
+        if (!list.isNullOrEmpty()) {
             addData(list)
         }
     } else {
-        replaceData(list)
+        replaceData(list ?: emptyList())
         refreshCompleted()
     }
 
-    if (pager != null) {
-        loadMoreCompleted(list != null && pager.hasMore(list.size))
+    if (hasMore == null) {
+        loadMoreCompleted(list != null && getPager().hasMore(list.size))
+    } else {
+        loadMoreCompleted(hasMore())
     }
 
-    if (onEmpty != null && isEmpty) {
+    if (onEmpty != null && isEmpty()) {
         onEmpty()
     }
-
 }
 
 fun RefreshListLayout<*>.handleListErrorWithoutState() {
     if (isRefreshing) {
         refreshCompleted()
     }
-    if (isLoadingMore) {
+    if (isLoadingMore()) {
         loadMoreFailed()
     }
 }
@@ -299,11 +257,9 @@ fun <T> RefreshListLayout<T>.submitListResultWithoutState(list: List<T>?, hasMor
     if (isRefreshing) {
         refreshCompleted()
     }
-
-    replaceData(list)
+    replaceData(list ?: emptyList())
     loadMoreCompleted(hasMore)
-
-    if (onEmpty != null && isEmpty) {
+    if (onEmpty != null && isEmpty()) {
         onEmpty()
     }
 }

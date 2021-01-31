@@ -81,7 +81,6 @@ public class MediaUtils {
                 .build();
 
         String targetPath = StorageUtils.createInternalPicturePath(context, StorageUtils.JPEG);
-        StorageUtils.makeFilePath(new File(targetPath));
 
         Uri targetUri = new Uri.Builder()
                 .scheme("file")

@@ -26,7 +26,7 @@ public class Source {
         return create(new File(path));
     }
 
-    public static Source createWithUri(Uri uri) {
+    public static Source create(Uri uri) {
         Source source = new Source();
         source.mUri = uri;
         return source;

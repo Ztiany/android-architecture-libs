@@ -42,7 +42,6 @@ final class BoxingGlideLoader implements IBoxingMediaLoader {
 
     @Override
     public void displayThumbnail(@NonNull ImageView img, @NonNull Uri uri, int width, int height) {
-
         try {
             RequestOptions requestOptions = new RequestOptions();
             Glide.with(img.getContext()).load(uri).apply(requestOptions).into(img);

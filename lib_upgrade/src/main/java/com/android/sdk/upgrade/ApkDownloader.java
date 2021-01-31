@@ -1,8 +1,6 @@
 package com.android.sdk.upgrade;
 
 
-import com.app.base.upgrade.UpgradeInteractor;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -5,10 +5,12 @@ import android.os.Parcelable;
 
 import com.android.sdk.mediaselector.common.CropOptions;
 import com.bilibili.boxing.BoxingMediaLoader;
+import com.bilibili.boxing.model.callback.MediaFilter;
 
 import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.Nullable;
+import timber.log.Timber;
 
 /**
  * @author Ztiany
@@ -30,6 +32,7 @@ public class Instructor implements Parcelable {
     private CropOptions mCropOptions;
     private boolean mIsMulti;
     private int mMaxCount = 9;
+    private MediaFilter mMediaFilter;
 
     private BaseMediaSelector mBaseMediaSelector;
 
@@ -44,6 +47,7 @@ public class Instructor implements Parcelable {
         mCropOptions = in.readParcelable(CropOptions.class.getClassLoader());
         mIsMulti = in.readByte() != 0;
         mMaxCount = in.readInt();
+        mMediaFilter = in.readParcelable(MediaFilter.class.getClassLoader());
     }
 
     public static final Creator<Instructor> CREATOR = new Creator<Instructor>() {
@@ -97,7 +101,17 @@ public class Instructor implements Parcelable {
         return this;
     }
 
+    public Instructor setMediaFilter(MediaFilter mediaFilter) {
+        mMediaFilter = mediaFilter;
+        return this;
+    }
+
+    public MediaFilter getMediaFilter() {
+        return mMediaFilter;
+    }
+
     public boolean start() {
+        Timber.d("start()");
         return mBaseMediaSelector.start(this);
     }
 
@@ -147,6 +161,7 @@ public class Instructor implements Parcelable {
         dest.writeParcelable(mCropOptions, flags);
         dest.writeByte((byte) (mIsMulti ? 1 : 0));
         dest.writeInt(mMaxCount);
+        dest.writeParcelable(mMediaFilter, flags);
     }
 
 }

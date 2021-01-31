@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.entity.AlbumEntity;
@@ -35,8 +37,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 
 /**

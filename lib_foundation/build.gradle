@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -27,6 +28,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -41,5 +46,6 @@ dependencies {
     compileOnly androidLibraries.activity
     compileOnly androidLibraries.activityKtx
     compileOnly androidLibraries.fragment
+    compileOnly kotlinLibraries.kotlinStdlib
     implementation thirdLibraries.supportOptional
 }

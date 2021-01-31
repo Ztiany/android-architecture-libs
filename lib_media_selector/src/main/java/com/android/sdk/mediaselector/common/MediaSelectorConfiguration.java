@@ -17,7 +17,7 @@ import com.ztiany.mediaselector.R;
 public class MediaSelectorConfiguration {
 
     private static String sAuthority = "";
-    private static boolean sOpenLog = true;
+    private static boolean sForceUseLegacyApi = false;
 
     /**
      * @see <a href='https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically'>how-to-get-accent-color-programmatically</>
@@ -52,12 +52,12 @@ public class MediaSelectorConfiguration {
         return context.getPackageName().concat(".file.provider");
     }
 
-    public static void setOpenLog(boolean openLog) {
-        sOpenLog = openLog;
+    public static void forceUseLegacyApi(boolean forceUseLegacyApi) {
+        sForceUseLegacyApi = forceUseLegacyApi;
     }
 
-    public static boolean isOpenLog() {
-        return sOpenLog;
+    public static boolean isForceUseLegacyApi() {
+        return sForceUseLegacyApi;
     }
 
 }

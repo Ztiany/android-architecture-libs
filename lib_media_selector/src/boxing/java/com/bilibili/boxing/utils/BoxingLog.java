@@ -17,7 +17,7 @@
 
 package com.bilibili.boxing.utils;
 
-import com.android.sdk.mediaselector.common.LogUtils;
+import timber.log.Timber;
 
 /**
  * Debug log tool.
@@ -27,7 +27,7 @@ import com.android.sdk.mediaselector.common.LogUtils;
 public class BoxingLog {
 
     public static void d(String log) {
-        LogUtils.d(log);
+        Timber.d(log);
     }
 
 }

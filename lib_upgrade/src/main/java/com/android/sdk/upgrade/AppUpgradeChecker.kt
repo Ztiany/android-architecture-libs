@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.app.base.upgrade.UpgradeInteractor
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.ServiceUtils
@@ -18,7 +17,7 @@ import java.io.File
  * usage, when automatic check new version:
  *
  * ```
- *       AppUpgradeChecker.checkAppUpgrade()
+ * AppUpgradeChecker.checkAppUpgrade()
  * ```
  *
  * usage, when click to check new version:
@@ -47,7 +46,7 @@ import java.io.File
  */
 object AppUpgradeChecker {
 
-    private var successOnce = false
+    private var succeededOnce = false
 
     private val isUpgradeServiceRunning: Boolean
         get() = ServiceUtils.isServiceRunning(UpgradeService::class.java.name)
@@ -76,10 +75,10 @@ object AppUpgradeChecker {
     )
 
     @SuppressLint("CheckResult")
-    fun checkAppUpgrade(silence: Boolean = true): LiveData<CheckingState> {
+    fun checkAppUpgrade(justOnce: Boolean = true): LiveData<CheckingState> {
         val liveData = MutableLiveData<CheckingState>()
         /*已经检查过了*/
-        if (silence && successOnce) {
+        if (justOnce && succeededOnce) {
             return liveData
         }
         /*正在下载*/
@@ -95,7 +94,7 @@ object AppUpgradeChecker {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { upgradeInfo ->
-                            successOnce = true
+                            succeededOnce = true
                             processUpdateInfo(upgradeInfo)
                             liveData.postValue(CheckingState(upgradeInfo = upgradeInfo))
                         },

@@ -18,7 +18,7 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     private Context mContext;
 
     public ViewPagerFragmentAdapter(FragmentManager fragmentManager, Context context) {
-        this(fragmentManager, context, BEHAVIOR_SET_USER_VISIBLE_HINT);
+        this(fragmentManager, context, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     /**

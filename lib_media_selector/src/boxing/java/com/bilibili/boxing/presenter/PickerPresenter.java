@@ -18,16 +18,17 @@
 package com.bilibili.boxing.presenter;
 
 import android.content.ContentResolver;
-import android.net.Uri;
 
 import com.bilibili.boxing.model.BoxingManager;
 import com.bilibili.boxing.model.callback.IAlbumTaskCallback;
 import com.bilibili.boxing.model.callback.IMediaTaskCallback;
+import com.bilibili.boxing.model.callback.MediaFilter;
 import com.bilibili.boxing.model.entity.AlbumEntity;
 import com.bilibili.boxing.model.entity.BaseMedia;
 import com.bilibili.boxing.model.entity.impl.ImageMedia;
 import com.bilibili.boxing.model.task.IMediaTask;
 import com.bilibili.boxing.utils.BoxingFileHelper;
+import com.bilibili.boxing_impl.BoxingResHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -115,15 +116,20 @@ public class PickerPresenter implements PickerContract.Presenter {
             map.put(media.getUri().toString(), media);
         }
 
-        if (selectedMedias == null || selectedMedias.size() < 0) {
+        if (selectedMedias == null || selectedMedias.size() <= 0) {
             return;
         }
 
         for (BaseMedia media : selectedMedias) {
-            if (map.containsKey(media.getUri())) {
-                map.get(media.getUri()).setSelected(true);
+            String key = media.getUri().toString();
+            if (map.containsKey(key)) {
+                ImageMedia imageMedia = map.get(key);
+                if (imageMedia != null) {
+                    imageMedia.setSelected(true);
+                }
             }
         }
+
     }
 
     private static class LoadMediaCallback implements IMediaTaskCallback<BaseMedia> {
@@ -153,9 +159,16 @@ public class PickerPresenter implements PickerContract.Presenter {
         }
 
         @Override
-        public boolean needFilter(Uri path) {
-            return !BoxingFileHelper.isFileValid(path);
+        public boolean needFilter(BaseMedia media) {
+            boolean isFileValid = BoxingFileHelper.isFileValid(media.getUri());
+            MediaFilter mediafilter = BoxingResHelper.getMediaFilter();
+            if (mediafilter == null) {
+                return !isFileValid;
+            } else {
+                return !isFileValid || mediafilter.filterPath(media.getUri()) || mediafilter.filerSize(media.getSize());
+            }
         }
+
     }
 
     private static class LoadAlbumCallback implements IAlbumTaskCallback {

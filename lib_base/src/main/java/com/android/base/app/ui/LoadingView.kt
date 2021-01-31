@@ -16,7 +16,7 @@ interface LoadingView {
     fun showLoadingDialog(message: CharSequence, cancelable: Boolean)
     fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean)
     fun dismissLoadingDialog()
-    fun dismissLoadingDialog(minimumMills: Long, onDismiss: () -> Unit)
+    fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)? = null)
     fun isLoadingDialogShowing(): Boolean
 
     fun showMessage(message: CharSequence)

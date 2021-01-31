@@ -58,6 +58,7 @@ dependencies {
     implementation project(':lib_foundation')
     /*imageLoader*/
     implementation thirdLibraries.glide
+    implementation thirdLibraries.timber
     implementation('com.github.yalantis:ucrop:2.2.4') {
         exclude group: 'com.squareup.okhttp3'
     }

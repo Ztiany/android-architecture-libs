@@ -17,7 +17,7 @@ typealias Consumer<T> = (newData: T?) -> Unit
 
 data class CombinedResult<T>(
         val dataType: DataType,
-        val data: T?,
+        val data: T,
         val error: Throwable?
 )
 
@@ -46,7 +46,7 @@ fun <T> combineRemoteAndLocal(
         local: Flowable<Optional<T>>,
         selector: Selector<T?>,
         onNewData: Consumer<T>
-): Flowable<Optional<out T>> {
+): Flowable<Optional<T>> {
 
     //没有网络
     if (!NetContext.get().connected()) {
@@ -64,27 +64,25 @@ fun <T> combineRemoteAndLocal(
     sharedLocal.connect()
 
     val filteredRemote = remote.onErrorResumeNext(Function {
-        if (isNetworkError(it)) {
-            Flowable.never()
-        } else {
-            if (it is ApiErrorException) {
-                onNewData(null)
+        sharedLocal.flatMap { localData ->
+            if (!localData.isPresent) {
+                Flowable.error(it)
+            } else {
+                Flowable.empty()
             }
-            Flowable.error(it)
         }
     }).flatMap { remoteData ->
         sharedLocal.flatMap { localData ->
             if (!localData.isPresent || selector(localData.get(), remoteData.orElse(null))) {
+                onNewData(remoteData.orElse(null))
                 Flowable.just(remoteData)
             } else {
                 Flowable.empty()
             }
         }
-    }.doOnNext { newData: Optional<T> ->
-        onNewData(newData.orElse(null))
     }
 
-    return Flowable.merge(sharedLocal.filter { obj: Optional<T> -> obj.isPresent }, filteredRemote)
+    return Flowable.mergeDelayError(sharedLocal.filter { obj: Optional<T> -> obj.isPresent }, filteredRemote)
 }
 
 /**
@@ -111,7 +109,7 @@ fun <T> combineRemoteAndLocalReturningError(
         delayNetError: Boolean = false,
         selector: Selector<T>,
         onNewData: Consumer<T>
-): Flowable<CombinedResult<out T?>> {
+): Flowable<CombinedResult<T?>> {
 
     val sharedLocal = local.defaultIfEmpty(Optional.empty()).replay()
     sharedLocal.connect()
@@ -120,39 +118,30 @@ fun <T> combineRemoteAndLocalReturningError(
     val complexRemote = remote.flatMap { remoteData ->
         sharedLocal.flatMap { localData ->
             if (!localData.isPresent || selector(localData.get(), remoteData.orElse(null))) {
+                onNewData(remoteData.orElse(null))
                 Flowable.just(remoteData)
             } else {
                 Flowable.empty()
             }
         }
-    }.doOnNext { newData: Optional<T> ->
-        onNewData(newData.orElse(null))
     }.map {
         CombinedResult<T?>(DataType.Remote, it.orElse(null), null)
     }.onErrorResumeNext(Function { throwable ->
-        if (throwable is ApiErrorException) {
-            onNewData(null)
-        }
+
         if (delayNetError) {
-            sharedLocal.flatMap {
-                Flowable.just(CombinedResult<T?>(DataType.Remote, null, throwable))
-            }
+            sharedLocal.flatMap { Flowable.just(CombinedResult(DataType.Remote, null, throwable)) }
         } else {
-            Flowable.just(CombinedResult<T?>(DataType.Remote, null, throwable))
+            Flowable.just(CombinedResult(DataType.Remote, null, throwable))
         }
     })
 
-    val mappedLocal: Flowable<CombinedResult<T>> = sharedLocal
+    val mappedLocal = sharedLocal
             .filter { obj: Optional<T> -> obj.isPresent }
             .map {
-                CombinedResult<T>(DataType.Disk, it.get(), null)
+                CombinedResult(DataType.Disk, it.get(), null)
             }
 
-    return Flowable.merge(mappedLocal, complexRemote)
-}
-
-private fun isNetworkError(exception: Throwable): Boolean {
-    return exception is IOException || exception is HttpException || exception is NetworkErrorException
+    return Flowable.mergeDelayError(mappedLocal, complexRemote)
 }
 
 /**refer [combineRemoteAndLocal]*/
@@ -160,7 +149,7 @@ fun <T> combineRemoteAndLocal(
         remote: Flowable<Optional<T>>,
         local: Flowable<Optional<T>>,
         onNewData: (T?) -> Unit
-): Flowable<Optional<out T>> {
+): Flowable<Optional<T>> {
     return combineRemoteAndLocal(remote, local, { t1, t2 -> t1 != t2 }, onNewData)
 }
 
@@ -170,6 +159,6 @@ fun <T> combineRemoteAndLocalReturningError(
         local: Flowable<Optional<T>>,
         delayNetError: Boolean = false,
         onNewData: (T?) -> Unit
-): Flowable<CombinedResult<out T?>> {
+): Flowable<CombinedResult<T?>> {
     return combineRemoteAndLocalReturningError(remote, local, delayNetError, { t1, t2 -> t1 != t2 }, onNewData)
 }

@@ -12,7 +12,10 @@ import android.view.ViewGroup
  * Email: ztiany3@gmail.com
  * Date : 2019-01-15 11:41
  */
-abstract class SimpleRecyclerAdapter<T>(context: Context, data: List<T>? = null) : RecyclerAdapter<T, KtViewHolder>(context, data) {
+abstract class SimpleRecyclerAdapter<T>(
+        context: Context,
+        data: List<T> = mutableListOf()
+) : RecyclerAdapter<T, KtViewHolder>(context, data) {
 
     private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -33,9 +36,14 @@ abstract class SimpleRecyclerAdapter<T>(context: Context, data: List<T>? = null)
     abstract fun provideLayout(parent: ViewGroup, viewType: Int): Any
 
     override fun onBindViewHolder(viewHolder: KtViewHolder, position: Int) {
-        bind(viewHolder, getItem(position) ?: throw NullPointerException("SimpleRecyclerAdapter onBindViewHolder getItem return null"))
+        val item = getItem(position)
+        if (item != null) {
+            bind(viewHolder, item)
+        }
     }
 
-    protected abstract fun bind(viewHolder: KtViewHolder, item: T)
+    protected open fun bind(viewHolder: KtViewHolder, item: T) {
+
+    }
 
 }

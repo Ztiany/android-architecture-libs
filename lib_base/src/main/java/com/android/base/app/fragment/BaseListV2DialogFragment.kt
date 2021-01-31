@@ -3,7 +3,8 @@ package com.android.base.app.fragment
 import android.os.Bundle
 import android.view.View
 import com.android.base.foundation.adapter.DataManager
-import com.android.base.app.ui.AutoPageNumber
+import com.android.base.app.ui.AutoPaging
+import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshListLayout
 import com.android.base.app.ui.StateLayoutConfig
 
@@ -46,7 +47,7 @@ abstract class BaseListV2DialogFragment<T> : BaseDialogFragment(), RefreshListLa
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (!::dataManager.isInitialized) {
-            throw NullPointerException("you need set DataManager")
+            throw NullPointerException("you need to set DataManager")
         }
     }
 
@@ -55,11 +56,11 @@ abstract class BaseListV2DialogFragment<T> : BaseDialogFragment(), RefreshListLa
         refreshCompleted()
     }
 
-    override fun replaceData(data: MutableList<T>?) {
+    override fun replaceData(data: List<T>) {
         dataManager.replaceAll(data)
     }
 
-    override fun addData(data: MutableList<T>?) {
+    override fun addData(data: List<T>) {
         dataManager.addItems(data)
     }
 
@@ -67,9 +68,19 @@ abstract class BaseListV2DialogFragment<T> : BaseDialogFragment(), RefreshListLa
 
     fun setLoadMoreEnable(enable: Boolean) = stateLayout.refreshView.setLoadMoreEnable(enable)
 
-    override fun getPager() = AutoPageNumber(this, dataManager)
+    override fun isEmpty(): Boolean {
+        return dataManager.isEmpty()
+    }
 
-    override fun isEmpty() = dataManager.isEmpty
+    override fun isLoadingMore(): Boolean {
+        return stateLayout.refreshView.isLoadingMore
+    }
+
+    private val _paging: Paging by lazy { AutoPaging(this, dataManager) }
+
+    override fun getPager(): Paging {
+        return _paging
+    }
 
     override fun loadMoreCompleted(hasMore: Boolean) = stateLayout.refreshView.loadMoreCompleted(hasMore)
 
@@ -98,8 +109,6 @@ abstract class BaseListV2DialogFragment<T> : BaseDialogFragment(), RefreshListLa
     override fun showNetErrorLayout() = stateLayout.showNetErrorLayout()
 
     override fun showServerErrorLayout() = stateLayout.showServerErrorLayout()
-
-    override fun isLoadingMore() = stateLayout.refreshView.isLoadingMore
 
     override fun currentStatus() = stateLayout.currentStatus()
 

@@ -45,6 +45,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import timber.log.Timber;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 
@@ -329,6 +330,7 @@ public abstract class AbsBoxingViewFragment extends Fragment implements PickerCo
      * use {@link #showMedia(List, int)} to get the result.
      */
     public final void loadMedias() {
+        Timber.d(" ---------loadMedias--------" );
         mPresenter.loadMedias(0, AlbumEntity.DEFAULT_NAME);
     }
 

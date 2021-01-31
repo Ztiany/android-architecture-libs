@@ -5,9 +5,11 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.lang.Exception
 import java.nio.file.Files
@@ -40,6 +42,7 @@ internal fun copySingleToInternal(context: Context, uri: Uri): String? {
         }
         target
     } catch (e: Exception) {
+        Timber.d("copySingleToInternal() $e")
         null
     }
 }

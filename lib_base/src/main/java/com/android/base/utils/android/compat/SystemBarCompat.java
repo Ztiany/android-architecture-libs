@@ -27,7 +27,7 @@ import androidx.annotation.ColorInt;
 import timber.log.Timber;
 
 /**
- * SystemBar工具类
+ * A tool for adjusting system bars.
  *
  * <p>
  * other useful utils:
@@ -82,6 +82,29 @@ public class SystemBarCompat {
             return setupStatusBarView(activity, decorView, color);
         }
         return null;
+    }
+
+    /**
+     * 适用于4.4，在 rootView 中添加一个与 StatusBar 高度一样的 View，用于对状态栏着色
+     *
+     * @param context  上下文
+     * @param rootView 用于添加着色View的根View
+     * @param color    着色
+     * @return 被添加的View
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static View setupStatusBarView(Context context, ViewGroup rootView, @ColorInt int color) {
+        View statusBarTintView = rootView.findViewById(R.id.base_status_view_id);
+        if (statusBarTintView == null) {
+            statusBarTintView = new View(context);
+            statusBarTintView.setId(R.id.base_status_view_id);
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight(context));
+            layoutParams.gravity = Gravity.TOP;
+            statusBarTintView.setLayoutParams(layoutParams);
+            rootView.addView(statusBarTintView, 0);
+        }
+        statusBarTintView.setBackgroundColor(color);
+        return statusBarTintView;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -166,32 +189,9 @@ public class SystemBarCompat {
     }
 
     /**
-     * 适用于4.4，在 rootView 中添加一个与 StatusBar 高度一样的 View，用于对状态栏着色
-     *
-     * @param context  上下文
-     * @param rootView 用于添加着色View的根View
-     * @param color    着色
-     * @return 被添加的View
-     */
-    @SuppressWarnings("WeakerAccess,unused")
-    public static View setupStatusBarView(Context context, ViewGroup rootView, @ColorInt int color) {
-        View statusBarTintView = rootView.findViewById(R.id.base_status_view_id);
-        if (statusBarTintView == null) {
-            statusBarTintView = new View(context);
-            statusBarTintView.setId(R.id.base_status_view_id);
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, getStatusBarHeight(context));
-            layoutParams.gravity = Gravity.TOP;
-            statusBarTintView.setLayoutParams(layoutParams);
-            rootView.addView(statusBarTintView, 0);
-        }
-        statusBarTintView.setBackgroundColor(color);
-        return statusBarTintView;
-    }
-
-    /**
      * 获取状态栏高度
      */
-    @SuppressWarnings("WeakerAccess,unused")
+    @SuppressWarnings("WeakerAccess")
     public static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources().getIdentifier(STATUS_BAR_HEIGHT_RES_NAME, "dimen", "android");
@@ -206,7 +206,7 @@ public class SystemBarCompat {
      *
      * @param context 上下文
      */
-    @SuppressWarnings("WeakerAccess,unused")
+    @SuppressWarnings("WeakerAccess")
     public static int getNavigationBarHeight(Context context) {
         int navigationBarHeight = 0;
         Resources rs = context.getResources();
@@ -306,7 +306,7 @@ public class SystemBarCompat {
      * @param activity activity
      * @return ActionBar高度
      */
-    @SuppressWarnings("WeakerAccess,unused")
+    @SuppressWarnings("WeakerAccess")
     public static int getActionBarHeight(Activity activity) {
         TypedValue tv = new TypedValue();
         if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
@@ -319,51 +319,51 @@ public class SystemBarCompat {
     //                                               View Flags
     ///////////////////////////////////////////////////////////////////////////
 
-    @SuppressWarnings("WeakerAccess,unused")
-    public static void setTranslucentStatusViaViewFlags(Activity activity) {
-        setTranslucentSystemUiViaViewFlags(activity, true, false);
+    @SuppressWarnings("WeakerAccess")
+    public static void setTransparentStatusViaViewFlags(Activity activity) {
+        setTransparentSystemUiViaViewFlags(activity, true, false);
     }
 
-    @SuppressWarnings("WeakerAccess,unused")
-    public static void setTranslucentNavigationViaViewFlags(Activity activity) {
-        setTranslucentSystemUiViaViewFlags(activity, false, true);
+    @SuppressWarnings("WeakerAccess")
+    public static void setTransparentNavigationViaViewFlags(Activity activity) {
+        setTransparentSystemUiViaViewFlags(activity, false, true);
     }
 
-    @SuppressWarnings("WeakerAccess,unused")
-    public static void setTranslucentSystemUiViaViewFlags(Activity activity) {
-        setTranslucentSystemUiViaViewFlags(activity, true, true);
+    @SuppressWarnings("WeakerAccess")
+    public static void setTransparentSystemUiViaViewFlags(Activity activity) {
+        setTransparentSystemUiViaViewFlags(activity, true, true);
     }
 
-    private static void setTranslucentSystemUiViaViewFlags(Activity activity, boolean status, boolean navigation) {
+    private static void setTransparentSystemUiViaViewFlags(Activity activity, boolean status, boolean navigation) {
         Window window = activity.getWindow();
         if (AndroidVersion.atLeast(21)) {
-            if (status && !navigation) {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
-            }
-            if (navigation && !status) {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-                window.getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-                setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
-            }
             if (navigation && status) {
-                window.clearFlags(
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
                 window.getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-
                 setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
+                setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
+            } else if (status) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                setupStatusBarColorAfter19(activity, Color.TRANSPARENT);
+            } else if (navigation) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                window.getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
                 setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
             }
         } else if (AndroidVersion.at(19)) {
             setTranslucentSystemUi(window, status, navigation);
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Notch
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * @see <a href='https://developer.android.com/guide/topics/display-cutout?hl=zh-cn'>支持刘海屏</a>

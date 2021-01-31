@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import com.android.base.foundation.activity.ActivityDelegate
 import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.activity.ActivityState
@@ -220,7 +221,7 @@ private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<Fragm
     private val mPendingTransactions = mutableListOf<FragmentTransaction>()
 
     fun safeCommit(@NonNull activityDelegateOwner: ActivityDelegateOwner, @NonNull transaction: FragmentTransaction): Boolean {
-        val status = activityDelegateOwner.status
+        val status = activityDelegateOwner.getStatus()
         val isCommitterResumed = (status == ActivityState.CREATE || status == ActivityState.START || status == ActivityState.RESUME)
 
         return if (isCommitterResumed) {
@@ -342,7 +343,8 @@ class EnhanceFragmentTransaction constructor(
     /**隐藏所有的 fragment */
     private fun hideFragments() {
         for (fragment in fragmentManager.fragments) {
-            if (fragment != null && fragment.isVisible) {
+            if (fragment != null && fragment.view != null && fragment.isVisible) {
+                fragmentTransaction.setMaxLifecycle(fragment, Lifecycle.State.STARTED)
                 fragmentTransaction.hide(fragment)
             }
         }
@@ -350,7 +352,8 @@ class EnhanceFragmentTransaction constructor(
 
     /**隐藏第一个可见的 fragment */
     private fun hideTopFragment() {
-        fragmentManager.fragments.lastOrNull { it.isVisible }?.let {
+        fragmentManager.fragments.lastOrNull { it.isVisible && it.view != null }?.let {
+            fragmentTransaction.setMaxLifecycle(it, Lifecycle.State.STARTED)
             fragmentTransaction.hide(it)
         }
     }

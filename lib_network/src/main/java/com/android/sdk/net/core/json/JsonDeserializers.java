@@ -52,6 +52,7 @@ class JsonDeserializers {
             try {
                 return json.getAsString();
             } catch (Exception e) {
+
                 Timber.e(e, "StringJsonDeserializer-deserialize-error:%s", (json != null ? json.toString() : ""));
                 return null;
             }

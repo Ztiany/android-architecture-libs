@@ -1,7 +1,6 @@
 package com.android.base.app.aac;
 
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,7 +16,7 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     private int mVersion = 0;
 
-    private final List<WeakReference<ObserverWrapper<? super T>>> mWrapperObserverList = new ArrayList<>();
+    private final List<ObserverWrapper<? super T>> mWrapperObserverList = new ArrayList<>();
 
     @Override
     public void setValue(T value) {
@@ -27,7 +26,7 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
 
     @Override
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
-        super.observe(owner, getOrNewObserver(observer, mVersion));
+        super.observe(owner,  getOrNewObserver(observer, mVersion));
     }
 
     @Override
@@ -36,61 +35,43 @@ public class SingleLiveData<T> extends MediatorLiveData<T> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void removeObserver(@NonNull Observer<? super T> observer) {
-        if (observer instanceof ObserverWrapper) {
-            super.removeObserver(observer);
-            removeWrapper((ObserverWrapper) observer);
-            Timber.d("removeObserver() called with: observer = wrapper = [" + observer + "]");
-        } else {
-            ObserverWrapper<? super T> wrapper = findWrapper(observer);
-            Timber.d("removeObserver() called with: observer = [" + observer + "], wrapper = [" + wrapper + "]");
-            super.removeObserver(wrapper);
-            removeWrapper(wrapper);
-        }
+        ObserverWrapper<? super T> wrapper = findWrapper(observer);
+        super.removeObserver(wrapper);
+        mWrapperObserverList.remove(wrapper);
     }
 
-    private void removeWrapper(ObserverWrapper observer) {
-        ListIterator<WeakReference<ObserverWrapper<? super T>>> iterator = mWrapperObserverList.listIterator();
-        while (iterator.hasNext()) {
-            WeakReference<ObserverWrapper<? super T>> next = iterator.next();
-            ObserverWrapper<? super T> item = next.get();
-            if (item == observer) {
-                iterator.remove();
-                break;
-            }
-        }
-    }
-
-    private ObserverWrapper<? super T> findWrapper(Observer<? super T> observer) {
-        ListIterator<WeakReference<ObserverWrapper<? super T>>> iterator = mWrapperObserverList.listIterator();
-
-        ObserverWrapper<? super T> target = null;
-
-        while (iterator.hasNext()) {
-            WeakReference<ObserverWrapper<? super T>> next = iterator.next();
-            ObserverWrapper<? super T> item = next.get();
-            if (item == null) {
-                iterator.remove();
-            } else if (item.mOrigin == observer) {
-                target = item;
-            }
-        }
-
-        return target;
-    }
-
-    private Observer<? super T> getOrNewObserver(@NonNull Observer<? super T> observer, int observerVersion) {
+    private ObserverWrapper<? super T> getOrNewObserver(@NonNull Observer<? super T> observer, int observerVersion) {
         ObserverWrapper<? super T> wrapper = findWrapper(observer);
 
         if (wrapper == null) {
             wrapper = new ObserverWrapper<>(observerVersion, observer);
-            mWrapperObserverList.add(new WeakReference<>(wrapper));
+            mWrapperObserverList.add(wrapper);
         }
 
-        Timber.d("getOrNewObserver() called with: observer = [" + observer + "], observerVersion = [" + observerVersion + "], wrapper = [" + wrapper + "]");
-
         return wrapper;
+    }
+
+    private ObserverWrapper<? super T> findWrapper(Observer<? super T> observer) {
+        ListIterator<ObserverWrapper<? super T>> iterator = mWrapperObserverList.listIterator();
+
+        ObserverWrapper<? super T> target = null;
+
+        while (iterator.hasNext()) {
+            ObserverWrapper<? super T> next = iterator.next();
+            if (next.mOrigin == observer) {
+                target = next;
+                Timber.d("findWrapper next.mOrigin == observer");
+                break;
+            }
+            if (next == observer) {
+                Timber.d("findWrapper next == observer");
+                target = next;
+                break;
+            }
+        }
+
+        return target;
     }
 
     private class ObserverWrapper<E> implements Observer<E> {

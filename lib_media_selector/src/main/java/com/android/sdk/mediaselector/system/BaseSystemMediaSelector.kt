@@ -11,12 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.android.base.foundation.common.ActFragWrapper
 import com.android.sdk.mediaselector.common.*
+import timber.log.Timber
 import java.io.File
 
-internal const val REQUEST_CAMERA = 196
-internal const val REQUEST_ALBUM = 198
-internal const val REQUEST_FILE = 199
-internal const val REQUEST_UCROP = 200
+internal const val REQUEST_CAMERA = 10711
+internal const val REQUEST_ALBUM = 10712
+internal const val REQUEST_FILE = 10713
+internal const val REQUEST_UCROP = 10714
 
 private const val INSTRUCTOR_KEY = "system_instructor_key"
 
@@ -77,7 +78,12 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
     // Result
     ///////////////////////////////////////////////////////////////////////////
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        LogUtils.d("onActivityResult() called with: requestCode = [$requestCode], resultCode = [$resultCode], data = [$data]")
+        if (requestCode != REQUEST_CAMERA && requestCode != REQUEST_ALBUM &&
+                requestCode != REQUEST_FILE && requestCode != REQUEST_UCROP) {
+            return
+        }
+
+        Timber.d("onActivityResult() called with: requestCode = [$requestCode], resultCode = [$resultCode], data = [$data]")
         if (resultCode != Activity.RESULT_OK) {
             mediaSelectorCallback.onCancel()
             return
@@ -106,7 +112,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
 
     private fun processUCropResult(data: Intent?) {
         val uCropResult = MediaUtils.getUCropResult(data)
-        LogUtils.d("processCameraResult() called with: resultCode = [], data = [$uCropResult]")
+        Timber.d("processCameraResult() called with: resultCode = [], data = [$uCropResult]")
         if (uCropResult == null) {
             mediaSelectorCallback.onTakeFail()
         } else {
@@ -116,7 +122,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
             } else {
                 mediaSelectorCallback.onTakeFail()
             }
-            LogUtils.d("processCameraResult() called with: resultCode = [], data = [$absolutePath]")
+            Timber.d("processCameraResult() called with: resultCode = [], data = [$absolutePath]")
         }
     }
 
@@ -139,7 +145,7 @@ internal abstract class BaseSystemMediaSelector : SystemMediaSelector {
             startActivityForResult(intent, REQUEST_CAMERA)
             return true
         } catch (e: Exception) {
-            LogUtils.e("takePhotoFromCamera error", e)
+            Timber.d(e, "takePhotoFromCamera error")
         }
         return false
     }

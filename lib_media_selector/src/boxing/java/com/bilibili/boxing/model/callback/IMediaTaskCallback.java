@@ -18,8 +18,6 @@
 package com.bilibili.boxing.model.callback;
 
 
-import android.net.Uri;
-
 import com.bilibili.boxing.model.entity.BaseMedia;
 
 import java.util.List;
@@ -44,9 +42,9 @@ public interface IMediaTaskCallback<T extends BaseMedia> {
     /**
      * judge the path needing filer
      *
-     * @param uri photo path
+     * @param media photo
      * @return true:be filter
      */
-    boolean needFilter(Uri uri);
+    boolean needFilter(T media);
 
 }

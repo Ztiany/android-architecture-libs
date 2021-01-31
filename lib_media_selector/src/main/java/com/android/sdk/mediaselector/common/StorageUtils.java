@@ -31,7 +31,9 @@ public class StorageUtils {
         if (!postfix.startsWith(".")) {
             postfix = "." + postfix;
         }
-        return new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), MEDIA_SELECTOR_FOLDER + "/" + tempFileName() + postfix).getAbsolutePath();
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), MEDIA_SELECTOR_FOLDER + "/" + tempFileName() + postfix);
+        StorageUtils.makeFilePath(file);
+        return file.getAbsolutePath();
     }
 
     /**
