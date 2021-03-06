@@ -1,4 +1,4 @@
-package com.android.sdk.permission.internal;
+package com.android.sdk.permission.impl.selfstudy;
 
 import android.content.Intent;
 import android.os.Bundle;

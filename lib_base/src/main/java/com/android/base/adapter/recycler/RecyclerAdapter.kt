@@ -1,6 +1,7 @@
 package com.android.base.adapter.recycler
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.base.foundation.adapter.DataManager
@@ -16,6 +17,8 @@ abstract class RecyclerAdapter<T, VH : RecyclerView.ViewHolder> @JvmOverloads co
         protected val context: Context,
         data: List<T> = mutableListOf()
 ) : RecyclerView.Adapter<VH>(), DataManager<T> {
+
+    protected val inflater: LayoutInflater by lazy { LayoutInflater.from(context) }
 
     @Suppress("LeakingThis")
     private val dataManager: RecyclerDataManagerImpl<T> = RecyclerDataManagerImpl(data.toMutableListChecked(), this)

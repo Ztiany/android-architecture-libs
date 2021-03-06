@@ -2,15 +2,15 @@ package com.android.base.app
 
 import android.app.Activity
 import android.content.Context
-import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.app.fragment.animator.FragmentAnimator
-import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView
 import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshLoadViewFactory
 import com.android.base.app.ui.RefreshLoadViewFactory.Factory
 import com.android.base.app.ui.RefreshViewFactory
+import com.android.base.foundation.activity.ActivityDelegateOwner
+import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.receiver.NetworkState
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
@@ -19,7 +19,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
 
 /**
- * useful tools for android development, just like a sword.
+ * A set of useful tools for android development, just like a sword.
  *
  * @author Ztiany
  * Email: ztiany3@gmail.com

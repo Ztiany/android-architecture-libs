@@ -1,9 +1,9 @@
 package com.android.base.adapter.recycler
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
 /**
  * @author Ztiany
@@ -17,22 +17,17 @@ abstract class ItemViewBinder<T, VH : RecyclerView.ViewHolder> : com.drakeet.mul
 
 }
 
-abstract class SimpleItemViewBinder<T> : ItemViewBinder<T, KtViewHolder>() {
+abstract class SimpleItemViewBinder<T, VB : ViewBinding> : ItemViewBinder<T, BindingViewHolder<VB>>() {
 
-    override fun onCreateViewHolder(inflater: LayoutInflater, parent: ViewGroup): KtViewHolder {
-        val layout = provideLayout(inflater, parent)
-        val itemView = if (layout is Int) {
-            inflater.inflate(layout, parent, false)
-        } else
-            layout as View
-        return KtViewHolder(itemView).apply {
+    override fun onCreateViewHolder(inflater: LayoutInflater, parent: ViewGroup): BindingViewHolder<VB> {
+        return BindingViewHolder(provideViewBinding(inflater, parent)).apply {
             onViewHolderCreated(this)
         }
     }
 
-    protected open fun onViewHolderCreated(viewHolder: KtViewHolder) = Unit
+    protected open fun onViewHolderCreated(viewHolder: BindingViewHolder<VB>) = Unit
 
     /**provide a layout id or a View*/
-    abstract fun provideLayout(inflater: LayoutInflater, parent: ViewGroup): Any
+    abstract fun provideViewBinding(inflater: LayoutInflater, parent: ViewGroup): VB
 
 }

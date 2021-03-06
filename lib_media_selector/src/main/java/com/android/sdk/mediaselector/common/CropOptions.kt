@@ -1,14 +1,11 @@
 package com.android.sdk.mediaselector.common
 
+import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 
 /**
  * 裁剪配置类
- * Author: JPH
- * Date: 2016/7/27 13:19
  */
-@Parcelize
 data class CropOptions(
         /**裁剪宽度比例 与aspectY组合，如16:9*/
         val aspectX: Int = 0,
@@ -18,4 +15,33 @@ data class CropOptions(
         val outputX: Int = 0,
         /**输入图片的高度*/
         val outputY: Int = 0
-) : Parcelable
+) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readInt(),
+            parcel.readInt())
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(aspectX)
+        parcel.writeInt(aspectY)
+        parcel.writeInt(outputX)
+        parcel.writeInt(outputY)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<CropOptions> {
+        override fun createFromParcel(parcel: Parcel): CropOptions {
+            return CropOptions(parcel)
+        }
+
+        override fun newArray(size: Int): Array<CropOptions?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+}

@@ -11,11 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-@SuppressWarnings("unused")
 public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
 
     private final List<ViewPagerInfo> mTabs;
-    private Context mContext;
+    private final Context mContext;
 
     public ViewPagerFragmentAdapter(FragmentManager fragmentManager, Context context) {
         this(fragmentManager, context, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

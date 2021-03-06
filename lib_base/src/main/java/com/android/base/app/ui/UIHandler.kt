@@ -6,7 +6,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.android.base.app.Sword
 import com.android.base.data.Resource
-import timber.log.Timber
 import androidx.lifecycle.observe as xObserve
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------

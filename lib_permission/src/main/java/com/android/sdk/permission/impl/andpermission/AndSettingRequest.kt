@@ -1,4 +1,4 @@
-package com.android.sdk.permission.andpermission
+package com.android.sdk.permission.impl.andpermission
 
 import com.android.sdk.permission.utils.HostWrapper
 import com.android.sdk.permission.api.SettingRequest

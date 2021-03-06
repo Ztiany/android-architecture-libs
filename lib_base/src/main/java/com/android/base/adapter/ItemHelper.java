@@ -16,8 +16,8 @@ import androidx.annotation.StringRes;
  */
 public class ItemHelper {
 
-    private View mItemView;
-    private SparseArray<View> views;
+    private final View mItemView;
+    private final SparseArray<View> views;
 
     public ItemHelper(View itemView) {
         mItemView = itemView;

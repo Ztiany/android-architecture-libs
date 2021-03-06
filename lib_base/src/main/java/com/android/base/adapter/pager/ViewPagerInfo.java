@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-@SuppressWarnings("all")
 public class ViewPagerInfo {
 
     public final Class<? extends Fragment> clazz;

@@ -1,6 +1,6 @@
 package com.android.sdk.permission.api
 
-import com.android.sdk.permission.internal.IPermissionUIProvider
+import com.android.sdk.permission.impl.selfstudy.IPermissionUIProvider
 
 interface PermissionRequest {
 

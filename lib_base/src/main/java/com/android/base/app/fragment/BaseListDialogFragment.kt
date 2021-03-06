@@ -2,10 +2,11 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import com.android.base.foundation.adapter.DataManager
+import androidx.viewbinding.ViewBinding
 import com.android.base.app.ui.AutoPaging
 import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshListLayout
+import com.android.base.foundation.adapter.DataManager
 import com.ztiany.loadmore.adapter.ILoadMore
 import com.ztiany.loadmore.adapter.OnLoadMoreListener
 import com.ztiany.loadmore.adapter.WrapperAdapter
@@ -16,7 +17,7 @@ import com.ztiany.loadmore.adapter.WrapperAdapter
  * email:    1169654504@qq.com
  * @see [BaseListFragment]
  */
-abstract class BaseListDialogFragment<T> : BaseStateDialogFragment(), RefreshListLayout<T> {
+abstract class BaseListDialogFragment<T, VB : ViewBinding> : BaseStateDialogFragment<VB>(), RefreshListLayout<T> {
 
     /**加载更多*/
     private var loadMore: ILoadMore? = null

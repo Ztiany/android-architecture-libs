@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatDialogFragment
@@ -24,15 +25,9 @@ import timber.log.Timber
  * email:    1169654504@qq.com
  * @see [BaseFragment]
  */
-open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
-
-    private var loadingView: LoadingView? = null
-
-    private val reuseView = ReusingView()
+open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
 
     private val fragmentDelegates by lazy { FragmentDelegates(this) }
-
-    private var recentShowingDialogTime: Long = 0
 
     private var _state: Bundle? = null
 
@@ -61,42 +56,22 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
-    /**缓存 Fragment 的 View，默认为不缓存，可能在某些特点场景下才会需要用到，设置为缓存可能有未知的问题*/
-    @Suppress
-    protected fun setCacheTheView(cacheTheView: Boolean) {
-        reuseView.cacheTheView = cacheTheView
-    }
-
     /**
-     * @return provide  a  layout id  or a View
+     * @return provide  a  layout id
      */
-    protected open fun provideLayout(): Any? = null
+    @LayoutRes
+    protected open fun provideLayout(): Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return reuseView.createView(provideLayout(), inflater, container)
+        Timber.tag(tag()).d("-->onCreateView  savedInstanceState = %s", savedInstanceState)
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Timber.tag(tag()).d("-->onViewCreated  savedInstanceState = %s", savedInstanceState)
-
-        if (reuseView.isNotTheSameView(view)) {
-            internalOnViewPrepared(view, savedInstanceState)
-            onViewPrepared(view, savedInstanceState)
-        }
-
         fragmentDelegates.onViewCreated(view, savedInstanceState)
     }
-
-    internal open fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {}
-
-    /**
-     * View is prepared, If [androidx.fragment.app.Fragment.onCreateView] reuse the layout, it will be called once.
-     *
-     * @param view view of fragment
-     */
-    protected open fun onViewPrepared(view: View, savedInstanceState: Bundle?) {}
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -138,7 +113,6 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
         Timber.tag(tag()).d("-->onDestroy")
         fragmentDelegates.onDestroy()
         super.onDestroy()
-        dismissLoadingDialog()
     }
 
     override fun onDetach() {
@@ -199,62 +173,6 @@ open class BaseDialogFragment : AppCompatDialogFragment(), LoadingView, OnBackPr
      */
     protected open fun handleBackPress(): Boolean {
         return false
-    }
-
-    private fun loadingView(): LoadingView {
-        val loadingViewImpl = loadingView
-        return if (loadingViewImpl != null) {
-            loadingViewImpl
-        } else {
-            loadingView = onCreateLoadingView()
-                    ?: Sword.loadingViewFactory?.invoke(requireContext())
-            loadingView
-                    ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
-        }
-    }
-
-    protected open fun onCreateLoadingView(): LoadingView? {
-        return null
-    }
-
-    override fun showLoadingDialog() {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(true)
-    }
-
-    override fun showLoadingDialog(cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(cancelable)
-    }
-
-    override fun showLoadingDialog(message: CharSequence, cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(message, cancelable)
-    }
-
-    override fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(messageId, cancelable)
-    }
-
-    override fun dismissLoadingDialog() {
-        loadingView?.dismissLoadingDialog()
-    }
-
-    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)?) {
-        dismissDialog(recentShowingDialogTime, minimumMills, onDismiss)
-    }
-
-    override fun isLoadingDialogShowing(): Boolean {
-        return loadingView != null && loadingView().isLoadingDialogShowing()
-    }
-
-    override fun showMessage(message: CharSequence) {
-        loadingView().showMessage(message)
-    }
-
-    override fun showMessage(@StringRes messageId: Int) {
-        loadingView().showMessage(messageId)
     }
 
 }

@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 public class ViewPagerStateFragmentAdapter extends FragmentStatePagerAdapter {
 
     private final List<ViewPagerInfo> mTabs;
-    private Context mContext;
+    private final Context mContext;
 
     public ViewPagerStateFragmentAdapter(FragmentManager fragmentManager, Context context) {
         this(fragmentManager, context, BEHAVIOR_SET_USER_VISIBLE_HINT);

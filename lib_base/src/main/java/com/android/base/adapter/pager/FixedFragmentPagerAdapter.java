@@ -17,9 +17,11 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.PagerAdapter;
 import timber.log.Timber;
 
+/**
+ * 修改了 {@link androidx.fragment.app.FragmentPagerAdapter#destroyItem(ViewGroup, int, Object)} 部分，不再无差别 remove，返回了 POSITION_NONE 的才 remove。
+ * 具体用法参考 <a href='http://note.youdao.com/noteshare?id=2e0b28231c31685891c5714d0a0206a3&sub=F520E34569074A4F9CAA0F424C1BBB3E'>ViewPager 刷新问题</a>。
+ */
 public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
-
-    private static final String TAG = "FixedFragmentPagerAdapter";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({BEHAVIOR_SET_USER_VISIBLE_HINT, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT})
@@ -68,6 +70,7 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
 
         String name = makeFragmentName(container.getId(), itemId);
         Fragment fragment = mFragmentManager.findFragmentByTag(name);
+
         if (fragment != null) {
             Timber.v("Attaching item #" + itemId + ": f=" + fragment);
             mCurTransaction.attach(fragment);
@@ -76,6 +79,7 @@ public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
             Timber.v("Adding item #" + itemId + ": f=" + fragment);
             mCurTransaction.add(container.getId(), fragment, makeFragmentName(container.getId(), itemId));
         }
+
         if (fragment != mCurrentPrimaryItem) {
             fragment.setMenuVisibility(false);
             if (mBehavior == BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {

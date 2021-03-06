@@ -3,10 +3,8 @@ package com.android.base.utils.android.views
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
+import android.view.View.OnLayoutChangeListener
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
@@ -64,6 +62,7 @@ val View.realContext: FragmentActivity?
         return null
     }
 
+@SuppressLint("ClickableViewAccessibility")
 fun View.setClickFeedback(pressAlpha: Float = 0.5F) {
     this.setOnTouchListener { v, event ->
         when (event.action) {
@@ -86,7 +85,7 @@ inline fun View.doOnLayoutAvailable(crossinline block: () -> Unit) {
     ViewCompat.isLaidOut(this).yes {
         block()
     }.otherwise {
-        addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+        addOnLayoutChangeListener(object : OnLayoutChangeListener {
             override fun onLayoutChange(v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
                 removeOnLayoutChangeListener(this)
                 block()
@@ -119,7 +118,7 @@ fun View.setPaddingLeft(padding: Int) {
     this.setPadding(padding, paddingTop, paddingRight, paddingBottom)
 }
 
-fun View.setPaddRight(padding: Int) {
+fun View.setPaddingRight(padding: Int) {
     this.setPadding(paddingLeft, paddingTop, padding, paddingBottom)
 }
 
@@ -244,13 +243,11 @@ fun View.setSize(width: Int, height: Int) {
 }
 
 fun View.onDebouncedClick(onClick: (View) -> Unit) {
-    onClickObservable(500)
-            .subscribeIgnoreError { onClick(this) }
+    onClickObservable(500).subscribeIgnoreError { onClick(this) }
 }
 
 fun View.onDebouncedClick(milliseconds: Long, onClick: (View) -> Unit) {
-    onClickObservable(milliseconds)
-            .subscribeIgnoreError { onClick(this) }
+    onClickObservable(milliseconds).subscribeIgnoreError { onClick(this) }
 }
 
 fun View.onClickObservable(): Observable<Unit> {
@@ -311,6 +308,8 @@ fun View.setBgDrawable(drawable: Drawable) {
 fun <V : View> View.find(@IdRes viewId: Int): V {
     return findViewById<View>(viewId) as V
 }
+
+fun View.inflater(): LayoutInflater = LayoutInflater.from(context)
 
 private const val ACTION_VISIBLE = 0x01
 private const val ACTION_GONE = 0x02

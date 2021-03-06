@@ -1,11 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
-
-androidExtensions {
-    experimental = true
-}
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -51,7 +47,12 @@ android {
             res.srcDirs += "src/github/res"
         }
     }
-    
+
+    //如果不想生成某个布局的绑定类，可以在根视图添加 tools:viewBindingIgnore="true" 属性。
+    viewBinding {
+        enabled = true
+    }
+
 }
 
 dependencies {

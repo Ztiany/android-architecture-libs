@@ -2,11 +2,12 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import android.view.View
-import com.android.base.foundation.adapter.DataManager
+import androidx.viewbinding.ViewBinding
 import com.android.base.app.ui.AutoPaging
 import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshListLayout
 import com.android.base.app.ui.StateLayoutConfig
+import com.android.base.foundation.adapter.DataManager
 
 /**
  *@author Ztiany
@@ -14,7 +15,7 @@ import com.android.base.app.ui.StateLayoutConfig
  *      Date : 2019-03-26 15:06
  *@see [BaseListV2Fragment]
  */
-abstract class BaseListV2DialogFragment<T> : BaseDialogFragment(), RefreshListLayout<T> {
+abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshListLayout<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 

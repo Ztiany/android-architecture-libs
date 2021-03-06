@@ -2,8 +2,8 @@ package com.android.sdk.permission
 
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.android.sdk.permission.andpermission.AndInstallRequest
 import com.android.sdk.permission.api.InstallRequest
+import com.android.sdk.permission.impl.andpermission.AndInstallRequest
 import com.android.sdk.permission.utils.HostWrapper
 
 class TypeOption {

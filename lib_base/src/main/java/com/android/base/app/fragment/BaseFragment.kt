@@ -6,20 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
-import com.android.base.app.Sword
 import com.android.base.app.activity.BackHandlerHelper
 import com.android.base.app.activity.OnBackPressListener
-import com.android.base.app.fragment.animator.FragmentAnimatorHelper
 import com.android.base.foundation.fragment.FragmentDelegate
 import com.android.base.foundation.fragment.FragmentDelegateOwner
-import com.android.base.app.fragment.tools.FragmentConfig
-import com.android.base.app.ui.LoadingView
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
-import com.github.dmstocking.optional.java.util.function.Predicate
 import timber.log.Timber
 
 /**
@@ -34,17 +27,9 @@ import timber.log.Timber
  * date :   2016-03-19 23:09
  * email:    1169654504@qq.com
  */
-open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
-
-    private var fragmentAnimatorHelper: FragmentAnimatorHelper? = null
-
-    private val reuseView = ReusingView()
-
-    private var loadingView: LoadingView? = null
+open class BaseFragment : Fragment(),  OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
 
     private val fragmentDelegates by lazy { FragmentDelegates(this) }
-
-    private var recentShowingDialogTime: Long = 0
 
     private var _state: Bundle? = null
 
@@ -73,42 +58,16 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
-    /**缓存 Fragment 的 View，默认为不缓存，可能在某些特点场景下才会需要用到，设置为缓存可能有未知的问题。*/
-    @Suppress
-    protected fun setReuseView(reuse: Boolean) {
-        reuseView.cacheTheView = reuse
-    }
-
-    /**
-     * @return provide  a  layout id  or a View
-     */
-    protected open fun provideLayout(): Any? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return reuseView.createView(provideLayout(), inflater, container)
+        Timber.tag(tag()).d("-->onCreateView  savedInstanceState = %s", savedInstanceState)
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Timber.tag(tag()).d("-->onViewCreated  savedInstanceState = %s", savedInstanceState)
-
-        if (reuseView.isNotTheSameView(view)) {
-            internalOnViewPrepared(view, savedInstanceState)
-            onViewPrepared(view, savedInstanceState)
-        }
-
         fragmentDelegates.onViewCreated(view, savedInstanceState)
     }
-
-    internal open fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {}
-
-    /**
-     * View is prepared, If [androidx.fragment.app.Fragment.onCreateView] reuse the layout, it will be called once
-     *
-     * @param view view of fragment
-     */
-    protected open fun onViewPrepared(view: View, savedInstanceState: Bundle?) {}
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -150,7 +109,6 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
         Timber.tag(tag()).d("-->onDestroy")
         fragmentDelegates.onDestroy()
         super.onDestroy()
-        dismissLoadingDialog()
     }
 
     override fun onDetach() {
@@ -211,69 +169,6 @@ open class BaseFragment : Fragment(), LoadingView, OnBackPressListener, Fragment
      */
     protected open fun handleBackPress(): Boolean {
         return false
-    }
-
-    private fun loadingView(): LoadingView {
-        val loadingViewImpl = loadingView
-        return if (loadingViewImpl != null) {
-            loadingViewImpl
-        } else {
-            loadingView = onCreateLoadingView()
-                    ?: Sword.loadingViewFactory?.invoke(requireContext())
-            loadingView
-                    ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
-        }
-    }
-
-    protected open fun onCreateLoadingView(): LoadingView? {
-        return null
-    }
-
-    override fun showLoadingDialog() {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(true)
-    }
-
-    override fun showLoadingDialog(cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(cancelable)
-    }
-
-    override fun showLoadingDialog(message: CharSequence, cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(message, cancelable)
-    }
-
-    override fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean) {
-        recentShowingDialogTime = System.currentTimeMillis()
-        loadingView().showLoadingDialog(messageId, cancelable)
-    }
-
-    override fun dismissLoadingDialog() {
-        loadingView?.dismissLoadingDialog()
-    }
-
-    override fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)?) {
-        dismissDialog(recentShowingDialogTime, minimumMills, onDismiss)
-    }
-
-    override fun isLoadingDialogShowing(): Boolean {
-        return loadingView != null && loadingView().isLoadingDialogShowing()
-    }
-
-    override fun showMessage(message: CharSequence) {
-        loadingView().showMessage(message)
-    }
-
-    override fun showMessage(@StringRes messageId: Int) {
-        loadingView().showMessage(messageId)
-    }
-
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        if (fragmentAnimatorHelper == null) {
-            fragmentAnimatorHelper = FragmentAnimatorHelper(requireContext(), FragmentConfig.defaultFragmentAnimator())
-        }
-        return fragmentAnimatorHelper?.onCreateAnimation(transit, enter)
     }
 
 }

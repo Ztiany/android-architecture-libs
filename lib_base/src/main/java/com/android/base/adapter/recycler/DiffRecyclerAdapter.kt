@@ -16,12 +16,12 @@ import java.util.concurrent.Executor
  * date :    2015-05-11 22:38
  * email:    1169654504@qq.com
  */
-abstract class DiffRecyclerAdapter<T> @JvmOverloads constructor(
+abstract class DiffRecyclerAdapter<T, VH : RecyclerView.ViewHolder> @JvmOverloads constructor(
         val context: Context,
         itemCallback: DiffUtil.ItemCallback<T>,
         executor: Executor? = null,
         private val headerCount: Int = 0
-) : RecyclerView.Adapter<KtViewHolder>(), DataManager<T> {
+) : RecyclerView.Adapter<VH>(), DataManager<T> {
 
     private val asyncListDiffer: AsyncListDiffer<T>
 

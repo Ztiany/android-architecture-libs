@@ -12,14 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * 如果  pager view 存在状态（比如 PhotoView），可能不适合使用此Adapter。
+ * 可复用 Pager 的 ViewPager 适配器。
  *
  * @param <T>  数据
  * @param <VH> View Holder类型
  */
 public abstract class ViewPagerAdapter<T, VH extends ViewPagerAdapter.ViewHolder> extends RecyclingPagerAdapter {
 
-    private List<T> mData;
+    private final List<T> mData;
 
     public ViewPagerAdapter(@Nullable List<T> data) {
         mData = data;

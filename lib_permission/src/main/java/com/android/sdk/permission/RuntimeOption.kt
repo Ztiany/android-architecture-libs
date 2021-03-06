@@ -1,24 +1,24 @@
 package com.android.sdk.permission
 
 import androidx.fragment.app.FragmentActivity
-import com.android.sdk.permission.utils.HostWrapper
-import com.android.sdk.permission.andpermission.AndPermissionRequest
-import com.android.sdk.permission.andpermission.AndSettingRequest
 import com.android.sdk.permission.api.PermissionRequest
 import com.android.sdk.permission.api.SettingRequest
-import com.android.sdk.permission.internal.InternalPermissionRequester
+import com.android.sdk.permission.impl.andpermission.AndPermissionRequest
+import com.android.sdk.permission.impl.andpermission.AndSettingRequest
+import com.android.sdk.permission.impl.selfstudy.InternalPermissionRequester
+import com.android.sdk.permission.utils.HostWrapper
 
 class RuntimeOption(private val hostWrapper: HostWrapper) {
 
     fun permission(vararg groups: String): PermissionRequest {
         return if (AutoPermission.isUseInternalApi()) {
-            internalPermissionRequester(groups)
+            selfPermissionRequester(groups)
         } else {
             AndPermissionRequest(hostWrapper, groups)
         }
     }
 
-    private fun internalPermissionRequester(groups: Array<out String>): InternalPermissionRequester {
+    private fun selfPermissionRequester(groups: Array<out String>): InternalPermissionRequester {
         return if (hostWrapper.fragment != null) {
             val fragmentActivity = hostWrapper.context as FragmentActivity
             InternalPermissionRequester(fragmentActivity, hostWrapper.fragment, groups)
@@ -29,7 +29,11 @@ class RuntimeOption(private val hostWrapper: HostWrapper) {
     }
 
     fun setting(): SettingRequest {
-        return AndSettingRequest(hostWrapper)
+        return if (AutoPermission.isUseInternalApi()) {
+            throw UnsupportedOperationException("Unsupported Operation")
+        } else {
+            AndSettingRequest(hostWrapper)
+        }
     }
 
 }

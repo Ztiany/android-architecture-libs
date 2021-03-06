@@ -25,11 +25,11 @@ public class BannerViewPager extends FrameLayout {
 
     private IPagerNumberView mPageNumberView;
 
-    private List<Uri> mImageUrlList = new ArrayList<>();
+    private final List<Uri> mImageUrlList = new ArrayList<>();
 
     private OnBannerPositionChangedListener mOnBannerPositionChangedListener;
 
-    private String mTransitionName;
+    private final String mTransitionName;
 
     private OnPageClickListener mOnPageClickListener;
 

@@ -163,7 +163,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
      *
      * @return layoutId
      */
-    protected abstract fun provideLayout(): Any?
+    protected open fun provideLayout(): Any? = null
 
     /**
      * after calling setContentView

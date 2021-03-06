@@ -2,6 +2,7 @@ package com.android.base.app.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.viewbinding.ViewBinding
 import com.android.base.app.ui.RefreshStateLayout
 import com.android.base.app.ui.RefreshView
 import com.android.base.app.ui.StateLayoutConfig
@@ -14,7 +15,7 @@ import com.android.base.utils.common.otherwise
  * email:    1169654504@qq.com
  * @see BaseStateFragment
  */
-abstract class BaseStateDialogFragment : BaseDialogFragment(), RefreshStateLayout {
+abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshStateLayout {
 
     private lateinit var stateLayout: RefreshableStateLayoutImpl
 
