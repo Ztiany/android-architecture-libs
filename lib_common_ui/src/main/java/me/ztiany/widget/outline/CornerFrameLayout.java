@@ -7,6 +7,9 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * only works above Android 5.0.
+ */
 public class CornerFrameLayout extends FrameLayout {
 
     public CornerFrameLayout(@NonNull Context context) {

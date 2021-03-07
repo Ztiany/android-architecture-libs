@@ -59,16 +59,15 @@ private fun <VB : ViewBinding> withGenericBindingClass(any: Any, block: (Class<V
     return block(any.findViewBindingType as Class<VB>)
 }
 
-private val Any.findViewBindingType: Type?
-
+private val Any.findViewBindingType: Type
     get() {
         var genericSuperclass = javaClass.genericSuperclass
         var superclass = javaClass.superclass
-        while (superclass != null) {
 
+        while (superclass != null) {
             if (genericSuperclass is ParameterizedType) {
                 val target = genericSuperclass.actualTypeArguments.find {
-                    it.toString().endsWith("Binding")
+                    ViewBinding::class.java.isAssignableFrom(it as Class<*>)
                 }
                 if (target != null) {
                     return target
@@ -78,5 +77,5 @@ private val Any.findViewBindingType: Type?
             superclass = superclass.superclass
         }
 
-        return null
+        throw IllegalStateException("Can't find the type of view binding form ${this::class.java.name}.")
     }

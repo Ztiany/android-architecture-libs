@@ -27,6 +27,7 @@ public class ViewHelper {
 
     public static void setViewOutline(View owner, final int radius, final int radiusSide) {
         owner.setOutlineProvider(new ViewOutlineProvider() {
+
             @Override
             @TargetApi(21)
             public void getOutline(View view, Outline outline) {
@@ -61,6 +62,7 @@ public class ViewHelper {
 
             }
         });
+
         owner.setClipToOutline(radius > 0);
         owner.invalidate();
     }
