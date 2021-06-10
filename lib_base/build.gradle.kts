@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("parcelize")
+     id("kotlin-parcelize")
     kotlin("kapt")
 }
 
@@ -24,7 +24,7 @@ android {
     }
 
     lintOptions {
-        abortOnError = false
+        isAbortOnError = false
     }
 
     compileOptions {
@@ -38,7 +38,7 @@ android {
 
     sourceSets.getByName("main") {
         java.srcDir("src/github/java")
-        resjava.srcDir("src/github/res")
+        res.srcDir("src/github/res")
     }
 
     //如果不想生成某个布局的绑定类，可以在根视图添加 tools:viewBindingIgnore="true" 属性。
@@ -54,7 +54,7 @@ dependencies {
     //测试
     testImplementation(TestLibraries.junit)
 
-    api(project(':lib_foundation'))
+    api(project(":lib_foundation"))
 
     //AndroidSupport
     api(AndroidLibraries.activity)

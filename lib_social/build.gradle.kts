@@ -2,12 +2,8 @@ plugins {
     id("com.android.library")
 }
 
-repositories {
-    flatDir { dirs("libs") }
-}
-
 android {
-   compileSdkVersion(AppConfig.compileSdkVersion)
+    compileSdkVersion(AppConfig.compileSdkVersion)
     buildToolsVersion(AppConfig.buildToolsVersion)
 
     defaultConfig {
@@ -17,14 +13,17 @@ android {
         versionName = AppConfig.versionName
     }
 
-    testOptions{
+    testOptions {
         unitTests.isReturnDefaultValues = true
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -40,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 
     implementation(AndroidLibraries.appcompat)
     implementation(AndroidLibraries.material)

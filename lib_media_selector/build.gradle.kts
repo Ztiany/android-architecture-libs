@@ -39,16 +39,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    sourceSets.getByName("main") {
-        java.srcDir("src/github/java")
-        resjava.srcDir("src/github/res")
-        java.srcDir("src/boxing/java")
-        resjava.srcDir("src/boxing/res")
-        java.srcDir("src/boxing-impl/java")
-        resjava.srcDir("src/boxing-impl/res")
-    }
-
+    
     sourceSets.getByName("main") {
         java {
             srcDir("src/github/java")
