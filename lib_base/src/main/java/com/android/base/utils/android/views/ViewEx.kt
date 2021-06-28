@@ -86,7 +86,17 @@ inline fun View.doOnLayoutAvailable(crossinline block: () -> Unit) {
         block()
     }.otherwise {
         addOnLayoutChangeListener(object : OnLayoutChangeListener {
-            override fun onLayoutChange(v: View?, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+            override fun onLayoutChange(
+                v: View?,
+                left: Int,
+                top: Int,
+                right: Int,
+                bottom: Int,
+                oldLeft: Int,
+                oldTop: Int,
+                oldRight: Int,
+                oldBottom: Int
+            ) {
                 removeOnLayoutChangeListener(this)
                 block()
             }
@@ -97,17 +107,17 @@ inline fun View.doOnLayoutAvailable(crossinline block: () -> Unit) {
 inline fun <T : View> T.onGlobalLayoutOnce(crossinline action: T.() -> Unit) {
     val t: T = this
     t.viewTreeObserver
-            .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    action.invoke(t)
-                    if (atLeast(16)) {
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    } else {
-                        @Suppress("DEPRECATION")
-                        viewTreeObserver.removeGlobalOnLayoutListener(this)
-                    }
+        .addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                action.invoke(t)
+                if (atLeast(16)) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                } else {
+                    @Suppress("DEPRECATION")
+                    viewTreeObserver.removeGlobalOnLayoutListener(this)
                 }
-            })
+            }
+        })
 }
 
 fun View.setPaddingAll(padding: Int) {
@@ -131,38 +141,65 @@ fun View.setPaddingBottom(padding: Int) {
 }
 
 fun newWWLayoutParams(): ViewGroup.LayoutParams {
-    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+    return ViewGroup.LayoutParams(
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT
+    )
 }
 
 fun newWMLayoutParams(): ViewGroup.LayoutParams {
-    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+    return ViewGroup.LayoutParams(
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+        ViewGroup.MarginLayoutParams.MATCH_PARENT
+    )
 }
 
 fun newMWLayoutParams(): ViewGroup.LayoutParams {
-    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+    return ViewGroup.LayoutParams(
+        ViewGroup.MarginLayoutParams.MATCH_PARENT,
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT
+    )
 }
 
 fun newMMLayoutParams(): ViewGroup.LayoutParams {
-    return ViewGroup.LayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+    return ViewGroup.LayoutParams(
+        ViewGroup.MarginLayoutParams.MATCH_PARENT,
+        ViewGroup.MarginLayoutParams.MATCH_PARENT
+    )
 }
 
 fun newWWMarginLayoutParams(): ViewGroup.MarginLayoutParams {
-    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+    return ViewGroup.MarginLayoutParams(
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT
+    )
 }
 
 fun newWMMarginLayoutParams(): ViewGroup.MarginLayoutParams {
-    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+    return ViewGroup.MarginLayoutParams(
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+        ViewGroup.MarginLayoutParams.MATCH_PARENT
+    )
 }
 
 fun newMWMarginLayoutParams(): ViewGroup.MarginLayoutParams {
-    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+    return ViewGroup.MarginLayoutParams(
+        ViewGroup.MarginLayoutParams.MATCH_PARENT,
+        ViewGroup.MarginLayoutParams.WRAP_CONTENT
+    )
 }
 
 fun newMMMarginLayoutParams(): ViewGroup.MarginLayoutParams {
-    return ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.MarginLayoutParams.MATCH_PARENT)
+    return ViewGroup.MarginLayoutParams(
+        ViewGroup.MarginLayoutParams.MATCH_PARENT,
+        ViewGroup.MarginLayoutParams.MATCH_PARENT
+    )
 }
 
-fun View.setTopMargin(topMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
+fun View.setTopMargin(
+    topMargin: Int,
+    layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null
+) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.topMargin = topMargin
@@ -173,7 +210,10 @@ fun View.setTopMargin(topMargin: Int, layoutParamsCreator: (() -> ViewGroup.Marg
     }
 }
 
-fun View.setBottomMargin(bottomMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
+fun View.setBottomMargin(
+    bottomMargin: Int,
+    layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null
+) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.bottomMargin = bottomMargin
@@ -184,7 +224,10 @@ fun View.setBottomMargin(bottomMargin: Int, layoutParamsCreator: (() -> ViewGrou
     }
 }
 
-fun View.setLeftMargin(leftMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
+fun View.setLeftMargin(
+    leftMargin: Int,
+    layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null
+) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.leftMargin = leftMargin
@@ -195,7 +238,10 @@ fun View.setLeftMargin(leftMargin: Int, layoutParamsCreator: (() -> ViewGroup.Ma
     }
 }
 
-fun View.setRightMargin(rightMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
+fun View.setRightMargin(
+    rightMargin: Int,
+    layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null
+) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.rightMargin = rightMargin
@@ -206,7 +252,13 @@ fun View.setRightMargin(rightMargin: Int, layoutParamsCreator: (() -> ViewGroup.
     }
 }
 
-fun View.setMargins(leftMargin: Int, topMargin: Int, rightMargin: Int, bottomMargin: Int, layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null) {
+fun View.setMargins(
+    leftMargin: Int,
+    topMargin: Int,
+    rightMargin: Int,
+    bottomMargin: Int,
+    layoutParamsCreator: (() -> ViewGroup.MarginLayoutParams)? = null
+) {
     val params: ViewGroup.LayoutParams? = layoutParams
     if (params is ViewGroup.MarginLayoutParams) {
         params.rightMargin = rightMargin
@@ -256,8 +308,8 @@ fun View.onClickObservable(): Observable<Unit> {
 
 fun View.onClickObservable(milliseconds: Long): Observable<Unit> {
     return clicks()
-            .throttleFirst(milliseconds, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
+        .throttleFirst(milliseconds, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
 }
 
 inline val ViewGroup.views get() = (0 until childCount).map { getChildAt(it) }
@@ -279,8 +331,9 @@ fun View.measureSelfWithScreenSize(): Boolean {
         return false
     }
     measure(
-            View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenWidth(), View.MeasureSpec.AT_MOST),
-            View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenHeight(), View.MeasureSpec.AT_MOST))
+        View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenWidth(), View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenHeight(), View.MeasureSpec.AT_MOST)
+    )
     return true
 }
 
@@ -290,8 +343,9 @@ fun View.measureSelf(width: Int, height: Int): Boolean {
         return false
     }
     measure(
-            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.AT_MOST),
-            View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.AT_MOST))
+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.AT_MOST)
+    )
     return true
 }
 
@@ -416,5 +470,12 @@ private fun doAction(action: Int, vararg views: View) {
             ACTION_ENABLE -> view.isEnabled = true
             ACTION_DISABLE -> view.isEnabled = false
         }
+    }
+}
+
+fun View.removeFromTree() {
+    val viewParent = parent
+    if (viewParent != null && viewParent is ViewGroup) {
+        viewParent.removeView(this)
     }
 }

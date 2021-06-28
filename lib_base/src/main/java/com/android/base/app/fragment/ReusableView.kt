@@ -1,7 +1,9 @@
 package com.android.base.app.fragment
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.android.base.utils.android.views.removeFromTree
 
 /**
  *@author Ztiany
@@ -10,37 +12,53 @@ import android.view.ViewGroup
  */
 class ReusableView {
 
+    var reuseTheView = false
+
     private var layoutView: View? = null
+    private var cachedView: View? = null
 
-    var cachedView: View? = null
-    var reuseTheView: Boolean = false
+    private var previousParams: Any? = null
 
-    private fun createFragmentLayoutCached(factory: () -> View): View? {
-        if (cachedView == null) {
-            val layout = createFragmentLayout(factory)
-            cachedView = layout
-            return layout
-        }
+    private fun createFragmentLayoutCached(
+        providedLayout: Any?,
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): View? {
 
-        cachedView?.run {
-            val viewParent = parent
-            if (viewParent != null && viewParent is ViewGroup) {
-                viewParent.removeView(this)
-            }
-        }
+        var view = cachedView
 
-        return cachedView
-    }
-
-    private fun createFragmentLayout(factory: () -> View): View {
-        return factory()
-    }
-
-    fun createView(factory: () -> View): View? {
-        return if (reuseTheView) {
-            createFragmentLayoutCached(factory)
+        return if (view == null || providedLayout != previousParams) {
+            view = createFragmentLayout(providedLayout, inflater, container)
+            cachedView = view
+            view
         } else {
-            createFragmentLayout(factory)
+            view.removeFromTree()
+            view
+        }
+
+    }
+
+    private fun createFragmentLayout(
+        providedLayout: Any?,
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): View? {
+
+        previousParams = providedLayout
+
+        return when (providedLayout) {
+            null -> null
+            is Int -> inflater.inflate(providedLayout, container, false)
+            is View -> providedLayout
+            else -> throw IllegalArgumentException("Here you should provide  a  layout id  or a View")
+        }
+    }
+
+    fun createView(provideLayout: Any?, inflater: LayoutInflater, container: ViewGroup?): View? {
+        return if (reuseTheView) {
+            createFragmentLayoutCached(provideLayout, inflater, container)
+        } else {
+            createFragmentLayout(provideLayout, inflater, container)
         }
     }
 
@@ -50,6 +68,14 @@ class ReusableView {
             return true
         }
         return false
+    }
+
+    fun destroyView() {
+        if (!reuseTheView) {
+            layoutView = null
+            cachedView = null
+            previousParams = null
+        }
     }
 
 }

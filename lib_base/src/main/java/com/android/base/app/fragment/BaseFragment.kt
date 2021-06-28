@@ -27,7 +27,8 @@ import timber.log.Timber
  * date :   2016-03-19 23:09
  * email:    1169654504@qq.com
  */
-open class BaseFragment : Fragment(),  OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
+open class BaseFragment : Fragment(), OnBackPressListener, FragmentDelegateOwner,
+    AutoDisposeLifecycleOwnerEx {
 
     private val fragmentDelegates by lazy { FragmentDelegates(this) }
 
@@ -58,7 +59,11 @@ open class BaseFragment : Fragment(),  OnBackPressListener, FragmentDelegateOwne
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         Timber.tag(tag()).d("-->onCreateView  savedInstanceState = %s", savedInstanceState)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -135,7 +140,11 @@ open class BaseFragment : Fragment(),  OnBackPressListener, FragmentDelegateOwne
         fragmentDelegates.onHiddenChanged(hidden)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         fragmentDelegates.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -165,7 +174,7 @@ open class BaseFragment : Fragment(),  OnBackPressListener, FragmentDelegateOwne
     }
 
     /**
-     * Fragment需要自己处理BackPress事件，如果不处理，就交给子Fragment处理。都不处理则由Activity处理
+     * Fragment需要自己处理BackPress事件，如果不处理，就交给子Fragment处理，都不处理则由Activity处理。
      */
     protected open fun handleBackPress(): Boolean {
         return false

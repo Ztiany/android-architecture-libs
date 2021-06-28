@@ -25,7 +25,8 @@ import timber.log.Timber
  * email:    1169654504@qq.com
  * @see [BaseFragment]
  */
-open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
+open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener,
+    FragmentDelegateOwner, AutoDisposeLifecycleOwnerEx {
 
     private val fragmentDelegates by lazy { FragmentDelegates(this) }
 
@@ -56,13 +57,11 @@ open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, 
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
-    /**
-     * @return provide  a  layout id
-     */
-    @LayoutRes
-    protected open fun provideLayout(): Int = 0
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         Timber.tag(tag()).d("-->onCreateView  savedInstanceState = %s", savedInstanceState)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -139,7 +138,11 @@ open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, 
         fragmentDelegates.onHiddenChanged(hidden)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         fragmentDelegates.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -169,7 +172,7 @@ open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, 
     }
 
     /**
-     * Fragment需要自己处理BackPress事件，如果不处理，就交给子Fragment处理。都不处理则由Activity处理
+     * Fragment需要自己处理BackPress事件，如果不处理，就交给子Fragment处理，都不处理则由Activity处理。
      */
     protected open fun handleBackPress(): Boolean {
         return false

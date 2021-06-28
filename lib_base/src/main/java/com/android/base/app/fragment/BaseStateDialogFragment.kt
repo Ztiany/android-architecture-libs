@@ -15,7 +15,7 @@ import com.android.base.utils.common.otherwise
  * email:    1169654504@qq.com
  * @see BaseStateFragment
  */
-abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshStateLayout {
+abstract class BaseStateDialogFragment : BaseUIDialogFragment(), RefreshStateLayout {
 
     private lateinit var stateLayout: RefreshableStateLayoutImpl
 

@@ -15,7 +15,7 @@ import com.android.base.foundation.adapter.DataManager
  *      Date : 2019-03-26 15:06
  *@see [BaseListV2Fragment]
  */
-abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListV2DialogFragment<T> : BaseUIDialogFragment(), RefreshListLayout<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
@@ -83,7 +83,8 @@ abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragm
         return _paging
     }
 
-    override fun loadMoreCompleted(hasMore: Boolean) = stateLayout.refreshView.loadMoreCompleted(hasMore)
+    override fun loadMoreCompleted(hasMore: Boolean) =
+        stateLayout.refreshView.loadMoreCompleted(hasMore)
 
     override fun loadMoreFailed() = stateLayout.refreshView.loadMoreFailed()
 

@@ -19,7 +19,7 @@ import com.ztiany.loadmore.adapter.WrapperAdapter
  * date :   2016-03-19 23:09
  * email:    1169654504@qq.com
  */
-abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListFragment<T> : BaseStateFragment(), RefreshListLayout<T> {
 
     /**加载更多*/
     private var loadMore: ILoadMore? = null
@@ -42,9 +42,9 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
     }
 
     protected fun setupLoadMore(
-            recyclerAdapter: Adapter<*>,
-            standardPagingNumber: Boolean = true,
-            paging: Paging = AutoPaging(this, dataManager)
+        recyclerAdapter: Adapter<*>,
+        standardPagingNumber: Boolean = true,
+        paging: Paging = AutoPaging(this, dataManager)
     ): Adapter<*> {
         this.paging = paging
 

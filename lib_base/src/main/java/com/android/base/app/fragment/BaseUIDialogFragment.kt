@@ -5,35 +5,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import androidx.viewbinding.ViewBinding
 import com.android.base.app.Sword
+import com.android.base.app.fragment.animator.FragmentAnimatorHelper
 import com.android.base.app.ui.LoadingView
-import com.android.base.app.ui.inflateBindingWithParameterizedType
 
 /**
  *@author Ztiany
  *      Email: ztiany3@gmail.com
  *      Date : 2021-03-06 23:00
  */
-abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), LoadingView {
+abstract class BaseUIDialogFragment : BaseDialogFragment(), LoadingView {
 
-    private var loadingView: LoadingView? = null
+    private var fragmentAnimatorHelper: FragmentAnimatorHelper? = null
 
     private var recentShowingDialogTime: Long = 0
 
-    private var _layout: VB? = null
-
-    val layout: VB get() = _layout!!
+    private var loadingView: LoadingView? = null
 
     private val reuseView by lazy { ReusableView() }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val factory = {
-            _layout = inflateBindingWithParameterizedType(layoutInflater, container, false)
-            layout.root
-        }
-        return reuseView.createView(factory)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return reuseView.createView(provideLayout(), inflater, container)
     }
+
+    /**
+     * @return provide a layout id or a View
+     */
+    abstract fun provideLayout(): Any?
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (reuseView.isNotTheSameView(view)) {
@@ -57,21 +59,18 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
      * 2. The reason it exist is that Hilt can not work properly when passing a default value to Fragment's constructor. In details, the default value is commonly a layout id.
      * 3. 缓存 Fragment 的 View，默认为不缓存，可能在某些特点场景下才会需要用到，设置为缓存可能有未知的问题。
      */
-    protected fun setReuseView() {
-        reuseView.reuseTheView = true
+    protected fun setReuseView(reuseTheView: Boolean) {
+        reuseView.reuseTheView = reuseTheView
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (!reuseView.reuseTheView) {
-            _layout = null
-        }
+        reuseView.destroyView()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         dismissLoadingDialog()
-        _layout = null
     }
 
     protected open fun onCreateLoadingView(): LoadingView? {
@@ -84,9 +83,9 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
             loadingViewImpl
         } else {
             loadingView = onCreateLoadingView()
-                    ?: Sword.loadingViewFactory?.invoke(requireContext())
+                ?: Sword.loadingViewFactory?.invoke(requireContext())
             loadingView
-                    ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
+                ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
         }
     }
 
