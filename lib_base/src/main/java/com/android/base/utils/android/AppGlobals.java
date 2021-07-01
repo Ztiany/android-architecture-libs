@@ -11,9 +11,7 @@ public class AppGlobals {
     public static Application getApplication() {
         if (sApplication == null) {
             try {
-                sApplication = (Application) Class.forName("android.app.ActivityThread")
-                        .getMethod("currentApplication")
-                        .invoke(null, (Object[]) null);
+                sApplication = (Application) Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null, (Object[]) null);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {

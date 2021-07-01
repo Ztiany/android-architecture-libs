@@ -30,7 +30,7 @@ object Sword {
     private val androidComponentLifecycleInjector = AndroidComponentLifecycleInjector()
 
     /** Application lifecycle delegate */
-    internal val applicationDelegate = ApplicationDelegate(androidComponentLifecycleInjector)
+    val coreAppDelegate = ApplicationDelegate(androidComponentLifecycleInjector)
 
     /** 错误类型分类器 */
     var errorClassifier: ErrorClassifier? = null
@@ -52,7 +52,7 @@ object Sword {
     fun networkState(): Flowable<NetworkState> = NetworkState.observableState()
 
     fun setCrashProcessor(crashProcessor: CrashProcessor): Sword {
-        applicationDelegate.setCrashProcessor(crashProcessor)
+        coreAppDelegate.setCrashProcessor(crashProcessor)
         return this
     }
 
@@ -95,7 +95,7 @@ object Sword {
 
     /** 获取可观察的 app 生命周期，发射 true 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
     val appState: Flowable<Boolean>
-        get() = applicationDelegate.appStatus
+        get() = coreAppDelegate.appStatus
 
     /** 获取当前 resume 的 Activity */
     val topActivity: Activity?
@@ -127,11 +127,8 @@ interface ErrorClassifier {
 }
 
 interface DelegateInjector {
-
     fun injectFragmentDelegate(fragment: FragmentDelegateOwner)
-
     fun injectActivityDelegate(activity: ActivityDelegateOwner)
-
 }
 
 interface ErrorConvert {

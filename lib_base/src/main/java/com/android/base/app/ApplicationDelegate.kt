@@ -20,9 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Email: ztiany3@gmail.com
  * Date : 2018-10-12 18:19
  */
-internal class ApplicationDelegate internal constructor(private val androidComponentLifecycleInjector: AndroidComponentLifecycleInjector) {
+class ApplicationDelegate internal constructor(
+    private val androidComponentLifecycleInjector: AndroidComponentLifecycleInjector
+) {
 
-    lateinit var application: Application
+    private lateinit var application: Application
 
     private lateinit var crashHandler: CrashHandler
 
@@ -30,6 +32,7 @@ internal class ApplicationDelegate internal constructor(private val androidCompo
     val appStatus: BehaviorProcessor<Boolean> = BehaviorProcessor.create()
 
     private val onCreateCalled = AtomicBoolean(false)
+
     private val onAttachBaseCalled = AtomicBoolean(false)
 
     fun attachBaseContext(base: Context) {
@@ -44,10 +47,13 @@ internal class ApplicationDelegate internal constructor(private val androidCompo
         //异常日志记录
         crashHandler = CrashHandler.register(application)
         //网络状态
-        application.registerReceiver(NetStateReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        application.registerReceiver(
+            NetStateReceiver(),
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
         //App前台后台
         listenActivityLifecycleCallbacks()
-        //声明周期回调
+        //生命周期回调
         application.registerActivityLifecycleCallbacks(androidComponentLifecycleInjector)
     }
 

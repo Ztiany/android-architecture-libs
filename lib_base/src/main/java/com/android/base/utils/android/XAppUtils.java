@@ -1,5 +1,6 @@
 package com.android.base.utils.android;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import timber.log.Timber;
 
 /**
@@ -124,6 +129,37 @@ public class XAppUtils {
             }
         }
         return isRunning;
+    }
+
+    public static void restartApp(Activity activity, Class<? extends Activity> target) {
+        Intent intent = new Intent(activity, target);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    /**
+     * Activity 分发结果给 Fragment【特定场景下才需要，比如 ARouter 不支持 Fragment.startActivityForResult()】
+     */
+    public static void dispatchActivityResult(FragmentActivity activity, int requestCode, int resultCode, Intent data) {
+        dispatchActivityResult(activity.getSupportFragmentManager(), requestCode, resultCode, data);
+    }
+
+    /**
+     * Activity 分发结果给 Fragment【特定场景下才需要，比如 ARouter 不支持 Fragment.startActivityForResult()】
+     */
+    public static void dispatchActivityResult(FragmentManager fragmentManager, int requestCode, int resultCode, Intent data) {
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if (fragments.isEmpty()) {
+            return;
+        }
+        for (Fragment fragment : fragments) {
+            if (fragment != null) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+                dispatchActivityResult(fragment.getChildFragmentManager(), requestCode, resultCode, data);
+            }
+        }
     }
 
 }

@@ -8,32 +8,32 @@ open class BaseAppContext : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        Sword.applicationDelegate.attachBaseContext(base)
+        Sword.coreAppDelegate.attachBaseContext(base)
     }
 
     override fun onCreate() {
         super.onCreate()
-        Sword.applicationDelegate.onCreate(this)
+        Sword.coreAppDelegate.onCreate(this)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        Sword.applicationDelegate.onLowMemory()
+        Sword.coreAppDelegate.onLowMemory()
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        Sword.applicationDelegate.onTrimMemory(level)
+        Sword.coreAppDelegate.onTrimMemory(level)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Sword.applicationDelegate.onConfigurationChanged(newConfig)
+        Sword.coreAppDelegate.onConfigurationChanged(newConfig)
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        Sword.applicationDelegate.onTerminate()
+        Sword.coreAppDelegate.onTerminate()
     }
 
 }
