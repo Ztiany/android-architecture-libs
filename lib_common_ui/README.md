@@ -12,6 +12,7 @@ GitHub 开源项目原始地址：
 - [ViewPagerIndicator](https://github.com/JakeWharton/ViewPagerIndicator)
 - [GestureLockView](https://github.com/sinawangnan7/GestureLockView)
 - [SwitchButton](https://github.com/kyleduo/SwitchButton)
+- [RcLayout](https://github.com/GcsSloop/rclayout)
 
 ## 2 使用方式
 
