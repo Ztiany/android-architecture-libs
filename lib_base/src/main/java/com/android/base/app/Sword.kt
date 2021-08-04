@@ -2,6 +2,8 @@ package com.android.base.app
 
 import android.app.Activity
 import android.content.Context
+import com.android.base.app.componentize.AndroidComponentLifecycleInjector
+import com.android.base.app.componentize.ApplicationDelegate
 import com.android.base.app.fragment.animator.FragmentAnimator
 import com.android.base.app.fragment.tools.FragmentConfig
 import com.android.base.app.ui.LoadingView

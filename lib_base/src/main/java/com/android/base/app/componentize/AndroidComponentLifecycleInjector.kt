@@ -1,4 +1,4 @@
-package com.android.base.app
+package com.android.base.app.componentize
 
 import android.app.Activity
 import android.content.Context
@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.android.base.app.DelegateInjector
 import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.interfaces.ActivityLifecycleCallbacksAdapter

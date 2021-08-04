@@ -1,4 +1,4 @@
-package com.android.base.componentization
+package com.android.base.app.componentize
 
 import android.app.Application
 import android.content.Context

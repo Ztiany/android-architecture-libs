@@ -1,4 +1,4 @@
-package com.android.base.app
+package com.android.base.app.componentize
 
 import android.app.Activity
 import android.app.Application
@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.ConnectivityManager
+import com.android.base.app.CrashProcessor
 import com.android.base.app.utils.CrashHandler
 import com.android.base.receiver.NetStateReceiver
 import com.android.base.utils.BaseUtils
