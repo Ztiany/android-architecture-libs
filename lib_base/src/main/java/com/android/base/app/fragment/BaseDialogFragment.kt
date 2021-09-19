@@ -6,14 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.annotation.StringRes
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatDialogFragment
-import com.android.base.app.Sword
 import com.android.base.app.activity.BackHandlerHelper
 import com.android.base.app.activity.OnBackPressListener
-import com.android.base.app.ui.LoadingView
 import com.android.base.foundation.fragment.FragmentDelegate
 import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx

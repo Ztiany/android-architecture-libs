@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
-import com.android.base.app.Sword
+import com.android.base.AndroidSword
 import com.android.base.app.fragment.animator.FragmentAnimatorHelper
 import com.android.base.app.ui.LoadingView
 
@@ -83,7 +83,7 @@ abstract class BaseUIDialogFragment : BaseDialogFragment(), LoadingView {
             loadingViewImpl
         } else {
             loadingView = onCreateLoadingView()
-                ?: Sword.loadingViewFactory?.invoke(requireContext())
+                ?: AndroidSword.loadingViewFactory?.invoke(requireContext())
             loadingView
                 ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
         }

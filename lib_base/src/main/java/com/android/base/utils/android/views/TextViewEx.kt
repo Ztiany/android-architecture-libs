@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import com.android.base.interfaces.TextWatcherAdapter
+import com.android.base.adaption.TextWatcherAdapter
 import com.google.android.material.textfield.TextInputLayout
 import java.util.regex.Pattern
 

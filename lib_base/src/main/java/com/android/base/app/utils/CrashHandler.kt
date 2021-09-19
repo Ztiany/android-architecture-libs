@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Process
-import com.android.base.app.CrashProcessor
+import com.android.base.CrashProcessor
 import com.blankj.utilcode.util.AppUtils
 import timber.log.Timber
 import java.io.File

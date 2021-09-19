@@ -4,13 +4,13 @@ package com.android.base.app.ui
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import com.android.base.app.Sword
+import com.android.base.AndroidSword
 import com.android.base.data.Resource
 import androidx.lifecycle.observe as xObserve
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------
 fun LoadingView.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
-    dismissLoadingDialog(Sword.minimumShowingDialogMills, onDismiss)
+    dismissLoadingDialog(AndroidSword.minimumShowingDialogMills, onDismiss)
 }
 
 class ResourceHandlerBuilder<T> {
@@ -53,7 +53,7 @@ fun <H, T> H.handleLiveData(
                     if (onError != null) {
                         onError(state.error())
                     } else {
-                        showMessage(Sword.errorConvert.convert(state.error()))
+                        showMessage(AndroidSword.errorConvert.convert(state.error()))
                     }
                 }
             }
@@ -113,7 +113,7 @@ fun RefreshStateLayout.handleResultError(throwable: Throwable) {
     if (isRefreshing) {
         refreshCompleted()
     }
-    val errorTypeClassifier = Sword.errorClassifier
+    val errorTypeClassifier = AndroidSword.errorClassifier
     if (errorTypeClassifier != null) {
         when {
             errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
@@ -161,7 +161,7 @@ fun RefreshListLayout<*>.handleListError(throwable: Throwable) {
         loadMoreFailed()
     }
     if (isEmpty()) {
-        val errorTypeClassifier = Sword.errorClassifier
+        val errorTypeClassifier = AndroidSword.errorClassifier
         if (errorTypeClassifier != null) {
             when {
                 errorTypeClassifier.isNetworkError(throwable) -> showNetErrorLayout()
