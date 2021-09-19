@@ -57,9 +57,7 @@ dependencies {
     api(project(":lib_foundation"))
 
     //AndroidSupport
-    api(AndroidLibraries.activity)
     api(AndroidLibraries.activityKtx)
-    api(AndroidLibraries.fragment)
     api(AndroidLibraries.fragmentKtx)
     api(AndroidLibraries.appcompat)
     api(AndroidLibraries.recyclerView)
@@ -68,7 +66,7 @@ dependencies {
     api(AndroidLibraries.swiperefreshlayout)
     api(AndroidLibraries.material)
     api(AndroidLibraries.viewpager2)
-    api(AndroidLibraries.annotations)
+    compileOnly(AndroidLibraries.annotations)
 
     //AAC
     api(AndroidLibraries.archRuntime)
@@ -78,12 +76,10 @@ dependencies {
     api(AndroidLibraries.lifecycleCommonJava8)
     api(AndroidLibraries.lifecycleRuntimeKtx)
     api(AndroidLibraries.lifecycleLiveDataCore)
-    api(AndroidLibraries.lifecycleLiveData)
     api(AndroidLibraries.lifecycleLiveKtx)
-    api(AndroidLibraries.lifecycleViewModel)
     api(AndroidLibraries.lifecycleViewModelKtx)
-    api(AndroidLibraries.lifecycleExtensions)
     api(AndroidLibraries.lifecycleReactiveStreams)
+    api(AndroidLibraries.lifecycleProcess)
 
     //Kotlin
     api(KotlinLibraries.kotlinStdlib)

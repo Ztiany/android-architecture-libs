@@ -2,7 +2,6 @@ package com.android.base.app
 
 import android.app.Activity
 import android.content.Context
-import com.android.base.app.componentize.AndroidComponentLifecycleInjector
 import com.android.base.app.componentize.ApplicationDelegate
 import com.android.base.app.fragment.animator.FragmentAnimator
 import com.android.base.app.fragment.tools.FragmentConfig
@@ -11,8 +10,6 @@ import com.android.base.app.ui.Paging
 import com.android.base.app.ui.RefreshLoadViewFactory
 import com.android.base.app.ui.RefreshLoadViewFactory.Factory
 import com.android.base.app.ui.RefreshViewFactory
-import com.android.base.foundation.activity.ActivityDelegateOwner
-import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.receiver.NetworkState
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
@@ -29,10 +26,8 @@ import timber.log.Timber
  */
 object Sword {
 
-    private val androidComponentLifecycleInjector = AndroidComponentLifecycleInjector()
-
     /** Application lifecycle delegate */
-    val coreAppDelegate = ApplicationDelegate(androidComponentLifecycleInjector)
+    val coreAppDelegate = ApplicationDelegate()
 
     /** 错误类型分类器 */
     var errorClassifier: ErrorClassifier? = null
@@ -90,11 +85,6 @@ object Sword {
         return this
     }
 
-    fun setDelegateInjector(delegateInjector: DelegateInjector): Sword {
-        androidComponentLifecycleInjector.delegateInjector = delegateInjector
-        return this
-    }
-
     /** 获取可观察的 app 生命周期，发射 true 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
     val appState: Flowable<Boolean>
         get() = coreAppDelegate.appStatus
@@ -126,11 +116,6 @@ interface CrashProcessor {
 interface ErrorClassifier {
     fun isNetworkError(throwable: Throwable): Boolean
     fun isServerError(throwable: Throwable): Boolean
-}
-
-interface DelegateInjector {
-    fun injectFragmentDelegate(fragment: FragmentDelegateOwner)
-    fun injectActivityDelegate(activity: ActivityDelegateOwner)
 }
 
 interface ErrorConvert {

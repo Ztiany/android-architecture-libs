@@ -35,7 +35,7 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(ThirdLibraries.andPermission)
-    implementation(AndroidLibraries.fragment)
+    implementation(AndroidLibraries.fragmentKtx)
     implementation(ThirdLibraries.timber)
     implementation(KotlinLibraries.kotlinStdlib)
     implementation(AndroidLibraries.lifecycleCommonJava8)

@@ -1,6 +1,8 @@
 package com.android.base.app.activity
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.UiThread
@@ -10,6 +12,7 @@ import com.android.base.foundation.activity.ActivityDelegate
 import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.activity.ActivityState
 import com.android.base.rx.autodispose.AutoDisposeLifecycleOwnerEx
+import com.android.base.utils.android.ScreenAdaptation
 import com.android.base.utils.android.compat.AndroidVersion
 import timber.log.Timber
 
@@ -24,7 +27,8 @@ import timber.log.Timber
  * Date : 2016-05-04 15:40
  * Email: 1169654504@qq.com
  */
-abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDisposeLifecycleOwnerEx {
+abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner,
+    AutoDisposeLifecycleOwnerEx {
 
     @Suppress("LeakingThis")
     private val activityDelegates = ActivityDelegates(this)
@@ -119,7 +123,11 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
         activityDelegates.callOnActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         activityDelegates.callOnRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -188,6 +196,20 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner, AutoDi
         } else {
             activityState === ActivityState.DESTROY
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 字体大小适配【忽略字体大小】
+    ///////////////////////////////////////////////////////////////////////////
+    private val screenAdaptation by lazy { ScreenAdaptation(this) }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        screenAdaptation.onConfigurationChanged(newConfig)
+        super.onConfigurationChanged(newConfig)
+    }
+
+    override fun getResources(): Resources {
+        return screenAdaptation.fixResources(super.getResources())
     }
 
 }

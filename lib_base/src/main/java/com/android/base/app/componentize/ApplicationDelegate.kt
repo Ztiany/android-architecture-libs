@@ -21,9 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Email: ztiany3@gmail.com
  * Date : 2018-10-12 18:19
  */
-class ApplicationDelegate internal constructor(
-    private val androidComponentLifecycleInjector: AndroidComponentLifecycleInjector
-) {
+class ApplicationDelegate internal constructor() {
 
     private lateinit var application: Application
 
@@ -54,8 +52,6 @@ class ApplicationDelegate internal constructor(
         )
         //App前台后台
         listenActivityLifecycleCallbacks()
-        //生命周期回调
-        application.registerActivityLifecycleCallbacks(androidComponentLifecycleInjector)
     }
 
     fun onTerminate() {}

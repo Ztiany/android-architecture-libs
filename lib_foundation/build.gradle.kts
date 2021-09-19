@@ -38,9 +38,8 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    compileOnly(AndroidLibraries.activity)
     compileOnly(AndroidLibraries.activityKtx)
-    compileOnly(AndroidLibraries.fragment)
+    compileOnly(AndroidLibraries.fragmentKtx)
 
     compileOnly(KotlinLibraries.kotlinStdlib)
 
