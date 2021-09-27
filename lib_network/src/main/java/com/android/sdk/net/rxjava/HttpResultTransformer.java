@@ -1,19 +1,19 @@
 package com.android.sdk.net.rxjava;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.android.sdk.net.NetContext;
-import com.android.sdk.net.core.result.DataExtractor;
-import com.android.sdk.net.core.result.ExceptionFactory;
-import com.android.sdk.net.core.result.Result;
 import com.android.sdk.net.core.exception.ApiErrorException;
 import com.android.sdk.net.core.exception.NetworkErrorException;
 import com.android.sdk.net.core.exception.ServerErrorException;
 import com.android.sdk.net.core.provider.ApiHandler;
+import com.android.sdk.net.core.result.ExceptionFactory;
+import com.android.sdk.net.core.result.Result;
 
 import org.reactivestreams.Publisher;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
 import io.reactivex.Observable;
@@ -28,7 +28,8 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
 
     private final boolean mRequireNonNullData;
     private final DataExtractor<Downstream, Upstream> mDataExtractor;
-    @Nullable private final ExceptionFactory mExceptionFactory;
+    @Nullable
+    private final ExceptionFactory mExceptionFactory;
 
     public HttpResultTransformer(
             boolean requireNonNullData,

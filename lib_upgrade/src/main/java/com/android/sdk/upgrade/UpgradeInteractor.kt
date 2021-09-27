@@ -2,9 +2,7 @@ package com.android.sdk.upgrade
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.android.sdk.upgrade.UpgradeException
-import com.android.sdk.upgrade.UpgradeInfo
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -16,16 +14,32 @@ import java.io.File
 interface UpgradeInteractor {
 
     /**when this method called, you should to ask server if there is a new version.*/
-    fun checkUpgrade(): Flowable<UpgradeInfo>
+    fun checkUpgrade(): Flow<UpgradeInfo>
 
     /**a dialog used to show information about information of new apk.*/
-    fun showUpgradeDialog(context: Context, upgradeInfo: UpgradeInfo, onCancel: () -> Unit, onConfirm: () -> Unit)
+    fun showUpgradeDialog(
+        context: Context,
+        upgradeInfo: UpgradeInfo,
+        onCancel: () -> Unit,
+        onConfirm: () -> Unit
+    )
 
     /**a dialog used to ask user to install the downloaded apk.*/
-    fun showInstallTipsDialog(context: Context, forceUpgrade: Boolean, onCancel: () -> Unit, onConfirm: () -> Unit)
+    fun showInstallTipsDialog(
+        context: Context,
+        forceUpgrade: Boolean,
+        onCancel: () -> Unit,
+        onConfirm: () -> Unit
+    )
 
     /**a loading dialog used to notice the user the downloading is failed*/
-    fun showDownloadingFailed(context: Context, forceUpgrade: Boolean, error: UpgradeException, onCancel: () -> Unit, onConfirm: () -> Unit)
+    fun showDownloadingFailed(
+        context: Context,
+        forceUpgrade: Boolean,
+        error: UpgradeException,
+        onCancel: () -> Unit,
+        onConfirm: () -> Unit
+    )
 
     /**a loading dialog used to notice the user it is downloading the new apk.*/
     fun showDownloadingDialog(context: Context, forceUpgrade: Boolean)

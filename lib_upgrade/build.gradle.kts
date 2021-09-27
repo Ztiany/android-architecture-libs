@@ -44,10 +44,9 @@ dependencies {
     implementation(AndroidLibraries.ktx)
 
     implementation(KotlinLibraries.kotlinStdlib)
+    implementation(KotlinLibraries.kotlinCoroutines)
 
     implementation(ThirdLibraries.timber)
     implementation(ThirdLibraries.okHttp)
-    implementation(ThirdLibraries.rxJava)
-    implementation(ThirdLibraries.rxAndroid)
     implementation(ThirdLibraries.utilcode)
 }

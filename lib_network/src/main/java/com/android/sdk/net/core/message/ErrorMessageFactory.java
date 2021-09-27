@@ -1,4 +1,4 @@
-package com.android.sdk.net.core.errorhandler;
+package com.android.sdk.net.core.message;
 
 import android.text.TextUtils;
 

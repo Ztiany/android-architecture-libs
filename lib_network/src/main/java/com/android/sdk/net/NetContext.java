@@ -1,18 +1,19 @@
 package com.android.sdk.net;
 
-import com.android.sdk.net.core.result.ExceptionFactory;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 import com.android.sdk.net.core.provider.ErrorDataAdapter;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.HttpConfig;
 import com.android.sdk.net.core.provider.NetworkChecker;
-import com.android.sdk.net.rxjava.RxResultPostTransformer;
+import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.service.ServiceFactory;
 import com.android.sdk.net.core.service.ServiceHelper;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import okhttp3.OkHttpClient;
 
 /**
@@ -73,7 +74,7 @@ public class NetContext {
 
     public static class Builder {
 
-        private NetProviderImpl mNetProvider = new NetProviderImpl();
+        private final NetProviderImpl mNetProvider = new NetProviderImpl();
 
         public Builder aipHandler(@NonNull ApiHandler apiHandler) {
             mNetProvider.mApiHandler = apiHandler;

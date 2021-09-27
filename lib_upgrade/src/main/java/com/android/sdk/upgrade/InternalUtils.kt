@@ -6,8 +6,7 @@ import java.io.Closeable
 import java.io.File
 
 internal fun File.makeParentPath(): Boolean {
-    val path = this.parentFile
-    return path.exists() || makeDir(path)
+    return makeDir(this.parentFile)
 }
 
 private fun makeDir(file: File?): Boolean {

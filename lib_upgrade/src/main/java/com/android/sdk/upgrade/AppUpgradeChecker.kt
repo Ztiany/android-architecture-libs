@@ -8,7 +8,11 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.ServiceUtils
 import com.blankj.utilcode.util.Utils
-import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.plus
 import java.io.File
 
 /**
@@ -68,40 +72,46 @@ object AppUpgradeChecker {
     }
 
     data class CheckingState(
-            val isLoading: Boolean = false,
-            val isDownloading: Boolean = false,
-            val error: Throwable? = null,
-            val upgradeInfo: UpgradeInfo? = null
+        val isLoading: Boolean = false,
+        val isDownloading: Boolean = false,
+        val error: Throwable? = null,
+        val upgradeInfo: UpgradeInfo? = null
     )
 
     @SuppressLint("CheckResult")
-    fun checkAppUpgrade(justOnce: Boolean = true): LiveData<CheckingState> {
+    fun checkAppUpgrade(
+        scope: CoroutineScope = (GlobalScope + Dispatchers.Main),
+        justOnce: Boolean = true
+    ): LiveData<CheckingState> {
         val liveData = MutableLiveData<CheckingState>()
+
         /*已经检查过了*/
         if (justOnce && succeededOnce) {
             return liveData
         }
+
         /*正在下载*/
         if (isUpgradeServiceRunning) {
             liveData.postValue(CheckingState(isDownloading = true))
             return liveData
         }
+
         /*执行检测*/
+        // TODO: 2021/9/27 test the code.
         upgradeInteractor.checkUpgrade()
-                .doOnSubscribe {
-                    liveData.postValue(CheckingState(isLoading = true))
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { upgradeInfo ->
-                            succeededOnce = true
-                            processUpdateInfo(upgradeInfo)
-                            liveData.postValue(CheckingState(upgradeInfo = upgradeInfo))
-                        },
-                        {
-                            liveData.postValue(CheckingState(error = it))
-                        }
-                )
+            .onStart {
+                liveData.postValue(CheckingState(isLoading = true))
+            }
+            .catch {
+                liveData.postValue(CheckingState(error = it))
+            }
+            .onEach {
+                succeededOnce = true
+                processUpdateInfo(upgradeInfo)
+                liveData.postValue(CheckingState(upgradeInfo = upgradeInfo))
+            }
+            .flowOn(Dispatchers.IO)
+            .launchIn(scope)
 
         return liveData
     }
@@ -115,14 +125,14 @@ object AppUpgradeChecker {
             AppUpgradeChecker.upgradeInfo = upgradeInfo
             safeContext {
                 upgradeInteractor.showUpgradeDialog(it, upgradeInfo,
-                        onCancel = {
-                            //do nothing
-                        },
-                        onConfirm = {
-                            if (!isUpgradeServiceRunning) {
-                                doUpdate()
-                            }
+                    onCancel = {
+                        //do nothing
+                    },
+                    onConfirm = {
+                        if (!isUpgradeServiceRunning) {
+                            doUpdate()
                         }
+                    }
                 )
             }
         }
@@ -134,7 +144,12 @@ object AppUpgradeChecker {
             upgradeInteractor.showDownloadingDialog(it, upgradeInfo.isForce)
         }
         //start downloading
-        UpgradeService.start(Utils.getApp(), upgradeInfo.downloadUrl, upgradeInfo.versionName, upgradeInfo.digitalAbstract)
+        UpgradeService.start(
+            Utils.getApp(),
+            upgradeInfo.downloadUrl,
+            upgradeInfo.versionName,
+            upgradeInfo.digitalAbstract
+        )
     }
 
     private fun processOnDownloadingFileSuccessful(file: File?) {
@@ -151,12 +166,12 @@ object AppUpgradeChecker {
 
     private fun showInstallTipsDialog(topActivity: Activity, apkFile: File) {
         upgradeInteractor.showInstallTipsDialog(topActivity, upgradeInfo.isForce,
-                onCancel = {
-                    // no op
-                },
-                onConfirm = {
-                    startInstall(apkFile)
-                })
+            onCancel = {
+                // no op
+            },
+            onConfirm = {
+                startInstall(apkFile)
+            })
     }
 
     private fun processOnDownloadingFileFailed(e: UpgradeException) {
@@ -166,14 +181,18 @@ object AppUpgradeChecker {
         }
     }
 
-    private fun showDownloadingFailedTips(safeContext: Activity, error: UpgradeException, isForce: Boolean) {
+    private fun showDownloadingFailedTips(
+        safeContext: Activity,
+        error: UpgradeException,
+        isForce: Boolean
+    ) {
         upgradeInteractor.showDownloadingFailed(safeContext, isForce, error,
-                onConfirm = {
-                    doUpdate()
-                },
-                onCancel = {
-                    // no op
-                })
+            onConfirm = {
+                doUpdate()
+            },
+            onCancel = {
+                // no op
+            })
     }
 
     private fun safeContext(onContext: (Activity) -> Unit) {
