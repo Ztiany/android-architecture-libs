@@ -91,7 +91,7 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
     }
 
     private Throwable newEmptyError() {
-        if (NetContext.get().connected()) {
+        if (NetContext.get().isConnected()) {
             return new ServerErrorException(ServerErrorException.UNKNOW_ERROR);//有连接无数据，服务器错误
         } else {
             return new NetworkErrorException();//无连接网络错误

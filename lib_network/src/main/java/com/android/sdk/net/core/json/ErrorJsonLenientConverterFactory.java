@@ -1,6 +1,8 @@
 package com.android.sdk.net.core.json;
 
 
+import androidx.annotation.NonNull;
+
 import com.android.sdk.net.NetContext;
 
 import java.lang.annotation.Annotation;
@@ -27,16 +29,21 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
     }
 
     @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type,
-                                                          Annotation[] parameterAnnotations,
-                                                          Annotation[] methodAnnotations,
-                                                          Retrofit retrofit) {
-
+    public Converter<?, RequestBody> requestBodyConverter(
+            @NonNull Type type,
+            @NonNull Annotation[] parameterAnnotations,
+            @NonNull Annotation[] methodAnnotations,
+            @NonNull Retrofit retrofit
+    ) {
         return mGsonConverterFactory.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
     }
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+    public Converter<ResponseBody, ?> responseBodyConverter(
+            @NonNull Type type,
+            @NonNull Annotation[] annotations,
+            @NonNull Retrofit retrofit
+    ) {
 
         final Converter<ResponseBody, ?> delegateConverter = mGsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
         assert delegateConverter != null;
@@ -45,7 +52,7 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
             try {
                 return delegateConverter.convert(value);
             } catch (Exception e/*防止闪退：JsonSyntaxException、IOException or MalformedJsonException*/) {
-                Timber.e(e, "Json covert error -->error ");
+                Timber.e(e, "Json covert error -->error, type is %s", type);
                 //服务器数据格式错误
                 return NetContext.get().netProvider().errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
             }

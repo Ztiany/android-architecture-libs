@@ -1,32 +1,26 @@
 package com.android.sdk.net;
 
-import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
-import com.android.sdk.net.core.provider.ErrorDataAdapter;
-import com.android.sdk.net.core.provider.ErrorMessage;
-import com.android.sdk.net.core.provider.HttpConfig;
-import com.android.sdk.net.core.provider.NetworkChecker;
-import com.android.sdk.net.rxjava.RxResultPostTransformer;
-import com.android.sdk.net.core.result.ExceptionFactory;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-class NetProviderImpl implements NetProvider {
+import com.android.sdk.net.core.provider.ApiHandler;
+import com.android.sdk.net.core.provider.ErrorDataAdapter;
+import com.android.sdk.net.core.provider.ErrorMessage;
+import com.android.sdk.net.core.provider.HttpConfig;
+import com.android.sdk.net.core.result.ExceptionFactory;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
+
+class HostNetProviderImpl implements HostNetProvider {
 
     ExceptionFactory mExceptionFactory;
+    ErrorMessage mErrorMessage;
+
     ApiHandler mApiHandler;
     HttpConfig mHttpConfig;
-    ErrorMessage mErrorMessage;
     ErrorDataAdapter mErrorDataAdapter;
-    NetworkChecker mNetworkChecker;
-    RxResultPostTransformer mRxResultPostTransformer;
+    RxResultPostTransformer<?> mRxResultPostTransformer;
     CoroutinesResultPostProcessor mCoroutinesResultPostProcessor;
-
-    @Override
-    public boolean isConnected() {
-        return mNetworkChecker.isConnected();
-    }
 
     @Nullable
     @Override
@@ -54,7 +48,7 @@ class NetProviderImpl implements NetProvider {
 
     @Nullable
     @Override
-    public RxResultPostTransformer rxResultPostTransformer() {
+    public RxResultPostTransformer<?> rxResultPostTransformer() {
         return mRxResultPostTransformer;
     }
 
@@ -71,7 +65,7 @@ class NetProviderImpl implements NetProvider {
     }
 
     void checkRequired() {
-        if (mErrorMessage == null || mErrorDataAdapter == null || mNetworkChecker == null || mHttpConfig == null) {
+        if (mErrorMessage == null || mErrorDataAdapter == null || mHttpConfig == null) {
             throw new NullPointerException("You must provide following object：ErrorMessage, mErrorDataAdapter, mNetworkChecker, HttpConfig.");
         }
     }

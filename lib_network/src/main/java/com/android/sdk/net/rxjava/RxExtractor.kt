@@ -1,13 +1,10 @@
 package com.android.sdk.net.rxjava
 
 import com.android.sdk.net.NetContext
-import com.android.sdk.net.core.exception.ApiErrorException
 import com.android.sdk.net.core.exception.NetworkErrorException
 import com.github.dmstocking.optional.java.util.Optional
 import io.reactivex.Flowable
 import io.reactivex.functions.Function
-import retrofit2.HttpException
-import java.io.IOException
 
 /** returning true means accepting the remote data */
 typealias Selector<T> = (local: T, remote: T?) -> Boolean
@@ -49,7 +46,7 @@ fun <T> combineRemoteAndLocal(
 ): Flowable<Optional<T>> {
 
     //没有网络
-    if (!NetContext.get().connected()) {
+    if (!NetContext.get().isConnected()) {
         return local.flatMap {
             if (it.isPresent) {
                 Flowable.just(it)

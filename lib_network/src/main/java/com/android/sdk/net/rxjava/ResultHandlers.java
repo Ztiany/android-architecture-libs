@@ -4,6 +4,7 @@ import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.result.Result;
 import com.github.dmstocking.optional.java.util.Optional;
 
+
 /**
  * 用于处理 Retrofit + RxJava2 网络请求返回的结果
  *

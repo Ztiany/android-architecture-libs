@@ -1,4 +1,4 @@
-package com.android.sdk.net
+package com.android.sdk.net.extension
 
 import com.android.sdk.net.core.service.ServiceFactory
 

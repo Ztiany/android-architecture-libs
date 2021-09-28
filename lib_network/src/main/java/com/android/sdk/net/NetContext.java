@@ -1,18 +1,12 @@
 package com.android.sdk.net;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.core.provider.ErrorDataAdapter;
-import com.android.sdk.net.core.provider.ErrorMessage;
-import com.android.sdk.net.core.provider.HttpConfig;
-import com.android.sdk.net.core.provider.NetworkChecker;
-import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.service.ServiceFactory;
 import com.android.sdk.net.core.service.ServiceHelper;
-import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
-import com.android.sdk.net.rxjava.RxResultPostTransformer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 
@@ -36,91 +30,77 @@ public class NetContext {
         return CONTEXT;
     }
 
+    static final String DEFAULT_CONFIG = "DEFAULT_CONFIG";
+
     private NetContext() {
         mServiceHelper = new ServiceHelper();
     }
 
-    private NetProvider mNetProvider;
-    private ServiceHelper mServiceHelper;
+    private final ServiceHelper mServiceHelper;
 
-    public Builder newBuilder() {
-        return new Builder();
+    private CommonProvider mCommonProvider;
+
+    private final Map<String, HostNetProvider> mProviderMap = new HashMap<>();
+
+    public void init(CommonProvider commonProvider) {
+        mCommonProvider = commonProvider;
     }
 
-    private void init(@NonNull NetProvider netProvider) {
-        mNetProvider = netProvider;
+    void addInto(String flag, @NonNull HostNetProvider hostNetProvider) {
+        mProviderMap.put(flag, hostNetProvider);
     }
 
-    public boolean connected() {
-        return mNetProvider.isConnected();
+    public CommonBuilder commonConfig() {
+        return new CommonBuilder(this);
     }
 
-    public NetProvider netProvider() {
-        NetProvider retProvider = mNetProvider;
+    public HostBuilder addBuilder() {
+        return addBuilder(DEFAULT_CONFIG);
+    }
 
-        if (retProvider == null) {
-            throw new RuntimeException("NetContext has not be initialized");
+    public HostBuilder addBuilder(String flag) {
+        checkIfHasBeenInitialized();
+        return new HostBuilder(flag, this);
+    }
+
+    private void checkIfHasBeenInitialized() {
+        if (mCommonProvider == null) {
+            throw new IllegalStateException("You should set common configurations by calling commonConfig() first.");
         }
-        return retProvider;
+    }
+
+    public boolean isConnected() {
+        return mCommonProvider.isConnected();
+    }
+
+    public HostNetProvider netProvider() {
+        return netProvider(DEFAULT_CONFIG);
+    }
+
+    public HostNetProvider netProvider(String flag) {
+        HostNetProvider hostNetProvider = mProviderMap.get(flag);
+
+        if (hostNetProvider == null) {
+            throw new RuntimeException("The HostNetProvider identified as " + flag + " has not been initialized");
+        }
+
+        return hostNetProvider;
     }
 
     public OkHttpClient httpClient() {
-        return mServiceHelper.getOkHttpClient(netProvider().httpConfig());
+        return httpClient(DEFAULT_CONFIG);
+    }
+
+    public OkHttpClient httpClient(String flag) {
+        return mServiceHelper.getOkHttpClient(flag, netProvider(flag).httpConfig());
     }
 
     public ServiceFactory serviceFactory() {
-        return mServiceHelper.getServiceFactory(netProvider().httpConfig());
+        return serviceFactory(DEFAULT_CONFIG);
     }
 
-    public static class Builder {
-
-        private final NetProviderImpl mNetProvider = new NetProviderImpl();
-
-        public Builder aipHandler(@NonNull ApiHandler apiHandler) {
-            mNetProvider.mApiHandler = apiHandler;
-            return this;
-        }
-
-        public Builder httpConfig(@NonNull HttpConfig httpConfig) {
-            mNetProvider.mHttpConfig = httpConfig;
-            return this;
-        }
-
-        public Builder errorMessage(@NonNull ErrorMessage errorMessage) {
-            mNetProvider.mErrorMessage = errorMessage;
-            return this;
-        }
-
-        public Builder errorDataAdapter(@NonNull ErrorDataAdapter errorDataAdapter) {
-            mNetProvider.mErrorDataAdapter = errorDataAdapter;
-            return this;
-        }
-
-        public Builder networkChecker(@NonNull NetworkChecker networkChecker) {
-            mNetProvider.mNetworkChecker = networkChecker;
-            return this;
-        }
-
-        public Builder postTransformer(@NonNull RxResultPostTransformer rxResultPostTransformer) {
-            mNetProvider.mRxResultPostTransformer = rxResultPostTransformer;
-            return this;
-        }
-
-        public Builder exceptionFactory(@NonNull ExceptionFactory exceptionFactory) {
-            mNetProvider.mExceptionFactory = exceptionFactory;
-            return this;
-        }
-
-        public Builder coroutinesRetryer(@Nullable CoroutinesResultPostProcessor retryer) {
-            mNetProvider.mCoroutinesResultPostProcessor = retryer;
-            return this;
-        }
-
-        public void setup() {
-            mNetProvider.checkRequired();
-            NetContext.get().init(mNetProvider);
-        }
-
+    public ServiceFactory serviceFactory(String flag) {
+        return mServiceHelper.getServiceFactory(flag, netProvider(flag).httpConfig());
     }
 
 }

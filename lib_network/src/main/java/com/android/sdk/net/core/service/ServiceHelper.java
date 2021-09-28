@@ -2,6 +2,9 @@ package com.android.sdk.net.core.service;
 
 import com.android.sdk.net.core.provider.HttpConfig;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -11,25 +14,35 @@ import okhttp3.OkHttpClient;
  */
 public class ServiceHelper {
 
-    private OkHttpClient mOkHttpClient;
-    private ServiceFactory mServiceFactory;
+    private final Map<String, OkHttpClient> mOkHttpClientMap = new HashMap<>();
 
-    public OkHttpClient getOkHttpClient(HttpConfig httpConfig) {
-        if (mOkHttpClient == null) {
+    private final Map<String, ServiceFactory> mServiceFactoryMap = new HashMap<>();
+
+    public OkHttpClient getOkHttpClient(String flag, HttpConfig httpConfig) {
+        OkHttpClient httpClient = mOkHttpClientMap.get(flag);
+
+        if (httpClient == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             if (httpConfig != null) {
                 httpConfig.configHttp(builder);
             }
-            mOkHttpClient = builder.build();
+            httpClient = builder.build();
+
+            mOkHttpClientMap.put(flag, httpClient);
         }
-        return mOkHttpClient;
+
+        return httpClient;
     }
 
-    public ServiceFactory getServiceFactory(HttpConfig httpConfig) {
-        if (mServiceFactory == null) {
-            mServiceFactory = new ServiceFactory(getOkHttpClient(httpConfig), httpConfig);
+    public ServiceFactory getServiceFactory(String flag, HttpConfig httpConfig) {
+        ServiceFactory serviceFactory = mServiceFactoryMap.get(flag);
+
+        if (serviceFactory == null) {
+            serviceFactory = new ServiceFactory(getOkHttpClient(flag, httpConfig), httpConfig);
+            mServiceFactoryMap.put(flag, serviceFactory);
         }
-        return mServiceFactory;
+
+        return serviceFactory;
     }
 
 }

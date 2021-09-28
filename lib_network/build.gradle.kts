@@ -17,7 +17,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -38,16 +41,17 @@ android {
 
 dependencies {
     implementation(AndroidLibraries.annotations)
-
-    implementation(ThirdLibraries.supportOptional)
     implementation(ThirdLibraries.timber)
     implementation(ThirdLibraries.retrofit)
     implementation(ThirdLibraries.retrofitConverterGson)
     implementation(ThirdLibraries.okHttp)
     implementation(ThirdLibraries.gson)
-    implementation(ThirdLibraries.rxJava)
-    implementation(ThirdLibraries.retrofitRxJava2CallAdapter)
 
-    implementation(KotlinLibraries.kotlinStdlib)
-    implementation(KotlinLibraries.kotlinCoroutines)
+    implementation(ThirdLibraries.supportOptional)
+
+    compileOnly(ThirdLibraries.rxJava)
+    compileOnly(ThirdLibraries.retrofitRxJava2CallAdapter)
+
+    compileOnly(KotlinLibraries.kotlinStdlib)
+    compileOnly(KotlinLibraries.kotlinCoroutines)
 }

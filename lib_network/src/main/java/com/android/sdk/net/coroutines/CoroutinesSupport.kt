@@ -1,11 +1,11 @@
 package com.android.sdk.net.coroutines
 
-import com.android.sdk.net.core.result.Result
 import com.android.sdk.net.NetContext
-import com.android.sdk.net.core.result.ExceptionFactory
 import com.android.sdk.net.core.exception.ApiErrorException
 import com.android.sdk.net.core.exception.NetworkErrorException
 import com.android.sdk.net.core.exception.ServerErrorException
+import com.android.sdk.net.core.result.ExceptionFactory
+import com.android.sdk.net.core.result.Result
 import kotlinx.coroutines.delay
 
 suspend fun <T> apiCall(
@@ -72,7 +72,7 @@ private suspend fun <T> realCall(call: suspend () -> Result<T>, requireNonNullDa
         }
 
     } catch (e: Throwable) {
-        return if (NetContext.get().connected()) {
+        return if (NetContext.get().isConnected()) {
             //有连接无数据，服务器错误
             CallResult.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
         } else {
@@ -142,7 +142,7 @@ private suspend fun <T> realCallDirectly(call: suspend () -> Result<T>, requireN
         }
 
     } catch (e: Throwable) {
-        if (NetContext.get().connected()) {
+        if (NetContext.get().isConnected()) {
             //有连接无数据，服务器错误
             throw ServerErrorException(ServerErrorException.UNKNOW_ERROR)
         } else {

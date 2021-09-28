@@ -1,19 +1,17 @@
 package com.android.sdk.net;
 
-import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
-import com.android.sdk.net.core.provider.ErrorDataAdapter;
-import com.android.sdk.net.core.provider.ErrorMessage;
-import com.android.sdk.net.core.provider.HttpConfig;
-import com.android.sdk.net.rxjava.RxResultPostTransformer;
-import com.android.sdk.net.core.result.ExceptionFactory;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public interface NetProvider {
+import com.android.sdk.net.core.provider.ApiHandler;
+import com.android.sdk.net.core.provider.ErrorDataAdapter;
+import com.android.sdk.net.core.provider.ErrorMessage;
+import com.android.sdk.net.core.provider.HttpConfig;
+import com.android.sdk.net.core.result.ExceptionFactory;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
-    boolean isConnected();
+public interface HostNetProvider {
 
     @Nullable
     ApiHandler aipHandler();
@@ -31,7 +29,7 @@ public interface NetProvider {
     ExceptionFactory exceptionFactory();
 
     @Nullable
-    RxResultPostTransformer rxResultPostTransformer();
+    RxResultPostTransformer<?> rxResultPostTransformer();
 
     @Nullable
     CoroutinesResultPostProcessor coroutinesResultPostProcessor();
