@@ -11,7 +11,7 @@ import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
-public interface HostNetProvider {
+public interface HostConfigProvider {
 
     @Nullable
     ApiHandler aipHandler();
@@ -20,18 +20,9 @@ public interface HostNetProvider {
     HttpConfig httpConfig();
 
     @NonNull
-    ErrorMessage errorMessage();
-
-    @NonNull
     ErrorDataAdapter errorDataAdapter();
 
     @Nullable
     ExceptionFactory exceptionFactory();
-
-    @Nullable
-    RxResultPostTransformer<?> rxResultPostTransformer();
-
-    @Nullable
-    CoroutinesResultPostProcessor coroutinesResultPostProcessor();
 
 }

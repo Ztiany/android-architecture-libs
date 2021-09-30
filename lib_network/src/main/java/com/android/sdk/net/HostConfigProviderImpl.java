@@ -11,16 +11,12 @@ import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
-class HostNetProviderImpl implements HostNetProvider {
+class HostConfigProviderImpl implements HostConfigProvider {
 
     ExceptionFactory mExceptionFactory;
-    ErrorMessage mErrorMessage;
-
     ApiHandler mApiHandler;
     HttpConfig mHttpConfig;
     ErrorDataAdapter mErrorDataAdapter;
-    RxResultPostTransformer<?> mRxResultPostTransformer;
-    CoroutinesResultPostProcessor mCoroutinesResultPostProcessor;
 
     @Nullable
     @Override
@@ -36,20 +32,8 @@ class HostNetProviderImpl implements HostNetProvider {
 
     @NonNull
     @Override
-    public ErrorMessage errorMessage() {
-        return mErrorMessage;
-    }
-
-    @NonNull
-    @Override
     public ErrorDataAdapter errorDataAdapter() {
         return mErrorDataAdapter;
-    }
-
-    @Nullable
-    @Override
-    public RxResultPostTransformer<?> rxResultPostTransformer() {
-        return mRxResultPostTransformer;
     }
 
     @Nullable
@@ -58,14 +42,9 @@ class HostNetProviderImpl implements HostNetProvider {
         return mExceptionFactory;
     }
 
-    @Nullable
-    @Override
-    public CoroutinesResultPostProcessor coroutinesResultPostProcessor() {
-        return mCoroutinesResultPostProcessor;
-    }
 
     void checkRequired() {
-        if (mErrorMessage == null || mErrorDataAdapter == null || mHttpConfig == null) {
+        if (mErrorDataAdapter == null || mHttpConfig == null) {
             throw new NullPointerException("You must provide following object：ErrorMessage, mErrorDataAdapter, mNetworkChecker, HttpConfig.");
         }
     }

@@ -1,20 +1,19 @@
 package com.android.sdk.net;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.sdk.net.core.provider.ErrorMessage;
-import com.android.sdk.net.core.provider.NetworkChecker;
+import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
 public class CommonProviderImpl implements CommonProvider {
 
-    NetworkChecker mNetworkChecker;
-
     ErrorMessage mErrorMessage;
 
-    @Override
-    public boolean isConnected() {
-        return mNetworkChecker.isConnected();
-    }
+    RxResultPostTransformer<?> mRxResultPostTransformer;
+
+    CoroutinesResultPostProcessor mCoroutinesResultPostProcessor;
 
     @NonNull
     @Override
@@ -22,10 +21,16 @@ public class CommonProviderImpl implements CommonProvider {
         return mErrorMessage;
     }
 
-    void checkRequired() {
-        if (mNetworkChecker == null) {
-            throw new NullPointerException("You must provide following object：NetworkChecker and ErrorMessage.");
-        }
+    @Nullable
+    @Override
+    public RxResultPostTransformer<?> rxResultPostTransformer() {
+        return mRxResultPostTransformer;
+    }
+
+    @Nullable
+    @Override
+    public CoroutinesResultPostProcessor coroutinesResultPostProcessor() {
+        return mCoroutinesResultPostProcessor;
     }
 
 }

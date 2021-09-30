@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.android.sdk.net.NetContext;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import okhttp3.RequestBody;
@@ -44,20 +45,21 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
             @NonNull Annotation[] annotations,
             @NonNull Retrofit retrofit
     ) {
-
         final Converter<ResponseBody, ?> delegateConverter = mGsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
         assert delegateConverter != null;
+
+        Timber.d("responseBodyConverter --> type is %s", type);
 
         return (Converter<ResponseBody, Object>) value -> {
             try {
                 return delegateConverter.convert(value);
             } catch (Exception e/*防止闪退：JsonSyntaxException、IOException or MalformedJsonException*/) {
-                Timber.e(e, "Json covert error -->error, type is %s", type);
+                Timber.e(e, "Json covert error --> error, type is %s", type);
                 //服务器数据格式错误
-                return NetContext.get().netProvider().errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
+                NetContext netContext = NetContext.get();
+                return netContext.netProviderByResultType(type).errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
             }
         };
-
     }
 
 }

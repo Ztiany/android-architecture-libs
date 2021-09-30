@@ -1,10 +1,17 @@
 package com.android.sdk.net;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 
+import com.android.sdk.net.core.flag.FlagHolder;
 import com.android.sdk.net.core.service.ServiceFactory;
 import com.android.sdk.net.core.service.ServiceHelper;
+import com.android.sdk.net.utils.NetworkUtils;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +24,7 @@ import okhttp3.OkHttpClient;
  */
 public class NetContext {
 
+    @SuppressLint("StaticFieldLeak")
     private static volatile NetContext CONTEXT;
 
     public static NetContext get() {
@@ -30,65 +38,81 @@ public class NetContext {
         return CONTEXT;
     }
 
-    static final String DEFAULT_CONFIG = "DEFAULT_CONFIG";
+    public static final String DEFAULT_FLAG = "DEFAULT_CONFIG";
+
+    private final ServiceHelper mServiceHelper;
+
+    private Context mContext;
+
+    private final FlagHolder mFlagHolder = new FlagHolder();
+
+    private final Map<String, HostConfigProvider> mProviderMap = new HashMap<>();
+
+    private CommonProvider mCommonProvider;
 
     private NetContext() {
         mServiceHelper = new ServiceHelper();
     }
 
-    private final ServiceHelper mServiceHelper;
-
-    private CommonProvider mCommonProvider;
-
-    private final Map<String, HostNetProvider> mProviderMap = new HashMap<>();
-
-    public void init(CommonProvider commonProvider) {
+    void init(CommonProvider commonProvider) {
         mCommonProvider = commonProvider;
     }
 
-    void addInto(String flag, @NonNull HostNetProvider hostNetProvider) {
-        mProviderMap.put(flag, hostNetProvider);
-    }
-
-    public CommonBuilder commonConfig() {
+    @MainThread
+    public CommonBuilder commonConfig(Context context) {
+        mContext = context;
         return new CommonBuilder(this);
     }
 
-    public HostBuilder addBuilder() {
-        return addBuilder(DEFAULT_CONFIG);
+    @MainThread
+    public HostConfigBuilder addBuilder() {
+        return addBuilder(DEFAULT_FLAG);
     }
 
-    public HostBuilder addBuilder(String flag) {
+    @MainThread
+    public HostConfigBuilder addBuilder(@NonNull String flag) {
         checkIfHasBeenInitialized();
-        return new HostBuilder(flag, this);
+        return new HostConfigBuilder(flag, this);
+    }
+
+    void addInto(String flag, @NonNull HostConfigProvider hostConfigProvider) {
+        mProviderMap.put(flag, hostConfigProvider);
     }
 
     private void checkIfHasBeenInitialized() {
-        if (mCommonProvider == null) {
-            throw new IllegalStateException("You should set common configurations by calling commonConfig() first.");
+        if (mContext == null) {
+            throw new IllegalStateException("You should call commonConfig() then setUp() first.");
         }
+    }
+
+    public CommonProvider commonProvider() {
+        return mCommonProvider;
     }
 
     public boolean isConnected() {
-        return mCommonProvider.isConnected();
+        return NetworkUtils.isConnected(getContext());
     }
 
-    public HostNetProvider netProvider() {
-        return netProvider(DEFAULT_CONFIG);
+    public HostConfigProvider netProvider() {
+        return netProvider(DEFAULT_FLAG);
     }
 
-    public HostNetProvider netProvider(String flag) {
-        HostNetProvider hostNetProvider = mProviderMap.get(flag);
+    public HostConfigProvider netProviderByResultType(Type type) {
+        return netProvider(getFlagHolder().getFlag(type));
+    }
 
-        if (hostNetProvider == null) {
+    public HostConfigProvider netProvider(String flag) {
+        HostConfigProvider hostConfigProvider = mProviderMap.get(flag);
+
+        if (hostConfigProvider == null) {
             throw new RuntimeException("The HostNetProvider identified as " + flag + " has not been initialized");
         }
 
-        return hostNetProvider;
+        return hostConfigProvider;
     }
 
     public OkHttpClient httpClient() {
-        return httpClient(DEFAULT_CONFIG);
+        return httpClient(DEFAULT_FLAG);
     }
 
     public OkHttpClient httpClient(String flag) {
@@ -96,11 +120,19 @@ public class NetContext {
     }
 
     public ServiceFactory serviceFactory() {
-        return serviceFactory(DEFAULT_CONFIG);
+        return serviceFactory(DEFAULT_FLAG);
     }
 
     public ServiceFactory serviceFactory(String flag) {
         return mServiceHelper.getServiceFactory(flag, netProvider(flag).httpConfig());
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public FlagHolder getFlagHolder() {
+        return mFlagHolder;
     }
 
 }

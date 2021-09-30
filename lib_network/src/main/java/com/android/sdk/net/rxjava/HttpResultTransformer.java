@@ -4,6 +4,7 @@ package com.android.sdk.net.rxjava;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.sdk.net.HostConfigProvider;
 import com.android.sdk.net.NetContext;
 import com.android.sdk.net.core.exception.ApiErrorException;
 import com.android.sdk.net.core.exception.NetworkErrorException;
@@ -22,12 +23,17 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
+import io.reactivex.functions.Function;
 
 public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements
-        ObservableTransformer<T, Downstream>, FlowableTransformer<T, Downstream>, SingleTransformer<T, Downstream> {
+        ObservableTransformer<T, Downstream>,
+        FlowableTransformer<T, Downstream>,
+        SingleTransformer<T, Downstream> {
 
     private final boolean mRequireNonNullData;
+
     private final DataExtractor<Downstream, Upstream> mDataExtractor;
+
     @Nullable
     private final ExceptionFactory mExceptionFactory;
 
@@ -36,16 +42,12 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
             @NonNull DataExtractor<Downstream, Upstream> dataExtractor,
             @Nullable ExceptionFactory exceptionFactory
     ) {
-
         mRequireNonNullData = requireNonNullData;
         mDataExtractor = dataExtractor;
-        if (exceptionFactory == null) {
-            exceptionFactory = NetContext.get().netProvider().exceptionFactory();
-        }
-
         mExceptionFactory = exceptionFactory;
     }
 
+    @NonNull
     @Override
     public Publisher<Downstream> apply(Flowable<T> upstream) {
 
@@ -54,7 +56,9 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
                 .map(this::processData);
 
         @SuppressWarnings("unchecked")
-        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        RxResultPostTransformer<Downstream> rxResultPostTransformer =
+                (RxResultPostTransformer<Downstream>) NetContext.get().commonProvider().rxResultPostTransformer();
+
         if (rxResultPostTransformer != null) {
             return downstreamFlowable.compose(rxResultPostTransformer);
         } else {
@@ -62,6 +66,7 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
         }
     }
 
+    @NonNull
     @Override
     public ObservableSource<Downstream> apply(Observable<T> upstream) {
 
@@ -70,7 +75,9 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
                 .map(this::processData);
 
         @SuppressWarnings("unchecked")
-        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        RxResultPostTransformer<Downstream> rxResultPostTransformer =
+                (RxResultPostTransformer<Downstream>) NetContext.get().commonProvider().rxResultPostTransformer();
+
         if (rxResultPostTransformer != null) {
             return downstreamObservable.compose(rxResultPostTransformer);
         } else {
@@ -78,11 +85,16 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
         }
     }
 
+    @NonNull
     @Override
     public SingleSource<Downstream> apply(Single<T> upstream) {
+
         Single<Downstream> downstreamSingle = upstream.map(this::processData);
+
         @SuppressWarnings("unchecked")
-        RxResultPostTransformer<Downstream> rxResultPostTransformer = (RxResultPostTransformer<Downstream>) NetContext.get().netProvider().rxResultPostTransformer();
+        RxResultPostTransformer<Downstream> rxResultPostTransformer =
+                (RxResultPostTransformer<Downstream>) NetContext.get().commonProvider().rxResultPostTransformer();
+
         if (rxResultPostTransformer != null) {
             return downstreamSingle.compose(rxResultPostTransformer);
         } else {
@@ -99,12 +111,15 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
     }
 
     private Downstream processData(Result<Upstream> rResult) {
-        if (NetContext.get().netProvider().errorDataAdapter().isErrorDataStub(rResult)) {
+
+        HostConfigProvider hostConfigProvider = NetContext.get().netProviderByResultType(rResult.getClass());
+
+        if (hostConfigProvider.errorDataAdapter().isErrorDataStub(rResult)) {
 
             throwAs(new ServerErrorException(ServerErrorException.SERVER_DATA_ERROR));//服务器数据格式错误
 
         } else if (!rResult.isSuccess()) {//检测响应码是否正确
-            ApiHandler apiHandler = NetContext.get().netProvider().aipHandler();
+            ApiHandler apiHandler = hostConfigProvider.aipHandler();
             if (apiHandler != null) {
                 apiHandler.onApiError(rResult);
             }
@@ -123,12 +138,18 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
 
     private Throwable createException(@NonNull Result<Upstream> rResult) {
         ExceptionFactory exceptionFactory = mExceptionFactory;
+
+        if (exceptionFactory == null) {
+            exceptionFactory = NetContext.get().netProviderByResultType(rResult.getClass()).exceptionFactory();
+        }
+
         if (exceptionFactory != null) {
             Exception exception = exceptionFactory.create(rResult);
             if (exception != null) {
                 return exception;
             }
         }
+
         return new ApiErrorException(rResult.getCode(), rResult.getMessage());
     }
 

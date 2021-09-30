@@ -37,6 +37,6 @@ public interface ErrorMessage {
     /**
      * 未知错误
      */
-    CharSequence unknowErrorMessage(Throwable exception);
+    CharSequence unknownErrorMessage(Throwable exception);
 
 }

@@ -25,14 +25,14 @@ public class ErrorMessageFactory {
 
     public static CharSequence createMessage(Throwable exception) {
 
-        ErrorMessage errorMessage = NetContext.get().netProvider().errorMessage();
+        ErrorMessage errorMessage = NetContext.get().commonProvider().errorMessage();
 
         Timber.d("createMessage with：%s", exception.toString());
 
         //handle rx CompositeException
         if (exception instanceof CompositeException) {
             List<Throwable> exceptions = ((CompositeException) exception).getExceptions();
-            if (exceptions != null && !exceptions.isEmpty()) {
+            if (!exceptions.isEmpty()) {
                 exception = findBestException(exceptions);
                 Timber.d("createMessage with CompositeException, all exception = ：%s", exceptions.toString());
             }
@@ -80,7 +80,7 @@ public class ErrorMessageFactory {
 
         //7：Others
         if (isEmpty(message)) {
-            message = errorMessage.unknowErrorMessage(exception);
+            message = errorMessage.unknownErrorMessage(exception);
         }
 
         return message;
@@ -88,12 +88,12 @@ public class ErrorMessageFactory {
 
     private static Throwable findBestException(List<Throwable> exceptions) {
         for (Throwable exception : exceptions) {
-            if(exception instanceof IOException||
-                    exception instanceof NetworkErrorException||
-                    exception instanceof ServerErrorException||
-                    exception instanceof HttpException||
-                    exception instanceof ApiErrorException||
-                    exception instanceof NoSuchElementException){
+            if (exception instanceof IOException ||
+                    exception instanceof NetworkErrorException ||
+                    exception instanceof ServerErrorException ||
+                    exception instanceof HttpException ||
+                    exception instanceof ApiErrorException ||
+                    exception instanceof NoSuchElementException) {
                 return exception;
             }
         }

@@ -13,30 +13,13 @@ private interface ExampleApi {
 }
 
 private suspend fun example(api: ExampleApi) {
+    apiCall {
+        api.loadData()
+    } onSucceeded {
 
-    apiCall({ api.loadData() }).ifSucceeded {
-
-    } ifFailed {
-
-    }
-
-    val callResult = apiCall({ api.loadData2() })
-    callResult.ifSucceeded {
-
-    } ifFailed {
+    } onFailed {
 
     }
 
-    try {
-        val loadData = api.loadData()
-    } catch (e: Exception) {
-
-    }
-
-    try {
-        val loadData = api.loadData2()
-    } catch (e: Exception) {
-
-    }
 
 }
