@@ -3,9 +3,9 @@ package com.android.base.widget;
 import android.content.res.TypedArray;
 import android.view.View;
 
-import com.android.base.app.ui.StateLayoutConfig;
-
 import androidx.annotation.NonNull;
+
+import com.android.base.architecture.ui.StateLayoutConfig;
 
 /**
  * @author Ztiany

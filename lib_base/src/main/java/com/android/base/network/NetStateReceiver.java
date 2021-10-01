@@ -1,5 +1,9 @@
 package com.android.base.network;
 
+import static com.android.base.network.NetworkState.STATE_GPRS;
+import static com.android.base.network.NetworkState.STATE_NONE;
+import static com.android.base.network.NetworkState.STATE_WIFI;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,10 +17,6 @@ import com.android.base.utils.android.compat.AndroidVersion;
 import com.blankj.utilcode.util.NetworkUtils;
 
 import timber.log.Timber;
-
-import static com.android.base.network.NetworkState.STATE_GPRS;
-import static com.android.base.network.NetworkState.STATE_NONE;
-import static com.android.base.network.NetworkState.STATE_WIFI;
 
 
 /**
@@ -69,7 +69,7 @@ public class NetStateReceiver extends BroadcastReceiver {
         if (mStatus != tempStatus) {
             Timber.d("mStatus与改变后的网络不同，网络真的改变了");
             //在此处 通知网络更新
-            NetworkState.notify(tempStatus);
+            NetworkStateKt.notifyState(tempStatus);
         } else {
             Timber.d("mStatus与改变后的网络相同，不处理");
         }

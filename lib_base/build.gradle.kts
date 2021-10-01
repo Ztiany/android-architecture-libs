@@ -86,16 +86,6 @@ dependencies {
     api(KotlinLibraries.kotlinReflect)
     api(KotlinLibraries.kotlinCoroutines)
     api(KotlinLibraries.kotlinAndroidCoroutines)
-    api(KotlinLibraries.kotlinxCoroutinesRx2)
-
-    //RxJava
-    api(ThirdLibraries.rxJava)
-    api(ThirdLibraries.rxAndroid)
-    api(ThirdLibraries.rxBinding)
-    api(ThirdLibraries.autoDispose)
-    api(ThirdLibraries.autoDisposeAndroid)
-    api(ThirdLibraries.autoDisposeLifecycle)
-    api(ThirdLibraries.autoDisposeLifecycleArchcomponents)
 
     //LoadMore
     api(UILibraries.wrapperAdapter)
@@ -106,12 +96,8 @@ dependencies {
     //Log
     api(ThirdLibraries.timber)
 
-    //ImageLoader
-    api(ThirdLibraries.glide)
-    api(ThirdLibraries.glideOkHttp)
-    api(ThirdLibraries.okHttp)
-
     //Utils
+    api(ThirdLibraries.okIO)
     api(ThirdLibraries.utilcode)
     api(ThirdLibraries.jOOR)
     api(ThirdLibraries.supportOptional)

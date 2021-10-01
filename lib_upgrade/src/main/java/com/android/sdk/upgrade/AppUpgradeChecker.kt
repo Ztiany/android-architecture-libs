@@ -10,9 +10,7 @@ import com.blankj.utilcode.util.ServiceUtils
 import com.blankj.utilcode.util.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.plus
 import java.io.File
 
 /**
@@ -29,21 +27,24 @@ import java.io.File
  * ```
  *  AppUpgradeChecker.checkAppUpgrade(false).observe(this) {
  *                       if (it.isDownloading) {
- *                              showMessage("正在下载更新")
- *                              return@observe
+ *                           showMessage("正在下载更新")
+ *                           return@observe
  *                       }
+ *
  *                       if (it.isLoading) {
- *                              showLoadingDialog(false)
+ *                           showLoadingDialog(false)
  *                       } else {
- *                              dismissLoadingDialog()
+ *                           dismissLoadingDialog()
  *                       }
+ *
  *                       val error = it.error
  *                       if (error != null) {
- *                              handleError(error)
+ *                           handleError(error)
  *                       }
+ *
  *                       val upgradeInfo = it.upgradeInfo
  *                       if (upgradeInfo != null && !upgradeInfo.isNewVersion) {
- *                              showMessage("已是最新版本")
+ *                           showMessage("已是最新版本")
  *                       }
  *                   }
  * ```
@@ -71,16 +72,9 @@ object AppUpgradeChecker {
         internalUpgradeInteractor = upgradeInteractor
     }
 
-    data class CheckingState(
-        val isLoading: Boolean = false,
-        val isDownloading: Boolean = false,
-        val error: Throwable? = null,
-        val upgradeInfo: UpgradeInfo? = null
-    )
-
     @SuppressLint("CheckResult")
     fun checkAppUpgrade(
-        scope: CoroutineScope = (GlobalScope + Dispatchers.Main),
+        scope: CoroutineScope,
         justOnce: Boolean = true
     ): LiveData<CheckingState> {
         val liveData = MutableLiveData<CheckingState>()

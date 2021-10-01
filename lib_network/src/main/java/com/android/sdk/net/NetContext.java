@@ -54,23 +54,23 @@ public class NetContext {
         mServiceHelper = new ServiceHelper();
     }
 
-    void init(CommonProvider commonProvider) {
+    void initCommonProvider(CommonProvider commonProvider) {
         mCommonProvider = commonProvider;
     }
 
     @MainThread
-    public CommonBuilder commonConfig(Context context) {
+    public CommonBuilder newCommonConfig(Context context) {
         mContext = context;
         return new CommonBuilder(this);
     }
 
     @MainThread
-    public HostConfigBuilder addBuilder() {
-        return addBuilder(DEFAULT_FLAG);
+    public HostConfigBuilder newHostBuilder() {
+        return newHostBuilder(DEFAULT_FLAG);
     }
 
     @MainThread
-    public HostConfigBuilder addBuilder(@NonNull String flag) {
+    public HostConfigBuilder newHostBuilder(@NonNull String flag) {
         checkIfHasBeenInitialized();
         return new HostConfigBuilder(flag, this);
     }

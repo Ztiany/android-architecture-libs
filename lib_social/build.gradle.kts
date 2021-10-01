@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+    kotlin("android")
 }
 
 android {
@@ -40,6 +41,8 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    
+    api(project(":lib_foundation"))
 
     implementation(AndroidLibraries.appcompat)
     implementation(AndroidLibraries.material)
@@ -50,6 +53,9 @@ dependencies {
     api(AndroidLibraries.fragmentKtx)
     api(AndroidLibraries.lifecycleCommon)
     api(AndroidLibraries.lifecycleCommonJava8)
+
+    implementation(KotlinLibraries.kotlinStdlib)
+    implementation(KotlinLibraries.kotlinCoroutines)
 
     implementation(ThirdLibraries.rxJava)
     implementation(ThirdLibraries.retrofit)

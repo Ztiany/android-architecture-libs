@@ -8,15 +8,10 @@ import android.view.View.OnLayoutChangeListener
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
-import com.android.base.rx.subscribeIgnoreError
 import com.android.base.utils.android.WindowUtils
 import com.android.base.utils.android.compat.AndroidVersion.atLeast
 import com.android.base.utils.common.otherwise
 import com.android.base.utils.common.yes
-import com.jakewharton.rxbinding3.view.clicks
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.concurrent.TimeUnit
 
 fun View.visibleOrGone(visible: Boolean) {
     if (visible) {
@@ -295,21 +290,19 @@ fun View.setSize(width: Int, height: Int) {
 }
 
 fun View.onDebouncedClick(onClick: (View) -> Unit) {
-    onClickObservable(500).subscribeIgnoreError { onClick(this) }
+    setOnClickListener {
+        if (!AntiShakeUtils.isInvalidClick(this)) {
+            onClick(this)
+        }
+    }
 }
 
 fun View.onDebouncedClick(milliseconds: Long, onClick: (View) -> Unit) {
-    onClickObservable(milliseconds).subscribeIgnoreError { onClick(this) }
-}
-
-fun View.onClickObservable(): Observable<Unit> {
-    return onClickObservable(500)
-}
-
-fun View.onClickObservable(milliseconds: Long): Observable<Unit> {
-    return clicks()
-        .throttleFirst(milliseconds, TimeUnit.MILLISECONDS)
-        .observeOn(AndroidSchedulers.mainThread())
+    setOnClickListener {
+        if (!AntiShakeUtils.isInvalidClick(this, milliseconds)) {
+            onClick(this)
+        }
+    }
 }
 
 inline val ViewGroup.views get() = (0 until childCount).map { getChildAt(it) }

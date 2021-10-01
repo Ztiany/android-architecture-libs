@@ -42,10 +42,10 @@ class UpgradeService : IntentService("UpgradeService") {
         val digitalAbstract = intent.getStringExtra(DIGITAL_ABSTRACT_KEY) ?: ""
         //start downloading
         ApkDownloader(
-                url,
-                AppUpgradeChecker.upgradeInteractor.generateAppDownloadPath(versionName),
-                digitalAbstract,
-                FlagDownloaderListener()
+            url,
+            AppUpgradeChecker.upgradeInteractor.generateAppDownloadPath(versionName),
+            digitalAbstract,
+            FlagDownloaderListener()
         ).start()
     }
 

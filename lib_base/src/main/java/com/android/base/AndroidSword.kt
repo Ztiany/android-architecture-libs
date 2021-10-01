@@ -2,20 +2,19 @@ package com.android.base
 
 import android.app.Activity
 import android.content.Context
-import com.android.base.app.component.ApplicationDelegate
-import com.android.base.app.fragment.animator.FragmentAnimator
-import com.android.base.app.fragment.tools.FragmentConfig
-import com.android.base.app.ui.LoadingView
-import com.android.base.app.ui.Paging
-import com.android.base.app.ui.RefreshLoadViewFactory
-import com.android.base.app.ui.RefreshLoadViewFactory.Factory
-import com.android.base.app.ui.RefreshViewFactory
+import com.android.base.architecture.app.ApplicationDelegate
+import com.android.base.architecture.fragment.animator.FragmentAnimator
+import com.android.base.architecture.fragment.tools.FragmentConfig
+import com.android.base.architecture.ui.LoadingView
+import com.android.base.architecture.ui.Paging
+import com.android.base.architecture.ui.RefreshLoadViewFactory
+import com.android.base.architecture.ui.RefreshLoadViewFactory.Factory
+import com.android.base.architecture.ui.RefreshViewFactory
 import com.android.base.network.NetworkState
+import com.android.base.network.observableState
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
-import io.reactivex.Flowable
-import io.reactivex.plugins.RxJavaPlugins
-import timber.log.Timber
+import kotlinx.coroutines.flow.Flow
 
 /**
  * A set of useful tools for android development, just like a sword.
@@ -46,7 +45,7 @@ object AndroidSword {
     }
 
     /**网络状态监听器*/
-    fun networkState(): Flowable<NetworkState> = NetworkState.observableState()
+    fun networkState(): Flow<NetworkState> = observableState()
 
     fun setCrashProcessor(crashProcessor: CrashProcessor): AndroidSword {
         coreAppDelegate.setCrashProcessor(crashProcessor)
@@ -75,18 +74,8 @@ object AndroidSword {
         return this
     }
 
-    /** RxJava2的一个重要的设计理念是：不吃掉任何一个异常。产生的问题是，当RxJava2“downStream”取消订阅后，“upStream”仍有可能抛出异常，这时由于已经取消订阅，
-     * “downStream”无法处理异常，此时的异常无人处理，便会导致程序崩溃,解决方案：在Application设置RxJavaPlugin的ErrorHandler。
-     * refer: [RxJava2使用过程中遇到的坑](https://github.com/qqiabc521/blog/issues/3) */
-    fun setupRxJavaErrorHandler(): AndroidSword {
-        RxJavaPlugins.setErrorHandler {
-            Timber.d("RxJavaPlugins error handler receives error: $it")
-        }
-        return this
-    }
-
     /** 获取可观察的 app 生命周期，发射 true 表示 app 切换到前台，发射 false 表示 app 切换到后台  */
-    val appState: Flowable<Boolean>
+    val appState: Flow<Boolean>
         get() = coreAppDelegate.appStatus
 
     /** 获取当前 resume 的 Activity */

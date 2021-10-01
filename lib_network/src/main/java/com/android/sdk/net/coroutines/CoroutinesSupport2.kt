@@ -1,7 +1,6 @@
 package com.android.sdk.net.coroutines
 
 import com.android.sdk.net.NetContext
-import com.android.sdk.net.core.exception.ApiErrorException
 import com.android.sdk.net.core.exception.NetworkErrorException
 import com.android.sdk.net.core.exception.ServerErrorException
 import com.android.sdk.net.core.result.ExceptionFactory
@@ -61,7 +60,9 @@ private suspend fun <T> realCallDirectly(
 
     try {
         val result = call.invoke()
-        val netProvider = NetContext.get().netProviderByResultType(result.javaClass)
+        val netContext = NetContext.get()
+        val hostFlag = NetContext.get().flagHolder.getFlag(result.javaClass)
+        val netProvider = netContext.netProvider(hostFlag)
 
         return if (netProvider.errorDataAdapter().isErrorDataStub(result)) {//服务器数据格式错误
 
@@ -71,7 +72,7 @@ private suspend fun <T> realCallDirectly(
 
             val apiHandler = netProvider.aipHandler()
             apiHandler?.onApiError(result)
-            throw createException(result, exceptionFactory)
+            throw createException(result, exceptionFactory, hostFlag, netProvider)
 
         } else if (requireNonNullData) { //如果约定必须返回的数据却没有返回数据，则认为是服务器错误。
 

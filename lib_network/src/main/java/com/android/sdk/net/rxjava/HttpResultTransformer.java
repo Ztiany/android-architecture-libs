@@ -23,7 +23,6 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
-import io.reactivex.functions.Function;
 
 public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstream>> implements
         ObservableTransformer<T, Downstream>,
@@ -112,18 +111,22 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
 
     private Downstream processData(Result<Upstream> rResult) {
 
-        HostConfigProvider hostConfigProvider = NetContext.get().netProviderByResultType(rResult.getClass());
+        NetContext netContext = NetContext.get();
+        String flag = netContext.getFlagHolder().getFlag(rResult.getClass());
+        HostConfigProvider hostConfigProvider = netContext.netProvider(flag);
 
         if (hostConfigProvider.errorDataAdapter().isErrorDataStub(rResult)) {
 
             throwAs(new ServerErrorException(ServerErrorException.SERVER_DATA_ERROR));//服务器数据格式错误
 
         } else if (!rResult.isSuccess()) {//检测响应码是否正确
+
             ApiHandler apiHandler = hostConfigProvider.aipHandler();
             if (apiHandler != null) {
                 apiHandler.onApiError(rResult);
             }
-            throwAs(createException(rResult));
+
+            throwAs(createException(rResult, flag, hostConfigProvider));
         }
 
         if (mRequireNonNullData) {
@@ -136,21 +139,21 @@ public class HttpResultTransformer<Upstream, Downstream, T extends Result<Upstre
         return mDataExtractor.getDataFromHttpResult(rResult);
     }
 
-    private Throwable createException(@NonNull Result<Upstream> rResult) {
+    private Throwable createException(@NonNull Result<Upstream> rResult, String flag, HostConfigProvider hostConfigProvider) {
         ExceptionFactory exceptionFactory = mExceptionFactory;
 
         if (exceptionFactory == null) {
-            exceptionFactory = NetContext.get().netProviderByResultType(rResult.getClass()).exceptionFactory();
+            exceptionFactory = hostConfigProvider.exceptionFactory();
         }
 
         if (exceptionFactory != null) {
-            Exception exception = exceptionFactory.create(rResult);
+            Exception exception = exceptionFactory.create(rResult, flag);
             if (exception != null) {
                 return exception;
             }
         }
 
-        return new ApiErrorException(rResult.getCode(), rResult.getMessage());
+        return new ApiErrorException(rResult.getCode(), rResult.getMessage(), flag);
     }
 
     @SuppressWarnings("unchecked")

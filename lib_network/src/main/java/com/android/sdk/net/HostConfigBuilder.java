@@ -2,16 +2,12 @@ package com.android.sdk.net;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.android.sdk.net.core.provider.ApiHandler;
 import com.android.sdk.net.core.provider.ErrorDataAdapter;
-import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.HttpConfig;
 import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.result.Result;
-import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
-import com.android.sdk.net.rxjava.RxResultPostTransformer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +56,7 @@ public class HostConfigBuilder {
     }
 
     @MainThread
-    public NetContext setup() {
+    public NetContext setUp() {
         mNetProvider.checkRequired();
 
         if (mResultTypeList != null) {

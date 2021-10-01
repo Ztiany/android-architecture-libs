@@ -41,6 +41,7 @@ dependencies {
     implementation(ThirdLibraries.mmkv)
     implementation(ThirdLibraries.supportOptional)
     implementation(ThirdLibraries.timber)
+
     compileOnly(ThirdLibraries.gson)
 
     compileOnly(ThirdLibraries.rxJava)

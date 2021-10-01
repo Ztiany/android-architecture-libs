@@ -8,6 +8,6 @@ public interface ExceptionFactory {
     /**
      * 根据{@link Result}创建特定的业务异常
      */
-    Exception create(Result<?> result);
+    Exception create(Result<?> result, String hostFlag);
 
 }

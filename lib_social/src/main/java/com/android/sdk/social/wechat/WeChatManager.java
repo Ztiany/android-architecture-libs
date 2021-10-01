@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.android.base.foundation.jetpack.SingleLiveData;
 import com.android.sdk.social.common.Status;
 import com.android.sdk.social.common.Utils;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -17,9 +22,6 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import timber.log.Timber;
 
 

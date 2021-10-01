@@ -1,23 +1,24 @@
 package com.android.base.widget;
 
+import static com.android.base.architecture.ui.StateLayoutConfig.CONTENT;
+import static com.android.base.architecture.ui.StateLayoutConfig.EMPTY;
+import static com.android.base.architecture.ui.StateLayoutConfig.ERROR;
+import static com.android.base.architecture.ui.StateLayoutConfig.LOADING;
+import static com.android.base.architecture.ui.StateLayoutConfig.ViewState;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.android.base.R;
-import com.android.base.app.ui.StateLayout;
-import com.android.base.app.ui.StateLayoutConfig;
-
 import androidx.annotation.NonNull;
-import timber.log.Timber;
 
-import static com.android.base.app.ui.StateLayoutConfig.CONTENT;
-import static com.android.base.app.ui.StateLayoutConfig.EMPTY;
-import static com.android.base.app.ui.StateLayoutConfig.ERROR;
-import static com.android.base.app.ui.StateLayoutConfig.LOADING;
-import static com.android.base.app.ui.StateLayoutConfig.ViewState;
+import com.android.base.R;
+import com.android.base.architecture.ui.StateLayout;
+import com.android.base.architecture.ui.StateLayoutConfig;
+
+import timber.log.Timber;
 
 /**
  * @author Ztiany

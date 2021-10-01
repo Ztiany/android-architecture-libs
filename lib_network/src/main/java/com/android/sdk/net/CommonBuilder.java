@@ -23,12 +23,6 @@ public class CommonBuilder {
         return this;
     }
 
-    @MainThread
-    public NetContext setUp() {
-        mNetContext.init(mCommonProvider);
-        return mNetContext;
-    }
-
     /**
      * If you use RxJava, you can use this to set up a piece of logic that will be executed before retrial.
      */
@@ -43,6 +37,12 @@ public class CommonBuilder {
     public CommonBuilder coroutinesResultPostProcessor(@Nullable CoroutinesResultPostProcessor resultPostProcessor) {
         mCommonProvider.mCoroutinesResultPostProcessor = resultPostProcessor;
         return this;
+    }
+
+    @MainThread
+    public NetContext setUp() {
+        mNetContext.initCommonProvider(mCommonProvider);
+        return mNetContext;
     }
 
 }

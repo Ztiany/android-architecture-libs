@@ -6,10 +6,10 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.android.base.R;
-
 import androidx.core.view.ViewCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.android.base.R;
 
 
 /**
@@ -22,8 +22,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class ScrollChildSwipeRefreshLayout extends SwipeRefreshLayout {
 
     private View mScrollUpChild;
-    private int mTargetId;
-    private boolean mRestoreRefreshStatus;
+
+    private final int mTargetId;
+
+    private final boolean mRestoreRefreshStatus;
 
     public ScrollChildSwipeRefreshLayout(Context context) {
         this(context, null);
