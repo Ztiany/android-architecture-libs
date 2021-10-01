@@ -158,20 +158,61 @@ fun FragmentManager.isFragmentInStack(clazz: Class<out Fragment>): Boolean {
     return false
 }
 
-inline fun FragmentManager.inTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun FragmentManager.commit(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val fragmentTransaction = beginTransaction()
     EnhanceFragmentTransaction(this, fragmentTransaction).func()
-    fragmentTransaction.commit()
+    if (allowStateLoss) {
+        fragmentTransaction.commitAllowingStateLoss()
+    } else {
+        fragmentTransaction.commit()
+    }
 }
 
-inline fun FragmentActivity.inFragmentTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun FragmentManager.commitNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+    val fragmentTransaction = beginTransaction()
+    EnhanceFragmentTransaction(this, fragmentTransaction).func()
+    if (allowStateLoss) {
+        fragmentTransaction.commitNowAllowingStateLoss()
+    } else {
+        fragmentTransaction.commitNow()
+    }
+}
+
+inline fun FragmentActivity.commit(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = supportFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
-    transaction.commit()
+    if (allowStateLoss) {
+        transaction.commitAllowingStateLoss()
+    } else {
+        transaction.commit()
+    }
 }
 
-fun <T> T.inSafelyFragmentTransaction(
+inline fun FragmentActivity.commitNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+    val transaction = supportFragmentManager.beginTransaction()
+    EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
+    if (allowStateLoss) {
+        transaction.commitNowAllowingStateLoss()
+    } else {
+        transaction.commitNow()
+    }
+}
+
+fun <T> T.commitSafely(
     func: EnhanceFragmentTransaction.() -> Unit
+): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
+    return internalCommitNowSafely(func, false)
+}
+
+fun <T> T.commitNowSafely(
+    func: EnhanceFragmentTransaction.() -> Unit
+): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
+    return internalCommitNowSafely(func, true)
+}
+
+private fun <T> T.internalCommitNowSafely(
+    func: EnhanceFragmentTransaction.() -> Unit,
+    now: Boolean
 ): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
 
     var delegate = findDelegate {
@@ -179,7 +220,7 @@ fun <T> T.inSafelyFragmentTransaction(
     } as? SafelyFragmentTransactionActivityDelegate
 
     if (delegate == null) {
-        delegate = SafelyFragmentTransactionActivityDelegate()
+        delegate = SafelyFragmentTransactionActivityDelegate(now)
         addDelegate(delegate)
     }
 
@@ -190,14 +231,42 @@ fun <T> T.inSafelyFragmentTransaction(
     return delegate.safeCommit(this, transaction)
 }
 
-inline fun Fragment.inChildFragmentTransaction(func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun Fragment.commit(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = childFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(childFragmentManager, transaction).func()
-    transaction.commit()
+    if (allowStateLoss) {
+        transaction.commitAllowingStateLoss()
+    } else {
+        transaction.commit()
+    }
 }
 
-fun <T> T.inSafelyChildFragmentTransaction(
-    func: EnhanceFragmentTransaction.() -> Unit
+inline fun Fragment.commitNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+    val transaction = childFragmentManager.beginTransaction()
+    EnhanceFragmentTransaction(childFragmentManager, transaction).func()
+    if (allowStateLoss) {
+        transaction.commitNowAllowingStateLoss()
+    } else {
+        transaction.commitNow()
+    }
+}
+
+fun <T> T.commitSafely(
+    func: EnhanceFragmentTransaction.() -> Unit,
+): Boolean where T : Fragment, T : FragmentDelegateOwner {
+    return internalCommitNowSafely(func, false)
+}
+
+fun <T> T.commitNowSafely(
+    func: EnhanceFragmentTransaction.() -> Unit,
+): Boolean where T : Fragment, T : FragmentDelegateOwner {
+    return internalCommitNowSafely(func, true)
+}
+
+
+fun <T> T.internalCommitNowSafely(
+    func: EnhanceFragmentTransaction.() -> Unit,
+    now: Boolean
 ): Boolean where T : Fragment, T : FragmentDelegateOwner {
 
     var delegate: SafelyFragmentTransactionFragmentDelegate? = findDelegate {
@@ -205,7 +274,7 @@ fun <T> T.inSafelyChildFragmentTransaction(
     } as? SafelyFragmentTransactionFragmentDelegate
 
     if (delegate == null) {
-        delegate = SafelyFragmentTransactionFragmentDelegate()
+        delegate = SafelyFragmentTransactionFragmentDelegate(now)
         addDelegate(delegate)
     }
 
@@ -216,7 +285,7 @@ fun <T> T.inSafelyChildFragmentTransaction(
     return delegate.safeCommit(this, transaction)
 }
 
-private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<FragmentActivity> {
+private class SafelyFragmentTransactionActivityDelegate(private val now: Boolean) : ActivityDelegate<FragmentActivity> {
 
     private val mPendingTransactions = mutableListOf<FragmentTransaction>()
 
@@ -225,7 +294,11 @@ private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<Fragm
         val isCommitterResumed = (status == ActivityState.CREATE || status == ActivityState.START || status == ActivityState.RESUME)
 
         return if (isCommitterResumed) {
-            transaction.commit()
+            if (now) {
+                transaction.commitNow()
+            } else {
+                transaction.commit()
+            }
             false
         } else {
             mPendingTransactions.add(transaction)
@@ -242,13 +315,17 @@ private class SafelyFragmentTransactionActivityDelegate : ActivityDelegate<Fragm
 
 }
 
-private class SafelyFragmentTransactionFragmentDelegate : FragmentDelegate<Fragment> {
+private class SafelyFragmentTransactionFragmentDelegate(private val now: Boolean) : FragmentDelegate<Fragment> {
 
     private val pendingTransactions = mutableListOf<FragmentTransaction>()
 
     fun safeCommit(@NonNull fragment: Fragment, @NonNull transaction: FragmentTransaction): Boolean {
         return if (fragment.isResumed) {
-            transaction.commit()
+            if (now) {
+                transaction.commitNow()
+            } else {
+                transaction.commit()
+            }
             false
         } else {
             pendingTransactions.add(transaction)
@@ -276,7 +353,7 @@ class EnhanceFragmentTransaction constructor(
 
     /**
      * 把 [fragment] 添加到回退栈中，并 hide 其他 fragment，
-     * 如果 [containerId]==0，则使用 [com.android.base.architecture.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [containerId]==0，则使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      */
     fun addToStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
@@ -296,7 +373,7 @@ class EnhanceFragmentTransaction constructor(
 
     /**
      * 以 replace 方式把 [fragment] 添加到回退栈中，
-     * 如果 [containerId]==0，则使用 [com.android.base.architecture.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
+     * 如果 [containerId]==0，则使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
      * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
      * 此方法可能导致 Fragment 转场动画错乱。
      */
@@ -322,7 +399,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * 添加 [fragment]，默认使用 [com.android.base.architecture.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
+     * 添加 [fragment]，默认使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
     fun addFragment(fragment: Fragment, tag: String? = null): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
@@ -330,7 +407,7 @@ class EnhanceFragmentTransaction constructor(
     }
 
     /**
-     * 替换为 [fragment]，id 使用 [com.android.base.architecture.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
+     * 替换为 [fragment]，id 使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
     fun replaceFragment(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
         val nonnullTag = (tag ?: fragment.javaClassName())
