@@ -7,9 +7,12 @@ import androidx.viewbinding.ViewBinding
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-///////////////////////////////////////////////////////////////////////////
-// 基类反射方式，参考 https://juejin.cn/post/6906153878312452103。
-///////////////////////////////////////////////////////////////////////////
+/*
+ * ViewBinding 封装【基类反射方式】，具体参考：
+ *
+ *      1. https://juejin.cn/post/6906153878312452103
+ *      2. https://github.com/DylanCaiCoding/ViewBindingKtx
+ */
 
 @JvmName("inflateWithGeneric")
 fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(layoutInflater: LayoutInflater): VB =
