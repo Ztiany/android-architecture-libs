@@ -191,10 +191,6 @@ abstract class LifecycleViewBindingProperty<in R : Any, out V : ViewBinding>(
 
 }
 
-// -------------------------------------------------------------------------------------
-// Utils
-// -------------------------------------------------------------------------------------
-
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 class ActivityViewBindingProperty<in A : ComponentActivity, out V : ViewBinding>(
     viewBinder: (A) -> V
@@ -205,6 +201,10 @@ class ActivityViewBindingProperty<in A : ComponentActivity, out V : ViewBinding>
     }
 
 }
+
+// -------------------------------------------------------------------------------------
+// Utils
+// -------------------------------------------------------------------------------------
 
 fun <V : View> View.requireViewByIdCompat(@IdRes id: Int): V {
     return ViewCompat.requireViewById(this, id)
