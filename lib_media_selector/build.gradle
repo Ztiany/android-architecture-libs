@@ -1,0 +1,60 @@
+plugins {
+    id "com.android.library"
+    id "kotlin-android"
+}
+
+android {
+    compileSdkVersion AppConfig.compileSdkVersion
+    buildToolsVersion AppConfig.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion AppConfig.minSdkVersion
+        targetSdkVersion AppConfig.targetSdkVersion
+        versionCode AppConfig.versionCode
+        versionName AppConfig.versionName
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += "src/github/java"
+            res.srcDirs += "src/github/res"
+            java.srcDirs += "src/boxing/java"
+            res.srcDirs += "src/boxing/res"
+            java.srcDirs += "src/boxing-impl/java"
+            res.srcDirs += "src/boxing-impl/res"
+        }
+    }
+
+}
+
+dependencies {
+    //support
+    implementation AndroidLibraries.appcompat
+    implementation AndroidLibraries.material
+    implementation AndroidLibraries.documentfile
+    implementation AndroidLibraries.lifecycleRuntimeKtx
+    implementation KotlinLibraries.kotlinStdlib
+    implementation KotlinLibraries.kotlinCoroutines
+    //foundation
+    implementation project(":lib_foundation")
+    /*imageLoader*/
+    implementation ThirdLibraries.glide
+    implementation ThirdLibraries.timber
+    /*image crop*/
+    implementation("com.github.yalantis:ucrop:2.2.4") {
+        exclude group: "com.squareup.okhttp3"
+    }
+}
