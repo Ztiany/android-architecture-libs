@@ -33,7 +33,6 @@ dependencies {
     implementation AndroidLibraries.annotations
 
     implementation ThirdLibraries.mmkv
-    implementation ThirdLibraries.supportOptional
     implementation ThirdLibraries.timber
     implementation ThirdLibraries.gson
     

@@ -29,13 +29,6 @@ android {
         jvmTarget = "1.8"
     }
 
-    sourceSets {
-        main {
-            java.srcDirs += 'src/github/java/'
-            res.srcDirs += 'src/github/res'
-        }
-    }
-
     //如果不想生成某个布局的绑定类，可以在根视图添加 tools:viewBindingIgnore="true" 属性。
     buildFeatures {
         viewBinding true
@@ -95,5 +88,4 @@ dependencies {
     api ThirdLibraries.okIO
     api ThirdLibraries.utilcode
     api ThirdLibraries.jOOR
-    api ThirdLibraries.supportOptional
 }

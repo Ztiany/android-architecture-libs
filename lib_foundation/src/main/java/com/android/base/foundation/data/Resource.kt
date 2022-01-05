@@ -1,7 +1,6 @@
 package com.android.base.foundation.data
 
 import androidx.lifecycle.MutableLiveData
-import com.github.dmstocking.optional.java.util.Optional
 
 
 /**
@@ -10,10 +9,10 @@ import com.github.dmstocking.optional.java.util.Optional
  * Date : 2018-05-15 16:23
  */
 class Resource<T> private constructor(
-        private val error: Throwable?,
-        //data or default data
-        private val data: T?,
-        private val status: Int
+    private val error: Throwable?,
+    //data or default data
+    private val data: T?,
+    private val status: Int
 ) {
 
     val isSuccess: Boolean
@@ -78,7 +77,7 @@ class Resource<T> private constructor(
 
     fun error(): Throwable {
         return error
-                ?: throw NullPointerException("This method can only be called when the state is error")
+            ?: throw NullPointerException("This method can only be called when the state is error")
     }
 
     override fun toString(): String {
@@ -193,14 +192,4 @@ fun <T : Any?> MutableLiveData<Resource<T>>.postSuccess(t: T? = null) {
     } else {
         postValue(Resource.success(t))
     }
-}
-
-fun <T : Any?> MutableLiveData<Resource<T>>.postOptional(optional: Optional<T>) {
-    optional.ifPresentOrElse(
-            {
-                postValue(Resource.success(it))
-            },
-            {
-                postValue(Resource.success())
-            })
 }

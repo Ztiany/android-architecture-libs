@@ -14,7 +14,6 @@ import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -39,12 +38,6 @@ class ApplicationDelegate internal constructor() {
 
     fun attachBaseContext(base: Context) {
         check(onAttachBaseCalled.compareAndSet(false, true)) { "Can only be called once" }
-        //app lifecycle invoke
-        Timber.d("attachBaseContext = ${ServiceLoader.load(AppLifecycle::class.java)}")
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.attachBaseContext(base)
-            }
     }
 
     fun onCreate(application: Application) {
@@ -61,43 +54,22 @@ class ApplicationDelegate internal constructor() {
         )
         //App前台后台
         listenActivityLifecycleCallbacks()
-        //app lifecycle invoke
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.onCreate(application)
-            }
     }
 
     fun onTerminate() {
-        //app lifecycle invoke
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.onTerminate()
-            }
+
     }
 
     fun onConfigurationChanged(newConfig: Configuration) {
-        //app lifecycle invoke
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.onConfigurationChanged(newConfig)
-            }
+
     }
 
     fun onTrimMemory(level: Int) {
-        //app lifecycle invoke
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.onTrimMemory(level)
-            }
+
     }
 
     fun onLowMemory() {
-        //app lifecycle invoke
-        ServiceLoader.load(AppLifecycle::class.java)
-            .forEach {
-                it.onLowMemory()
-            }
+
     }
 
     private fun listenActivityLifecycleCallbacks() {

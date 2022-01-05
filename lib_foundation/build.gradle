@@ -43,5 +43,4 @@ dependencies {
     compileOnly KotlinLibraries.kotlinStdlib
 
     compileOnly ThirdLibraries.timber
-    compileOnly ThirdLibraries.supportOptional
 }

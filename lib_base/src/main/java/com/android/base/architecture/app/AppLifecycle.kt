@@ -1,12 +1,25 @@
 package com.android.base.architecture.app
 
 import android.app.Application
-import android.content.Context
 import android.content.res.Configuration
 
+/**
+ * This interface is designed for initialize the modules which consist of a completed APP. How to collect Module Initializer?
+ *
+ * option1: use Dagger2.
+ * ```
+ * class AppContext: Application{
+ *
+ *  @Inject internal lateinit var moduleInitializers: Lazy<Set<AppLifecycle>>
+ *
+ * }
+ * ```
+ *
+ * option2: use ServiceLoader.
+ *
+ * Here it just provide a interface and nothing else.
+ */
 interface AppLifecycle {
-
-    fun attachBaseContext(base: Context)
 
     fun onCreate(application: Application)
 
