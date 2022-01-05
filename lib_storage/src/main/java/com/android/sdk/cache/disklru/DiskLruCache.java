@@ -16,8 +16,6 @@
 
 package com.android.sdk.cache.disklru;
 
-import com.android.sdk.cache.StrictLineReader;
-
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.EOFException;

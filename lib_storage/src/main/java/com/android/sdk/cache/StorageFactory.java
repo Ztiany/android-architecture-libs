@@ -15,12 +15,12 @@ public interface StorageFactory {
 
     abstract class Builder {
 
-        Context context;
-        String storageId;
-        boolean multiProcess;
-        Encipher encipher;
+        protected Context context;
+        protected String storageId;
+        protected boolean multiProcess;
+        protected Encipher encipher;
 
-        Builder(Context context) {
+        protected Builder(Context context) {
             this.context = context;
         }
 
