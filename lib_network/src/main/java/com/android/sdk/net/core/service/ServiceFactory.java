@@ -7,10 +7,8 @@ import com.android.sdk.net.core.progress.ResponseProgressInterceptor;
 import com.android.sdk.net.core.progress.UrlProgressListener;
 import com.android.sdk.net.core.provider.HttpConfig;
 
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -33,8 +31,8 @@ public class ServiceFactory {
         if (!httpConfig.configRetrofit(mOkHttpClient, builder)) {
             builder.baseUrl(mBaseUrl)
                     .client(okHttpClient)
-                    .addConverterFactory(new ErrorJsonLenientConverterFactory(GsonConverterFactory.create(GsonUtils.gson())))
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()));
+                    .addConverterFactory(new ErrorJsonLenientConverterFactory(GsonConverterFactory.create(GsonUtils.gson())));
+                    //.addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()));
         }
 
         mRetrofit = builder.build();
