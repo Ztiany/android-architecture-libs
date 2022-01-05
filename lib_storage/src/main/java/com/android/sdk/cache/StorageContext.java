@@ -1,5 +1,8 @@
 package com.android.sdk.cache;
 
+import com.android.sdk.cache.json.JsonSerializer;
+import com.android.sdk.cache.json.Serializer;
+
 /**
  * @author Ztiany
  * Email: ztiany3@gmail.com
@@ -13,7 +16,7 @@ public class StorageContext {
         sSerializer = serializer;
     }
 
-    static Serializer provideSerializer() {
+    public static Serializer provideSerializer() {
         if (sSerializer != null) {
             return sSerializer;
         }

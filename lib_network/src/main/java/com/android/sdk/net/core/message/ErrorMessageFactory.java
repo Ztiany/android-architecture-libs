@@ -9,10 +9,8 @@ import com.android.sdk.net.core.exception.ServerErrorException;
 import com.android.sdk.net.core.provider.ErrorMessage;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import io.reactivex.exceptions.CompositeException;
 import retrofit2.HttpException;
 import timber.log.Timber;
 
@@ -28,15 +26,6 @@ public class ErrorMessageFactory {
         ErrorMessage errorMessage = NetContext.get().commonProvider().errorMessage();
 
         Timber.d("createMessage with：%s", exception.toString());
-
-        //handle rx CompositeException
-        if (exception instanceof CompositeException) {
-            List<Throwable> exceptions = ((CompositeException) exception).getExceptions();
-            if (!exceptions.isEmpty()) {
-                exception = findBestException(exceptions);
-                Timber.d("createMessage with CompositeException, all exception = ：%s", exceptions.toString());
-            }
-        }
 
         CharSequence message = null;
         //SocketTimeoutException, NetworkErrorException extends IOException
@@ -84,20 +73,6 @@ public class ErrorMessageFactory {
         }
 
         return message;
-    }
-
-    private static Throwable findBestException(List<Throwable> exceptions) {
-        for (Throwable exception : exceptions) {
-            if (exception instanceof IOException ||
-                    exception instanceof NetworkErrorException ||
-                    exception instanceof ServerErrorException ||
-                    exception instanceof HttpException ||
-                    exception instanceof ApiErrorException ||
-                    exception instanceof NoSuchElementException) {
-                return exception;
-            }
-        }
-        return exceptions.get(0);
     }
 
     private static boolean isEmpty(CharSequence str) {

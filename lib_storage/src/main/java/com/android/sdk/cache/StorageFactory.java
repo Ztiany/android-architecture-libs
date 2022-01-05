@@ -2,6 +2,8 @@ package com.android.sdk.cache;
 
 import android.content.Context;
 
+import com.android.sdk.cache.encryption.Encipher;
+
 /**
  * @author Ztiany
  * Email: ztiany3@gmail.com

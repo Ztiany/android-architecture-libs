@@ -1,5 +1,6 @@
 package com.android.sdk.social.ali;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,9 +11,6 @@ import android.text.TextUtils;
 import com.alipay.sdk.app.PayTask;
 
 import java.util.Map;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 
 /**
  * 支付宝支付执行器
@@ -29,21 +27,13 @@ public class AliPayExecutor {
     static final int PAY_RESULT_FAIL = 3;
     static final int PAY_RESULT_WAIT_CONFIRM = 4;
 
-    public static Observable<AliPayResult> doAliPay(final Activity activity, final String sign) {
-        return Observable.create(
-                (ObservableEmitter<AliPayResult> subscriber) -> {
-                    if (subscriber.isDisposed()) {
-                        return;
-                    }
-                    try {
-                        PayTask payTask = new PayTask(activity);
-                        Map<String, String> pay = payTask.payV2(sign, false);//不要出现丑陋AliPay对话框-_-!
-                        subscriber.onNext(new AliPayResult(pay));
-                        subscriber.onComplete();
-                    } catch (Exception e) {
-                        subscriber.onError(e);
-                    }
-                });
+    /**
+     * 耗时操作，不要在主线程执行。
+     */
+    public static AliPayResult doAliPay(final Activity activity, final String sign) {
+        PayTask payTask = new PayTask(activity);
+        Map<String, String> pay = payTask.payV2(sign, false);//不要出现丑陋AliPay对话框-_-!
+        return new AliPayResult(pay);
     }
 
     /**
@@ -52,6 +42,7 @@ public class AliPayExecutor {
     public static boolean isAliPayInstalled(Context context) {
         Uri uri = Uri.parse("alipays://platformapi/startApp");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        @SuppressLint("QueryPermissionsNeeded")
         ComponentName componentName = intent.resolveActivity(context.getPackageManager());
         return componentName != null;
     }

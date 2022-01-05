@@ -31,16 +31,12 @@ android {
 
 dependencies {
     implementation AndroidLibraries.annotations
+
     implementation ThirdLibraries.timber
     implementation ThirdLibraries.retrofit
+    implementation ThirdLibraries.gson
     implementation ThirdLibraries.retrofitConverterGson
     implementation ThirdLibraries.okHttp
-    implementation ThirdLibraries.gson
-
-    implementation ThirdLibraries.supportOptional
-
-    compileOnly ThirdLibraries.rxJava
-    compileOnly ThirdLibraries.retrofitRxJava2CallAdapter
 
     compileOnly KotlinLibraries.kotlinStdlib
     compileOnly KotlinLibraries.kotlinCoroutines
