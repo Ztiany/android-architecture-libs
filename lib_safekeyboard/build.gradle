@@ -25,6 +25,6 @@ android {
 }
 
 dependencies {
+    implementation AndroidLibraries.appcompat
     implementation AndroidLibraries.lifecycleCommonJava8
-    implementation AndroidLibraries.biometric
 }

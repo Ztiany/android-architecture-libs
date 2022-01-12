@@ -31,6 +31,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation AndroidLibraries.appcompat
     implementation AndroidLibraries.lifecycleCommonJava8
     implementation AndroidLibraries.biometric
 }
