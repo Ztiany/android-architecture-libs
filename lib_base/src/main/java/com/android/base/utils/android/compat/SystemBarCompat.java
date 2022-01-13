@@ -21,20 +21,33 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import androidx.annotation.ColorInt;
+
 import com.android.base.R;
 
-import androidx.annotation.ColorInt;
 import timber.log.Timber;
 
 /**
- * A tool for adjusting system bars.
+ * A tool for adjusting system bars.[TODO: using WindowInsets API instead.]
  *
  * <p>
- * other useful utils:
+ * other useful libs:
+ * <ol>
  * <li>https://github.com/Zackratos/UltimateBar</li>
+ * <li>https://github.com/Veaer/Glass</li>
+ * <li>https://github.com/H07000223/FlycoSystemBar</li>
  * <li>https://github.com/niorgai/StatusBarCompat</li>
  * <li>https://github.com/laobie/StatusBarUtil</li>
  * <li>https://github.com/msdx/status-bar-compat</li>
+ * </ol>
+ * </p>
+ *
+ * <p>
+ * other useful utils:
+ * <ol>
+ * <li>{@link androidx.core.view.ViewCompat}</li>
+ * <li>{@link androidx.core.view.WindowInsetsCompat}</li>
+ * </ol>
  * </p>
  *
  * @author Ztiany
@@ -57,21 +70,21 @@ public class SystemBarCompat {
     @SuppressWarnings("WeakerAccess,unused")
     public static void setTranslucentStatusOn19(Activity activity) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            setTranslucentSystemUi(activity, true, false);
+            setTranslucentSystemBar(activity, true, false);
         }
     }
 
     @SuppressWarnings("WeakerAccess,unused")
     public static void setTranslucentNavigationOn19(Activity activity) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            setTranslucentSystemUi(activity, false, true);
+            setTranslucentSystemBar(activity, false, true);
         }
     }
 
     @SuppressWarnings("WeakerAccess,unused")
     public static void setTranslucentOn19(Activity activity) {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            setTranslucentSystemUi(activity, true, true);
+            setTranslucentSystemBar(activity, true, true);
         }
     }
 
@@ -116,7 +129,7 @@ public class SystemBarCompat {
         if (!AndroidVersion.above(20)) {
             return;
         }
-        setTranslucentSystemUi(activity, true, false);
+        setTranslucentSystemBar(activity, true, false);
     }
 
     @SuppressWarnings("WeakerAccess,unused")
@@ -124,7 +137,7 @@ public class SystemBarCompat {
         if (!AndroidVersion.above(20)) {
             return;
         }
-        setTranslucentSystemUi(activity, false, true);
+        setTranslucentSystemBar(activity, false, true);
     }
 
     @SuppressWarnings("WeakerAccess,unused")
@@ -132,7 +145,7 @@ public class SystemBarCompat {
         if (!AndroidVersion.above(20)) {
             return;
         }
-        setTranslucentSystemUi(activity, true, true);
+        setTranslucentSystemBar(activity, true, true);
     }
 
     public static void setupStatusBarColorAfter19(Activity activity, @ColorInt int color) {
@@ -158,9 +171,9 @@ public class SystemBarCompat {
     ///////////////////////////////////////////////////////////////////////////
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void setTranslucentSystemUi(Activity activity, boolean status, boolean navigation) {
+    public static void setTranslucentSystemBar(Activity activity, boolean status, boolean navigation) {
         Window win = activity.getWindow();
-        setTranslucentSystemUi(win, status, navigation);
+        setTranslucentSystemBar(win, status, navigation);
     }
 
     public static void setStatusBarColor(Activity activity, @ColorInt int color) {
@@ -168,7 +181,7 @@ public class SystemBarCompat {
         setupStatusBarColorAfter19(activity, color);
     }
 
-    public static void setTranslucentSystemUi(Window win, boolean status, boolean navigation) {
+    public static void setTranslucentSystemBar(Window win, boolean status, boolean navigation) {
         if (!AndroidVersion.atLeast(19)) {
             return;
         }
@@ -321,20 +334,20 @@ public class SystemBarCompat {
 
     @SuppressWarnings("WeakerAccess")
     public static void setTransparentStatusViaViewFlags(Activity activity) {
-        setTransparentSystemUiViaViewFlags(activity, true, false);
+        setTransparentSystemBarViaViewFlags(activity, true, false);
     }
 
     @SuppressWarnings("WeakerAccess")
     public static void setTransparentNavigationViaViewFlags(Activity activity) {
-        setTransparentSystemUiViaViewFlags(activity, false, true);
+        setTransparentSystemBarViaViewFlags(activity, false, true);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public static void setTransparentSystemUiViaViewFlags(Activity activity) {
-        setTransparentSystemUiViaViewFlags(activity, true, true);
+    public static void setTransparentSystemBarViaViewFlags(Activity activity) {
+        setTransparentSystemBarViaViewFlags(activity, true, true);
     }
 
-    private static void setTransparentSystemUiViaViewFlags(Activity activity, boolean status, boolean navigation) {
+    private static void setTransparentSystemBarViaViewFlags(Activity activity, boolean status, boolean navigation) {
         Window window = activity.getWindow();
         if (AndroidVersion.atLeast(21)) {
             if (navigation && status) {
@@ -357,7 +370,7 @@ public class SystemBarCompat {
                 setupNavigationBarColorAfter19(activity, Color.TRANSPARENT);
             }
         } else if (AndroidVersion.at(19)) {
-            setTranslucentSystemUi(window, status, navigation);
+            setTranslucentSystemBar(window, status, navigation);
         }
     }
 
