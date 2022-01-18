@@ -4,14 +4,13 @@ import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import java.security.MessageDigest;
 import java.util.UUID;
 
-public class DeviceIdUtil {
+import timber.log.Timber;
 
-    private static final String TAG = "DeviceIdUtil";
+public class DeviceIdUtil {
 
     /**
      * 获取一个唯一设备标识。
@@ -22,19 +21,15 @@ public class DeviceIdUtil {
 
         //International Mobile Equipment Identity.
         String imei = getIMEI(context);
-        android.util.Log.d(TAG, "imei: " + imei);
 
         //ANDROID ID
         String androidID = getAndroidId(context);
-        android.util.Log.d(TAG, "androidId: " + androidID);
 
         //Serial  8.0
         String serial = getSerial();
-        android.util.Log.d(TAG, "serial: " + serial);
 
         //Device UUID
         String id = getDeviceUUID().replace("-", "");
-        android.util.Log.d(TAG, "hardware: " + id);
 
         //追加 IMEI
         if (imei != null && imei.length() > 0) {
@@ -134,8 +129,7 @@ public class DeviceIdUtil {
                 Build.PRODUCT +
                 serial;
 
-        Log.d(TAG, String.format("BOARD = %s, BRAND = %s,  DEVICE = %s, HARDWARE = %s, MANUFACTURER = %s, ID = %s, MODEL = %s, PRODUCT = %s, Serial = %s",
-                Build.BOARD, Build.BRAND, Build.DEVICE, Build.HARDWARE, Build.MANUFACTURER, Build.ID, Build.MODEL, Build.PRODUCT, serial));
+        Timber.d("BOARD = %s, BRAND = %s,  DEVICE = %s, HARDWARE = %s, MANUFACTURER = %s, ID = %s, MODEL = %s, PRODUCT = %s, Serial = %s", Build.BOARD, Build.BRAND, Build.DEVICE, Build.HARDWARE, Build.MANUFACTURER, Build.ID, Build.MODEL, Build.PRODUCT, serial);
 
         return new UUID(dev.hashCode(), serial.hashCode()).toString();
     }
@@ -153,8 +147,8 @@ public class DeviceIdUtil {
     private static String getAndroidId(Context context) {
         try {
             return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        } catch (Exception ex) {
-            Log.e(TAG, "getAndroidId", ex);
+        } catch (Exception ignored) {
+
         }
         return "";
     }
@@ -188,8 +182,8 @@ public class DeviceIdUtil {
             } else {
                 return Build.SERIAL;
             }
-        } catch (Exception ex) {
-            Log.e(TAG, "getSerial", ex);
+        } catch (Exception ignored) {
+
         }
 
         return "";
@@ -227,8 +221,8 @@ public class DeviceIdUtil {
             } else {
                 return tm.getDeviceId();
             }
-        } catch (Exception ex) {
-            Log.e(TAG, "getIMEI", ex);
+        } catch (Exception ignored) {
+
         }
         return "";
     }

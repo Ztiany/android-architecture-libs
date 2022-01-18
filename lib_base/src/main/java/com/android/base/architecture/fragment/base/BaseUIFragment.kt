@@ -30,9 +30,9 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
 
     private val reuseView by lazy { ReusableView() }
 
-    private var _layout: VB? = null
-    protected val layout: VB
-        get() = checkNotNull(_layout) {
+    private var _viewBinding: VB? = null
+    protected val viewBinding: VB
+        get() = checkNotNull(_viewBinding) {
             "access layout after calling onViewCreated()"
         }
 
@@ -43,8 +43,8 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
     ): View? {
 
         val factory = {
-            _layout = inflateBindingWithParameterizedType(layoutInflater, container, false)
-            layout.root
+            _viewBinding = inflateBindingWithParameterizedType(layoutInflater, container, false)
+            viewBinding.root
         }
         return reuseView.createView(factory)
     }
@@ -78,14 +78,14 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
     override fun onDestroyView() {
         super.onDestroyView()
         if (reuseView.destroyView()) {
-            _layout = null
+            _viewBinding = null
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         dismissLoadingDialog()
-        _layout = null
+        _viewBinding = null
     }
 
     private fun loadingView(): LoadingView {

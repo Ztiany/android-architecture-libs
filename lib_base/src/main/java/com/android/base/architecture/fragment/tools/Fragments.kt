@@ -18,6 +18,8 @@ import com.android.base.foundation.fragment.FragmentDelegateOwner
 import com.android.base.utils.common.javaClassName
 import kotlin.reflect.KClass
 
+/*There are some useful methods in this file for you to operate Fragment. But maybe Jetpack Compose is a better choice.*/
+
 /**被此 annotation 标注的方法，表示需要使用 [Fragment] 的全类名作为 [FragmentTransaction] 中相关方法的 flag 参数的实参，比如 add/replace 等*/
 annotation class UsingFragmentClassNameAsFlag
 
@@ -45,8 +47,8 @@ fun FragmentActivity?.exitFragment(immediate: Boolean = false) {
 }
 
 /**
- * @param clazz    the interface container must implemented
- * @param <T>      Type
+ * @param clazz the interface container must implemented
+ * @param <T> Type
  * @return the interface context must implemented
  */
 fun <T> Fragment.requireContainerImplement(clazz: Class<T>): T? {
@@ -61,8 +63,8 @@ fun <T> Fragment.requireContainerImplement(clazz: Class<T>): T? {
 }
 
 /**
- * @param clazz    the interface context must implemented
- * @param <T>      Type
+ * @param clazz the interface context must implemented
+ * @param <T> Type
  * @return the interface context must implemented
  */
 fun <T> Fragment.requireContextImplement(clazz: Class<T>): T? {
@@ -74,8 +76,8 @@ fun <T> Fragment.requireContextImplement(clazz: Class<T>): T? {
 }
 
 /**
- * @param clazz    the interface parent must implemented
- * @param <T>      Type
+ * @param clazz the interface parent must implemented
+ * @param <T> Type
  * @return the interface context must implemented
  */
 fun <T> Fragment.requireParentImplement(clazz: Class<T>): T? {
@@ -178,7 +180,7 @@ inline fun FragmentManager.commitNow(allowStateLoss: Boolean = false, func: Enha
     }
 }
 
-inline fun FragmentActivity.commit(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun FragmentActivity.doFragmentTransaction(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = supportFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
     if (allowStateLoss) {
@@ -188,7 +190,7 @@ inline fun FragmentActivity.commit(allowStateLoss: Boolean = false, func: Enhanc
     }
 }
 
-inline fun FragmentActivity.commitNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun FragmentActivity.doFragmentTransactionNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = supportFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(supportFragmentManager, transaction).func()
     if (allowStateLoss) {
@@ -198,13 +200,13 @@ inline fun FragmentActivity.commitNow(allowStateLoss: Boolean = false, func: Enh
     }
 }
 
-fun <T> T.commitSafely(
+fun <T> T.doFragmentTransactionSafely(
     func: EnhanceFragmentTransaction.() -> Unit
 ): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
     return internalCommitNowSafely(func, false)
 }
 
-fun <T> T.commitNowSafely(
+fun <T> T.doFragmentTransactionNowSafely(
     func: EnhanceFragmentTransaction.() -> Unit
 ): Boolean where T : FragmentActivity, T : ActivityDelegateOwner {
     return internalCommitNowSafely(func, true)
@@ -231,7 +233,7 @@ private fun <T> T.internalCommitNowSafely(
     return delegate.safeCommit(this, transaction)
 }
 
-inline fun Fragment.commit(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun Fragment.doFragmentTransaction(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = childFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(childFragmentManager, transaction).func()
     if (allowStateLoss) {
@@ -241,7 +243,7 @@ inline fun Fragment.commit(allowStateLoss: Boolean = false, func: EnhanceFragmen
     }
 }
 
-inline fun Fragment.commitNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
+inline fun Fragment.doFragmentTransactionNow(allowStateLoss: Boolean = false, func: EnhanceFragmentTransaction.() -> Unit) {
     val transaction = childFragmentManager.beginTransaction()
     EnhanceFragmentTransaction(childFragmentManager, transaction).func()
     if (allowStateLoss) {
@@ -251,18 +253,17 @@ inline fun Fragment.commitNow(allowStateLoss: Boolean = false, func: EnhanceFrag
     }
 }
 
-fun <T> T.commitSafely(
+fun <T> T.doFragmentTransactionSafely(
     func: EnhanceFragmentTransaction.() -> Unit,
 ): Boolean where T : Fragment, T : FragmentDelegateOwner {
     return internalCommitNowSafely(func, false)
 }
 
-fun <T> T.commitNowSafely(
+fun <T> T.doFragmentTransactionNowSafely(
     func: EnhanceFragmentTransaction.() -> Unit,
 ): Boolean where T : Fragment, T : FragmentDelegateOwner {
     return internalCommitNowSafely(func, true)
 }
-
 
 fun <T> T.internalCommitNowSafely(
     func: EnhanceFragmentTransaction.() -> Unit,
@@ -354,14 +355,18 @@ class EnhanceFragmentTransaction constructor(
     /**
      * 把 [fragment] 添加到回退栈中，并 hide 其他 fragment，
      * 如果 [containerId]==0，则使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
-     * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
+     * 如果 [tag] == null 则使用 fragment 对应 class 的全限定类名。
      */
-    fun addToStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+    fun addToStack(
+        containerId: Int = 0,
+        fragment: Fragment,
+        tag: String = fragment.javaClassName(),
+        transition: Boolean = true
+    ): EnhanceFragmentTransaction {
         //set add to stack
-        val nonnullTag = (tag ?: fragment.javaClassName())
-        addToBackStack(nonnullTag)
+        addToBackStack(tag)
         //add
-        fragmentTransaction.add(confirmLayoutId(containerId), fragment, nonnullTag)
+        fragmentTransaction.add(confirmLayoutId(containerId), fragment, tag)
         //hide top
         hideTopFragment()
         if (transition) {
@@ -374,15 +379,19 @@ class EnhanceFragmentTransaction constructor(
     /**
      * 以 replace 方式把 [fragment] 添加到回退栈中，
      * 如果 [containerId]==0，则使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，
-     * 如果 [tag] ==null 则使用 fragment 对应 class 的全限定类名。
+     * 如果 [tag] == null 则使用 fragment 对应 class 的全限定类名。
      * 此方法可能导致 Fragment 转场动画错乱。
      */
-    fun replaceToStack(containerId: Int = 0, fragment: Fragment, tag: String? = null, transition: Boolean = true): EnhanceFragmentTransaction {
+    fun replaceToStack(
+        containerId: Int = 0,
+        fragment: Fragment,
+        tag: String = fragment.javaClassName(),
+        transition: Boolean = true
+    ): EnhanceFragmentTransaction {
         //set add to stack
-        val nonnullTag = (tag ?: fragment.javaClassName())
-        addToBackStack(nonnullTag)
+        addToBackStack(tag)
         //add
-        fragmentTransaction.replace(confirmLayoutId(containerId), fragment, nonnullTag)
+        fragmentTransaction.replace(confirmLayoutId(containerId), fragment, tag)
         //set a transition
         if (transition) {
             setOpeningTransition()
@@ -401,23 +410,21 @@ class EnhanceFragmentTransaction constructor(
     /**
      * 添加 [fragment]，默认使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
-    fun addFragment(fragment: Fragment, tag: String? = null): FragmentTransaction {
-        val nonnullTag = (tag ?: fragment.javaClassName())
-        return fragmentTransaction.add(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
+    fun addFragment(fragment: Fragment, tag: String = fragment.javaClassName()): FragmentTransaction {
+        return fragmentTransaction.add(FragmentConfig.defaultContainerId(), fragment, tag)
     }
 
     /**
      * 替换为 [fragment]，id 使用 [com.android.base.AndroidSword.setDefaultFragmentContainerId] 中配置的 id，如果 [tag] 为null，则使用 [fragment] 的全限定类名。
      */
-    fun replaceFragment(fragment: Fragment, tag: String? = null, transition: Boolean = true): FragmentTransaction {
-        val nonnullTag = (tag ?: fragment.javaClassName())
+    fun replaceFragment(fragment: Fragment, tag: String = fragment.javaClassName(), transition: Boolean = true): FragmentTransaction {
         if (transition) {
             setOpeningTransition()
         }
-        return fragmentTransaction.replace(FragmentConfig.defaultContainerId(), fragment, nonnullTag)
+        return fragmentTransaction.replace(FragmentConfig.defaultContainerId(), fragment, tag)
     }
 
-    /**隐藏所有的 fragment */
+    /** 隐藏所有的 fragment */
     private fun hideFragments() {
         for (fragment in fragmentManager.fragments) {
             if (fragment != null && fragment.view != null && fragment.isVisible) {
@@ -427,7 +434,7 @@ class EnhanceFragmentTransaction constructor(
         }
     }
 
-    /**隐藏第一个可见的 fragment */
+    /** 隐藏第一个可见的 fragment */
     private fun hideTopFragment() {
         fragmentManager.fragments.lastOrNull { it.isVisible && it.view != null }?.let {
             fragmentTransaction.setMaxLifecycle(it, Lifecycle.State.STARTED)
@@ -569,12 +576,18 @@ class EnhanceFragmentTransaction constructor(
         throw UnsupportedOperationException("commitAllowingStateLoss will be called automatically")
     }
 
-    @Deprecated("commitNow will be called automatically", ReplaceWith("throw UnsupportedOperationException(\"commitNow will be called automatically\")"))
+    @Deprecated(
+        "commitNow will be called automatically",
+        ReplaceWith("throw UnsupportedOperationException(\"commitNow will be called automatically\")")
+    )
     override fun commitNow() {
         throw UnsupportedOperationException("commitNow will be called automatically")
     }
 
-    @Deprecated("commitNowAllowingStateLoss will be called automatically", ReplaceWith("throw UnsupportedOperationException(\"commitNowAllowingStateLoss will be called automatically\")"))
+    @Deprecated(
+        "commitNowAllowingStateLoss will be called automatically",
+        ReplaceWith("throw UnsupportedOperationException(\"commitNowAllowingStateLoss will be called automatically\")")
+    )
     override fun commitNowAllowingStateLoss() {
         throw UnsupportedOperationException("commitNowAllowingStateLoss will be called automatically")
     }
