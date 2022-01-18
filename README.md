@@ -12,4 +12,4 @@
 
 ## how to use
 
-refer [AndroidArchitecture](https://github.com/Ztiany/AndroidArchitecture)
+refer [android-new-cloud-phone-client](http://192.168.32.253:3000/vclusters-general/android-new-cloud-phone-client).
