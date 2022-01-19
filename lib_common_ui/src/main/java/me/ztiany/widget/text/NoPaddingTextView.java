@@ -15,8 +15,8 @@ import androidx.appcompat.widget.AppCompatTextView;
  */
 public class NoPaddingTextView extends AppCompatTextView {
 
-    private Paint mPaint = getPaint();
-    private Rect mBounds = new Rect();
+    private final Paint mPaint = getPaint();
+    private final Rect mBounds = new Rect();
 
     public NoPaddingTextView(Context context) {
         super(context);
