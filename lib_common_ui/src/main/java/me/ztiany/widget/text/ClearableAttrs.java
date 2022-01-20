@@ -2,7 +2,7 @@ package me.ztiany.widget.text;
 
 import android.graphics.Bitmap;
 
-public class ClearableAttrs {
+class ClearableAttrs {
 
     private Bitmap mClearBitmap;
     private Bitmap mPasswordVisibleBitmap;

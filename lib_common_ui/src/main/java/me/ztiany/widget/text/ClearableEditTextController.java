@@ -26,7 +26,7 @@ import timber.log.Timber;
  * Email: ztiany3@gmail.com
  * Date : 2020-03-02 11:52
  */
-public class ClearableEditTextController {
+class ClearableEditTextController {
 
     private Bitmap mClearBitmap;
     private Bitmap mPasswordVisibleBitmap;
@@ -56,16 +56,15 @@ public class ClearableEditTextController {
 
     private PasswordTransformationMethod mVisibleTransformation;
 
-    private EditText mEditText;
+    private final EditText mEditText;
 
     @SuppressWarnings("WeakerAccess")
-    public ClearableEditTextController(EditText editText, ClearableAttrs clearableAttrs) {
+    public ClearableEditTextController(EditText editText) {
         mEditText = editText;
-        getAttrs(clearableAttrs);
-        init();
     }
 
-    private void getAttrs(ClearableAttrs clearableAttrs) {
+    void init(ClearableAttrs clearableAttrs) {
+        //get all attrs
         mClearBitmap = clearableAttrs.getClearBitmap();
         if (mClearBitmap == null) {
             mClearBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.base_ui_icon_clear);
@@ -74,9 +73,8 @@ public class ClearableEditTextController {
         mPasswordInvisibleBitmap = clearableAttrs.getPasswordInvisibleBitmap();
         mPasswordVisibleEnable = clearableAttrs.isPasswordVisibleEnable() && isInputTypePassword();
         mContentClearableEnable = clearableAttrs.isContentClearableEnable();
-    }
 
-    private void init() {
+        //calculate
         mInitPaddingRight = mEditText.getPaddingRight();
         mBitmapRightEdgeOffset = Sizes.dpToPx(getContext(), 5);
         mBitmapMargin = Sizes.dpToPx(getContext(), 15);
@@ -92,14 +90,14 @@ public class ClearableEditTextController {
 
     private Bitmap getPasswordVisibleBitmap() {
         if (mPasswordVisibleBitmap == null) {
-            mPasswordVisibleBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.base_ui_icon_password_open);
+            mPasswordVisibleBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.base_ui_icon_eye_on);
         }
         return mPasswordVisibleBitmap;
     }
 
     private Bitmap getPasswordInvisibleBitmap() {
         if (mPasswordInvisibleBitmap == null) {
-            mPasswordInvisibleBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.base_ui_icon_password_close);
+            mPasswordInvisibleBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.base_ui_icon_eye_off);
         }
         return mPasswordInvisibleBitmap;
     }
@@ -175,6 +173,7 @@ public class ClearableEditTextController {
                     } else {
                         mEditText.setTransformationMethod(getVisibleTransformation());
                     }
+                    mEditText.setSelection(getTextValue().length());
                 }
             }
         }
@@ -224,7 +223,7 @@ public class ClearableEditTextController {
         if (mPasswordVisibleEnable) {
             Bitmap passwordBitmap = getPasswordBitmap();
             canvas.translate(-(passwordBitmap.getWidth() + mBitmapRightEdgeOffset), 0);
-            canvas.drawBitmap(passwordBitmap, 0, (mEditText.getMeasuredHeight() - passwordBitmap.getHeight()) / 2, mBitmapPaint);
+            canvas.drawBitmap(passwordBitmap, 0, (int) (0.5F + (mEditText.getMeasuredHeight() - passwordBitmap.getHeight()) / 2.0F), mBitmapPaint);
         }
 
         boolean hasClearBitmap = mContentClearableEnable && !TextUtils.isEmpty(getTextValue());
@@ -235,7 +234,7 @@ public class ClearableEditTextController {
             } else {
                 canvas.translate(-(mClearBitmap.getWidth() + mBitmapRightEdgeOffset), 0);
             }
-            canvas.drawBitmap(mClearBitmap, 0, (mEditText.getMeasuredHeight() - mClearBitmap.getHeight()) / 2, mBitmapPaint);
+            canvas.drawBitmap(mClearBitmap, 0, (int) (0.5F + (mEditText.getMeasuredHeight() - mClearBitmap.getHeight()) / 2.0F), mBitmapPaint);
         }
 
         canvas.restore();

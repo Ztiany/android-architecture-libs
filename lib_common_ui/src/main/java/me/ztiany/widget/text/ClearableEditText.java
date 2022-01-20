@@ -9,14 +9,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.android.sdk.ui.R;
-
 import androidx.appcompat.widget.AppCompatEditText;
+
+import com.android.sdk.ui.R;
 
 
 public class ClearableEditText extends AppCompatEditText {
 
-    private ClearableEditTextController mClearableEditTextController;
+    private final ClearableEditTextController mClearableEditTextController = new ClearableEditTextController(this);
 
     public ClearableEditText(Context context) {
         super(context);
@@ -33,8 +33,8 @@ public class ClearableEditText extends AppCompatEditText {
         init(context, attrs);
     }
 
-
     private void init(Context context, AttributeSet attrs) {
+
         ClearableAttrs clearableAttrs = new ClearableAttrs();
         TypedArray typedArray = null;
         try {
@@ -63,8 +63,7 @@ public class ClearableEditText extends AppCompatEditText {
                 typedArray.recycle();
             }
         }
-
-        mClearableEditTextController = new ClearableEditTextController(this, clearableAttrs);
+        mClearableEditTextController.init(clearableAttrs);
     }
 
     @SuppressLint("ClickableViewAccessibility")
