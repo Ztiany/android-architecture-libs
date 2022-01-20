@@ -33,7 +33,7 @@ import timber.log.Timber;
  * <p>
  * other useful libs:
  * <ol>
- * <li>https://github.com/Zackratos/UltimateBar</li>
+ * <li>https://github.com/Zackratos/UltimateBarX</li>
  * <li>https://github.com/Veaer/Glass</li>
  * <li>https://github.com/H07000223/FlycoSystemBar</li>
  * <li>https://github.com/niorgai/StatusBarCompat</li>
