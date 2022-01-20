@@ -4,8 +4,12 @@ package com.android.base.architecture.ui
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import com.android.base.AndroidSword
 import com.android.base.foundation.data.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------
 fun LoadingView.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
@@ -41,40 +45,59 @@ fun <H, T> H.handleLiveData(
 ) where H : LoadingView, H : LifecycleOwner {
 
     val builder = ResourceHandlerBuilder<T>()
-
     handlerBuilder(builder)
 
     liveData.observe(this, { state ->
-        when {
-            state.isError -> {
-                dismissLoadingDialogDelayed {
-                    val onError = builder.onError
-                    if (onError != null) {
-                        onError(state.error())
-                    } else {
-                        showMessage(AndroidSword.errorConvert.convert(state.error()))
-                    }
-                }
-            }
-            state.isLoading && builder.showLoading -> {
-                if (builder.onLoading == null) {
-                    showLoadingDialog(builder.loadingMessage, !builder.forceLoading)
-                } else {
-                    builder.onLoading?.invoke()
-                }
-            }
-            state.isSuccess -> {
-                dismissLoadingDialogDelayed {
-                    builder.onSuccess?.invoke(state.get())
-                    if (state.hasData()) {
-                        builder.onSuccessWithData?.invoke(state.data())
-                    } else {
-                        builder.onEmpty?.invoke()
-                    }
-                }
-            }//success end
-        }
+        handleResourceInternal(state, builder)
     })
+}
+
+/** refer to [handleLiveData] */
+fun <H, T> H.handleFlowData(
+    /**core: data*/
+    flow: Flow<Resource<T>>,
+    handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
+) where H : LoadingView, H : LifecycleOwner {
+    val builder = ResourceHandlerBuilder<T>()
+    handlerBuilder(builder)
+    flow.onEach {
+        handleResourceInternal(it, builder)
+    }.launchIn(lifecycleScope)
+}
+
+private fun <H, T> H.handleResourceInternal(
+    state: Resource<T>,
+    handlerBuilder: ResourceHandlerBuilder<T>
+) where H : LoadingView, H : LifecycleOwner {
+    when {
+        state.isError -> {
+            dismissLoadingDialogDelayed {
+                val onError = handlerBuilder.onError
+                if (onError != null) {
+                    onError(state.error())
+                } else {
+                    showMessage(AndroidSword.errorConvert.convert(state.error()))
+                }
+            }
+        }
+        state.isLoading && handlerBuilder.showLoading -> {
+            if (handlerBuilder.onLoading == null) {
+                showLoadingDialog(handlerBuilder.loadingMessage, !handlerBuilder.forceLoading)
+            } else {
+                handlerBuilder.onLoading?.invoke()
+            }
+        }
+        state.isSuccess -> {
+            dismissLoadingDialogDelayed {
+                handlerBuilder.onSuccess?.invoke(state.get())
+                if (state.hasData()) {
+                    handlerBuilder.onSuccessWithData?.invoke(state.data())
+                } else {
+                    handlerBuilder.onEmpty?.invoke()
+                }
+            }
+        }//success end
+    }
 }
 
 //----------------------------------------------Loading In StateView----------------------------------------------
@@ -84,7 +107,12 @@ private fun <T> newDefaultChecker(): ((T) -> Boolean) {
     }
 }
 
-fun <T> RefreshStateLayout.handleResultState(resource: Resource<T>, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+fun <T> RefreshStateLayout.handleResultState(
+    resource: Resource<T>,
+    isEmpty: ((T) -> Boolean)? = newDefaultChecker(),
+    onEmpty: (() -> Unit)? = null,
+    onResult: ((T) -> Unit)
+) {
     when {
         resource.isLoading -> showLoadingLayout()
         resource.isError -> handleResultError(resource.error())
@@ -92,7 +120,12 @@ fun <T> RefreshStateLayout.handleResultState(resource: Resource<T>, isEmpty: ((T
     }
 }
 
-fun <T> RefreshStateLayout.handleResult(t: T?, isEmpty: ((T) -> Boolean)? = newDefaultChecker(), onEmpty: (() -> Unit)? = null, onResult: ((T) -> Unit)) {
+fun <T> RefreshStateLayout.handleResult(
+    t: T?,
+    isEmpty: ((T) -> Boolean)? = newDefaultChecker(),
+    onEmpty: (() -> Unit)? = null,
+    onResult: ((T) -> Unit)
+) {
     if (isRefreshing) {
         refreshCompleted()
     }
