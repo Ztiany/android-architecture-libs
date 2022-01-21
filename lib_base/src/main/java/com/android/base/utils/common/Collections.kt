@@ -18,20 +18,31 @@ fun <E> List<E>?.ifNotEmpty(action: List<E>.() -> Unit) {
     }
 }
 
-fun <E> MutableList<E>.removeWhich(firstMatchOnly: Boolean = false, filter: (E) -> Boolean): Boolean {
+fun <E> MutableList<E>.removeWhen(filter: (E) -> Boolean): Boolean {
     var removed = false
     val each = iterator()
     while (each.hasNext()) {
         if (filter(each.next())) {
             each.remove()
             removed = true
-        }
-        if (firstMatchOnly && removed) {
-            return removed
+            break
         }
     }
     return removed
 }
+
+fun <E> MutableList<E>.removeAllWhen(firstMatchOnly: Boolean = false, filter: (E) -> Boolean): Int {
+    var removed = 0
+    val each = iterator()
+    while (each.hasNext()) {
+        if (filter(each.next())) {
+            each.remove()
+            removed++
+        }
+    }
+    return removed
+}
+
 
 inline fun <T> List<T>.findFrom(startIndex: Int = 0, predicate: (T) -> Boolean): T? {
     var element: T

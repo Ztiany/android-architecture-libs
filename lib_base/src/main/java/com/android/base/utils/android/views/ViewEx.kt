@@ -312,7 +312,7 @@ fun View.measureSelf(): Boolean {
     if (layoutParams == null || layoutParams.width == ViewGroup.LayoutParams.MATCH_PARENT && layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT) {
         return false
     }
-    val size = 1 shl 30 - 1//即后30位
+    val size = 1 shl 30 - 1//即后 30 位
     val measureSpec = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.AT_MOST)
     measure(measureSpec, measureSpec)
     return true

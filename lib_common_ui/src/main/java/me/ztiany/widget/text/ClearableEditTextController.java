@@ -156,7 +156,7 @@ class ClearableEditTextController {
     }
 
 
-    public void onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
 
         if (action == MotionEvent.ACTION_DOWN) {
@@ -178,6 +178,7 @@ class ClearableEditTextController {
             }
         }
 
+        return mDownPosition != DOWN_POSITION_NONE;
     }
 
     private int detectTouchPosition(MotionEvent event) {

@@ -69,7 +69,9 @@ public class ClearableEditText extends AppCompatEditText {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mClearableEditTextController.onTouchEvent(event);
+        if (mClearableEditTextController.onTouchEvent(event)) {
+            return true;
+        }
         return super.onTouchEvent(event);
     }
 

@@ -37,7 +37,7 @@ object AndroidSword {
     /** 用于创建 LoadingView*/
     var loadingViewFactory: ((Context) -> LoadingView)? = null
 
-    /**[Throwable] 到可读的[CharSequence]转换*/
+    /** [Throwable] 到可读的 [CharSequence] 转换*/
     var errorConvert: ErrorConvert = object : ErrorConvert {
         override fun convert(throwable: Throwable): CharSequence {
             return throwable.message.toString()
