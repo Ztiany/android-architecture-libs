@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-public class DeviceIdUtil {
+public class DeviceIdUtils {
 
     /**
      * 获取一个唯一设备标识。

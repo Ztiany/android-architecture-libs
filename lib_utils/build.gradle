@@ -55,6 +55,7 @@ dependencies {
     api ThirdLibraries.okIO
     api ThirdLibraries.jOOR
 
+    //由于 util-code 侵入性较大，不直接引入，需要什么就复制什么。
     //https://juejin.cn/user/1978776659167981
     //https://github.com/Blankj/AndroidUtilCode
     compileOnly "com.blankj:utilcodex:1.30.0"

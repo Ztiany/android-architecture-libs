@@ -6,18 +6,26 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
-import com.blankj.utilcode.util.Utils;
+import com.android.base.utils.android.AppUtils;
+import com.android.base.utils.android.network.NetworkStateKt;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 依赖 Context 的其他工具类都由 BaseUtils 提供
  */
 public class BaseUtils {
 
+    private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
+
     private static Application sApplication;
 
     public static void init(Application application) {
-        Utils.init(application);
-        sApplication = application;
+        if (isInitialized.compareAndSet(false, true)) {
+            sApplication = application;
+            AppUtils.registerActivityLifecycle(application);
+            NetworkStateKt.initNetworkState(application);
+        }
     }
 
     public static Context getAppContext() {

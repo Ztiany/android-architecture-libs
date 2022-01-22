@@ -3,7 +3,6 @@ package com.android.base.utils.android.cache;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.base.utils.BaseUtils;
 
@@ -14,6 +13,7 @@ import timber.log.Timber;
 /**
  * modified from <a href='https://github.com/hongyangAndroid/SpCache'>hongyangAndroid/SpCache</a>
  */
+@SuppressWarnings("unused")
 public class SpCache {
 
     private static final String TAG = SpCache.class.getSimpleName();
@@ -121,7 +121,7 @@ public class SpCache {
         } else if (t instanceof Long) {
             editor.putLong(key, (Long) t);
         } else {
-            Timber.d("you may be put a invalid object :" + t);
+            Timber.d("you may be put a invalid object :%s", t.toString());
             editor.putString(key, t.toString());
         }
         SharedPreferencesCompat.apply(editor, mUseApply);
@@ -130,7 +130,7 @@ public class SpCache {
 
 
     private Object readDisk(String key, Object defaultObject) {
-        Log.e("TAG", "readDisk");
+        Timber.e("readDisk");
         SharedPreferences sp = getSharedPreferences();
 
         if (defaultObject instanceof String) {
@@ -144,7 +144,7 @@ public class SpCache {
         } else if (defaultObject instanceof Long) {
             return sp.getLong(key, (Long) defaultObject);
         }
-        Log.e(TAG, "you can not read object , which class is " + defaultObject.getClass().getSimpleName());
+        Timber.e("you can not read object , which class is %s", defaultObject.getClass().getSimpleName());
         return null;
 
     }

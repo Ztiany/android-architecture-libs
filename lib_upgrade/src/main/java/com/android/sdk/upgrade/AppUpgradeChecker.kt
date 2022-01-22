@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.ServiceUtils
-import com.blankj.utilcode.util.Utils
+import com.android.base.utils.BaseUtils
+import com.android.base.utils.android.AppUtils
+import com.android.base.utils.android.ServiceUtils
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -139,7 +139,7 @@ object AppUpgradeChecker {
         }
         //start downloading
         UpgradeService.start(
-            Utils.getApp(),
+            BaseUtils.getAppContext(),
             upgradeInfo.downloadUrl,
             upgradeInfo.versionName,
             upgradeInfo.digitalAbstract
@@ -190,19 +190,18 @@ object AppUpgradeChecker {
     }
 
     private fun safeContext(onContext: (Activity) -> Unit) {
-        val topActivity: Activity? = ActivityUtils.getTopActivity()
+        val topActivity: Activity? = AppUtils.getTopActivity()
         if (topActivity != null) {
             onContext(topActivity)
         } else {
-            AppUtils.registerAppStatusChangedListener(object : Utils.OnAppStatusChangedListener {
+            AppUtils.addOnAppStatusChangedListener(object : AppUtils.OnAppStatusChangedListener {
 
                 override fun onBackground(activity: Activity?) = Unit
 
                 override fun onForeground(activity: Activity?) {
-                    AppUtils.unregisterAppStatusChangedListener(this)
-                    ActivityUtils.getTopActivity()?.let { onContext(it) }
+                    AppUtils.removeOnAppStatusChangedListener(this)
+                    AppUtils.getTopActivity()?.let { onContext(it) }
                 }
-
             })
         }
     }

@@ -33,6 +33,9 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import kotlinx.coroutines.flow.Flow;
+import timber.log.Timber;
+
 /**
  * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/NetworkUtils.java'>AndroidUtilCode's NetworkUtils</a>
  */
@@ -534,6 +537,32 @@ public final class NetworkUtils {
             return ssid.substring(1, ssid.length() - 1);
         }
         return ssid;
+    }
+
+    /**
+     * 获取当前系统是否设置代理，参考 [App 防止 Fiddler 抓包小技巧](https://cloud.tencent.com/developer/article/1445715)。
+     */
+    public static boolean checkWifiProxy(Context context) {
+        boolean isIcsOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+        String proxyAddress;
+        int proxyPort;
+        if (isIcsOrLater) {
+            proxyAddress = System.getProperty("http.proxyHost");
+            String portStr = System.getProperty("http.proxyPort");
+            proxyPort = Integer.parseInt(portStr == null ? "-1" : portStr);
+        } else {
+            proxyAddress = android.net.Proxy.getHost(context);
+            proxyPort = android.net.Proxy.getPort(context);
+        }
+        Timber.d("proxyAddress : ${proxyAddress}, port : $proxyPort");
+        return !TextUtils.isEmpty(proxyAddress) && proxyPort != -1;
+    }
+
+    /**
+     * 获取可以监听网络状态
+     */
+    public static Flow<NetworkState> observableNetworkState() {
+        return NetworkStateKt.observableNetworkState();
     }
 
 }

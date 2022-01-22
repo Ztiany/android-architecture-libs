@@ -3,16 +3,10 @@ package com.android.base.architecture.app
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.IntentFilter
 import android.content.res.Configuration
-import android.net.ConnectivityManager
 import com.android.base.CrashProcessor
 import com.android.base.utils.BaseUtils
-import com.android.base.utils.android.network.NetStateReceiver
-import com.android.base.utils.android.network.NetworkState
-import com.android.base.utils.android.network.NetworkUtils
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
+import com.android.base.utils.android.AppUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -38,21 +32,7 @@ class ApplicationDelegate internal constructor() {
 
     private val onAttachBaseCalled = AtomicBoolean(false)
 
-    private val networkStateFlow by lazy {
-        MutableStateFlow(
-            when {
-                NetworkUtils.isWifiConnected() -> NetworkState.STATE_WIFI
-                NetworkUtils.isConnected() -> NetworkState.STATE_GPRS
-                else -> NetworkState.STATE_NONE
-            }
-        )
-    }
-
-    internal fun observableNetworkState(): Flow<NetworkState> {
-        return networkStateFlow
-    }
-
-    fun attachBaseContext(base: Context) {
+    fun attachBaseContext(@Suppress("UNUSED_PARAMETER") base: Context) {
         check(onAttachBaseCalled.compareAndSet(false, true)) { "Can only be called once" }
     }
 
@@ -63,15 +43,6 @@ class ApplicationDelegate internal constructor() {
         BaseUtils.init(application)
         //异常日志记录
         crashHandler = CrashHandler.register(application)
-        //网络状态
-        application.registerReceiver(
-            object : NetStateReceiver() {
-                override fun onNetworkStateChanged(tempStatus: NetworkState) {
-                    networkStateFlow.value = tempStatus
-                }
-            },
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
         //App前台后台
         listenActivityLifecycleCallbacks()
     }
@@ -80,11 +51,11 @@ class ApplicationDelegate internal constructor() {
 
     }
 
-    fun onConfigurationChanged(newConfig: Configuration) {
+    fun onConfigurationChanged(@Suppress("UNUSED_PARAMETER") newConfig: Configuration) {
 
     }
 
-    fun onTrimMemory(level: Int) {
+    fun onTrimMemory(@Suppress("UNUSED_PARAMETER") level: Int) {
 
     }
 
@@ -93,7 +64,7 @@ class ApplicationDelegate internal constructor() {
     }
 
     private fun listenActivityLifecycleCallbacks() {
-        AppUtils.registerAppStatusChangedListener(object : OnAppStatusChangedListener {
+        AppUtils.addOnAppStatusChangedListener(object : AppUtils.OnAppStatusChangedListener {
             override fun onBackground(activity: Activity?) {
                 Timber.d("app进入后台")
                 _appStatus.value = false

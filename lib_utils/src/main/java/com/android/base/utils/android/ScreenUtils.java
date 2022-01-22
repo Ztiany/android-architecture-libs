@@ -22,15 +22,16 @@ import com.android.base.utils.android.compat.SystemBarCompat;
 /**
  * 窗口工具箱
  *
+ * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/ScreenUtils.java'>AndroidUtilCode's ScreenUtils</a>
  * @see <a href='https://developer.android.com/reference/android/view/Display'>Display</>
  * @see <a href='https://stackoverflow.com/questions/14341041/how-to-get-real-screen-height-and-width'>how-to-get-real-screen-height-and-width</>
  */
-public final class WindowUtils {
+public final class ScreenUtils {
 
     /**
      * Don't let anyone instantiate this class.
      */
-    private WindowUtils() {
+    private ScreenUtils() {
         throw new Error("Do not need instantiate!");
     }
 

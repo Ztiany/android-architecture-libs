@@ -21,7 +21,7 @@ import timber.log.Timber;
 
 
 /**
- * 网络监听，接下来会使用eventBus来分发网络状态，对网络状态感兴趣的可以对网络状态进行订阅,需要权限：
+ * 网络监听，需要权限：
  * <pre>{@code
  *
  *   <receiver android:name="com.library.receiver.NetStateReceiver">

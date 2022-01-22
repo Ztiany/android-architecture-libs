@@ -2,11 +2,14 @@ package com.android.base.utils.android;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.webkit.MimeTypeMap;
@@ -28,11 +31,39 @@ import java.util.List;
 
 import timber.log.Timber;
 
-
+/**
+ * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/AppUtils.java'>AndroidUtilCode's AppUtils</a>
+ * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/ActivityUtils.java'>ActivityUtils's AppUtils</a>
+ */
 public class AppUtils {
 
     private AppUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
+    }
+
+    private static final InternalActivityLifecycleCallbacks callback = new InternalActivityLifecycleCallbacks();
+
+    public static void registerActivityLifecycle(Application application) {
+        callback.init(application);
+    }
+
+    @Nullable
+    public static Activity getTopActivity() {
+        return callback.getTopActivity();
+    }
+
+    public static void addOnAppStatusChangedListener(final AppUtils.OnAppStatusChangedListener listener) {
+        callback.addOnAppStatusChangedListener(listener);
+    }
+
+    public static void removeOnAppStatusChangedListener(final AppUtils.OnAppStatusChangedListener listener) {
+        callback.removeOnAppStatusChangedListener(listener);
+    }
+
+    public interface OnAppStatusChangedListener {
+        void onForeground(Activity activity);
+
+        void onBackground(Activity activity);
     }
 
     /**
@@ -230,6 +261,306 @@ public class AppUtils {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    /**
+     * Return the application's icon.
+     *
+     * @return the application's icon
+     */
+    public static Drawable getAppIcon() {
+        return getAppIcon(BaseUtils.getAppContext().getPackageName());
+    }
+
+    /**
+     * Return the application's icon.
+     *
+     * @param packageName The name of the package.
+     * @return the application's icon
+     */
+    public static Drawable getAppIcon(final String packageName) {
+        if (Strings.isSpace(packageName)) return null;
+        try {
+            PackageManager pm = BaseUtils.getAppContext().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(packageName, 0);
+            return pi == null ? null : pi.applicationInfo.loadIcon(pm);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Return the application's icon resource identifier.
+     *
+     * @return the application's icon resource identifier
+     */
+    public static int getAppIconId() {
+        return getAppIconId(BaseUtils.getAppContext().getPackageName());
+    }
+
+    /**
+     * Return the application's icon resource identifier.
+     *
+     * @param packageName The name of the package.
+     * @return the application's icon resource identifier
+     */
+    public static int getAppIconId(final String packageName) {
+        if (Strings.isSpace(packageName)) return 0;
+        try {
+            PackageManager pm = BaseUtils.getAppContext().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(packageName, 0);
+            return pi == null ? 0 : pi.applicationInfo.icon;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * Return the application's package name.
+     *
+     * @return the application's package name
+     */
+    public static String getAppPackageName() {
+        return BaseUtils.getAppContext().getPackageName();
+    }
+
+    /**
+     * Return the application's path.
+     *
+     * @return the application's path
+     */
+    public static String getAppPath() {
+        return getAppPath(BaseUtils.getAppContext().getPackageName());
+    }
+
+    /**
+     * Return the application's path.
+     *
+     * @param packageName The name of the package.
+     * @return the application's path
+     */
+    public static String getAppPath(final String packageName) {
+        if (Strings.isSpace(packageName)) return "";
+        try {
+            PackageManager pm = BaseUtils.getAppContext().getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(packageName, 0);
+            return pi == null ? null : pi.applicationInfo.sourceDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Return whether the app is installed.
+     *
+     * @param pkgName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppInstalled(final String pkgName) {
+        if (Strings.isSpace(pkgName)) return false;
+        PackageManager pm = BaseUtils.getAppContext().getPackageManager();
+        try {
+            return pm.getApplicationInfo(pkgName, 0).enabled;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Return whether the application with root permission.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppRoot() {
+        ShellUtils.CommandResult result = ShellUtils.execCmd("echo root", true);
+        return result.result == 0;
+    }
+
+    /**
+     * Return whether it is a debug application.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppDebug() {
+        return isAppDebug(BaseUtils.getAppContext().getPackageName());
+    }
+
+    /**
+     * Return whether it is a debug application.
+     *
+     * @param packageName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppDebug(final String packageName) {
+        if (Strings.isSpace(packageName)) return false;
+        ApplicationInfo ai = BaseUtils.getAppContext().getApplicationInfo();
+        return ai != null && (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
+    /**
+     * Return whether it is a system application.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppSystem() {
+        return isAppSystem(BaseUtils.getAppContext().getPackageName());
+    }
+
+    /**
+     * Return whether it is a system application.
+     *
+     * @param packageName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppSystem(final String packageName) {
+        if (Strings.isSpace(packageName)) return false;
+        try {
+            PackageManager pm = BaseUtils.getAppContext().getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
+            return ai != null && (ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Return whether application is foreground.
+     *
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppForeground() {
+        ActivityManager am = (ActivityManager) BaseUtils.getAppContext().getSystemService(Context.ACTIVITY_SERVICE);
+        if (am == null) return false;
+        List<ActivityManager.RunningAppProcessInfo> info = am.getRunningAppProcesses();
+        if (info == null || info.size() == 0) return false;
+        for (ActivityManager.RunningAppProcessInfo aInfo : info) {
+            if (aInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                if (aInfo.processName.equals(BaseUtils.getAppContext().getPackageName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return whether application is foreground.
+     * <p>Target APIs greater than 21 must hold
+     * {@code <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />}</p>
+     *
+     * @param pkgName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppForeground(@NonNull final String pkgName) {
+        return !Strings.isSpace(pkgName) && pkgName.equals(ProcessUtils.getForegroundProcessName());
+    }
+
+    /**
+     * Return whether application is running.
+     *
+     * @param pkgName The name of the package.
+     * @return {@code true}: yes<br>{@code false}: no
+     */
+    public static boolean isAppRunning(final String pkgName) {
+        if (Strings.isSpace(pkgName)) return false;
+        ApplicationInfo ai = BaseUtils.getAppContext().getApplicationInfo();
+        int uid = ai.uid;
+        ActivityManager am = (ActivityManager) BaseUtils.getAppContext().getSystemService(Context.ACTIVITY_SERVICE);
+        if (am != null) {
+            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(Integer.MAX_VALUE);
+            if (taskInfo != null && taskInfo.size() > 0) {
+                for (ActivityManager.RunningTaskInfo aInfo : taskInfo) {
+                    if (aInfo.baseActivity != null) {
+                        if (pkgName.equals(aInfo.baseActivity.getPackageName())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            List<ActivityManager.RunningServiceInfo> serviceInfo = am.getRunningServices(Integer.MAX_VALUE);
+            if (serviceInfo != null && serviceInfo.size() > 0) {
+                for (ActivityManager.RunningServiceInfo aInfo : serviceInfo) {
+                    if (uid == aInfo.uid) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finish the activity.
+     *
+     * @param activity The activity.
+     */
+    public static void finishActivity(@NonNull final Activity activity) {
+        finishActivity(activity, false);
+    }
+
+    /**
+     * Finish the activity.
+     *
+     * @param activity   The activity.
+     * @param isLoadAnim True to use animation for the outgoing activity, false otherwise.
+     */
+    public static void finishActivity(@NonNull final Activity activity, final boolean isLoadAnim) {
+        activity.finish();
+        if (!isLoadAnim) {
+            activity.overridePendingTransition(0, 0);
+        }
+    }
+
+    /**
+     * Finish the activities whose type not equals the activity class.
+     *
+     * @param clz The activity class.
+     */
+    public static void finishOtherActivities(@NonNull final Class<? extends Activity> clz) {
+        finishOtherActivities(clz, false);
+    }
+
+
+    /**
+     * Finish the activities whose type not equals the activity class.
+     *
+     * @param clz        The activity class.
+     * @param isLoadAnim True to use animation for the outgoing activity, false otherwise.
+     */
+    public static void finishOtherActivities(@NonNull final Class<? extends Activity> clz, final boolean isLoadAnim) {
+        List<Activity> activities = callback.getActivityList();
+        for (Activity act : activities) {
+            if (!act.getClass().equals(clz)) {
+                finishActivity(act, isLoadAnim);
+            }
+        }
+    }
+
+    /**
+     * Finish all of activities.
+     */
+    public static void finishAllActivities() {
+        finishAllActivities(false);
+    }
+
+    /**
+     * Finish all of activities.
+     *
+     * @param isLoadAnim True to use animation for the outgoing activity, false otherwise.
+     */
+    public static void finishAllActivities(final boolean isLoadAnim) {
+        List<Activity> activityList = callback.getActivityList();
+        for (Activity act : activityList) {
+            // sActivityList remove the index activity at onActivityDestroyed
+            act.finish();
+            if (!isLoadAnim) {
+                act.overridePendingTransition(0, 0);
+            }
         }
     }
 

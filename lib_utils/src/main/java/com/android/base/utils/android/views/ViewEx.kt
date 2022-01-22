@@ -8,7 +8,7 @@ import android.view.View.OnLayoutChangeListener
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
-import com.android.base.utils.android.WindowUtils
+import com.android.base.utils.android.ScreenUtils
 import com.android.base.utils.android.compat.AndroidVersion.atLeast
 import com.android.base.utils.common.otherwise
 import com.android.base.utils.common.yes
@@ -324,8 +324,8 @@ fun View.measureSelfWithScreenSize(): Boolean {
         return false
     }
     measure(
-        View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenWidth(), View.MeasureSpec.AT_MOST),
-        View.MeasureSpec.makeMeasureSpec(WindowUtils.getAppScreenHeight(), View.MeasureSpec.AT_MOST)
+        View.MeasureSpec.makeMeasureSpec(ScreenUtils.getAppScreenWidth(), View.MeasureSpec.AT_MOST),
+        View.MeasureSpec.makeMeasureSpec(ScreenUtils.getAppScreenHeight(), View.MeasureSpec.AT_MOST)
     )
     return true
 }

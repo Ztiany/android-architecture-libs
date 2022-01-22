@@ -84,7 +84,4 @@ dependencies {
 
     //Log
     api ThirdLibraries.timber
-
-    //utils
-    implementation "com.blankj:utilcodex:1.30.0"//TODO: remove this
 }

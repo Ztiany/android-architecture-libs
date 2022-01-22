@@ -7,8 +7,9 @@ import android.content.res.Resources;
 import androidx.annotation.NonNull;
 
 /**
- * 在系统修改了字体缩放后，依然保持原始的字体比例，以此来防止因为字体过大而导致 UI 布局错乱。
  * <p>
+ * 在系统修改了字体缩放后，依然保持原始的字体比例，以此来防止因为字体过大而导致 UI 布局错乱。
+ * </p>
  * usage in activity:
  * <pre>
  * override fun onConfigurationChanged(newConfig: Configuration) {

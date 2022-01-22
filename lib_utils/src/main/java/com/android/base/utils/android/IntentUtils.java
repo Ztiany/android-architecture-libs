@@ -1,7 +1,5 @@
 package com.android.base.utils.android;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +10,6 @@ import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -20,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class IntentUtils {
 
@@ -135,7 +134,7 @@ public class IntentUtils {
             context.startActivity(intent);
             return true;
         } else {
-            Log.d(TAG, "insertEvent() fail");
+            Timber.d("insertEvent() fail");
             return false;
         }
     }

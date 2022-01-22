@@ -1,8 +1,6 @@
 package com.android.base.architecture.activity
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.UiThread
@@ -11,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.android.base.foundation.activity.ActivityDelegate
 import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.activity.ActivityState
-import com.android.base.utils.android.TextSizeAdaptation
 import com.android.base.utils.android.compat.AndroidVersion
 import timber.log.Timber
 
@@ -194,20 +191,6 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner{
         } else {
             activityState === ActivityState.DESTROY
         }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 字体大小适配【忽略字体大小】
-    ///////////////////////////////////////////////////////////////////////////
-    private val screenAdaptation by lazy { TextSizeAdaptation(this) }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        screenAdaptation.onConfigurationChanged(newConfig)
-        super.onConfigurationChanged(newConfig)
-    }
-
-    override fun getResources(): Resources {
-        return screenAdaptation.fixResources(super.getResources())
     }
 
 }

@@ -41,6 +41,4 @@ dependencies {
 
     implementation ThirdLibraries.timber
     implementation ThirdLibraries.okHttp
-
-    implementation "com.blankj:utilcodex:1.30.0" //TODO : remove this
 }

@@ -10,9 +10,9 @@ import com.android.base.architecture.ui.Paging
 import com.android.base.architecture.ui.RefreshLoadViewFactory
 import com.android.base.architecture.ui.RefreshLoadViewFactory.Factory
 import com.android.base.architecture.ui.RefreshViewFactory
+import com.android.base.utils.android.AppUtils
 import com.android.base.utils.android.network.NetworkState
-import com.blankj.utilcode.util.ActivityUtils
-import com.blankj.utilcode.util.AppUtils
+import com.android.base.utils.android.network.NetworkUtils
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -42,9 +42,6 @@ object AndroidSword {
             return throwable.message.toString()
         }
     }
-
-    /**网络状态监听器*/
-    fun networkState(): Flow<NetworkState> = coreAppDelegate.observableNetworkState()
 
     fun setCrashProcessor(crashProcessor: CrashProcessor): AndroidSword {
         coreAppDelegate.setCrashProcessor(crashProcessor)
@@ -79,7 +76,7 @@ object AndroidSword {
 
     /** 获取当前 resume 的 Activity */
     val topActivity: Activity?
-        get() = ActivityUtils.getTopActivity()
+        get() = AppUtils.getTopActivity()
 
     /** App是否在前台运行 */
     val isForeground: Boolean
@@ -94,6 +91,9 @@ object AndroidSword {
         RefreshViewFactory.registerFactory(factory)
         return this
     }
+
+    /** 监听网络状态 */
+    fun observableNetworkState(): Flow<NetworkState> = NetworkUtils.observableNetworkState()
 
 }
 

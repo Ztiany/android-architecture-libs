@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.android.base.utils.BaseUtils
-import com.android.base.utils.android.ActivityUtils
+import com.android.base.utils.android.AppUtils
 
 inline fun <T : TypedArray?, R> T.use(block: (T) -> R): R {
     var recycled = false
@@ -135,7 +135,7 @@ fun getStyledDrawable(context: Context, @AttrRes attr: Int): Drawable? {
 // text
 ///////////////////////////////////////////////////////////////////////////
 private fun getContext(): Context {
-    return ActivityUtils.topActivity ?: BaseUtils.getAppContext()
+    return AppUtils.getTopActivity() ?: BaseUtils.getAppContext()
 }
 
 fun getText(@StringRes id: Int): CharSequence {
