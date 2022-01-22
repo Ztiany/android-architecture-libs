@@ -1,6 +1,7 @@
 package com.android.sdk.net.coroutines
 
 import com.android.sdk.net.core.result.Result
+import java.lang.Exception
 
 /**
  *@author Ztiany
@@ -21,5 +22,10 @@ private suspend fun example(api: ExampleApi) {
 
     }
 
+    try {
+        executeApiCall { api.loadData2() }
+    } catch (e: Exception) {
+
+    }
 
 }

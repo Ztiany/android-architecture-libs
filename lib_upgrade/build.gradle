@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+    implementation project(":lib_utils")
+
     implementation AndroidLibraries.annotations
     implementation AndroidLibraries.lifecycleLiveKtx
     implementation AndroidLibraries.ktx
@@ -39,5 +41,6 @@ dependencies {
 
     implementation ThirdLibraries.timber
     implementation ThirdLibraries.okHttp
-    implementation ThirdLibraries.utilcode
+
+    implementation "com.blankj:utilcodex:1.30.0" //TODO : remove this
 }

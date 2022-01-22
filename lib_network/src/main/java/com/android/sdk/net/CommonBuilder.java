@@ -4,6 +4,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.sdk.net.core.provider.ErrorBodyHandler;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 
@@ -19,6 +20,11 @@ public class CommonBuilder {
 
     public CommonBuilder errorMessage(@NonNull ErrorMessage errorMessage) {
         mCommonProvider.mErrorMessage = errorMessage;
+        return this;
+    }
+
+    public CommonBuilder errorBodyHandler(@NonNull ErrorBodyHandler errorBodyHandler) {
+        mCommonProvider.mErrorBodyHandler = errorBodyHandler;
         return this;
     }
 

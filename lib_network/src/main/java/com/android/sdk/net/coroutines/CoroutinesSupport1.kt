@@ -1,7 +1,6 @@
 package com.android.sdk.net.coroutines
 
 import com.android.sdk.net.NetContext
-import com.android.sdk.net.core.exception.NetworkErrorException
 import com.android.sdk.net.core.exception.ServerErrorException
 import com.android.sdk.net.core.result.ExceptionFactory
 import com.android.sdk.net.core.result.Result
@@ -62,7 +61,7 @@ private suspend fun <T> realCall(
         val result = call.invoke()
         val netContext = NetContext.get()
         val hostFlag = NetContext.get().flagHolder.getFlag(result.javaClass)
-        val netProvider = netContext.netProvider(hostFlag)
+        val netProvider = netContext.hostConfigProvider(hostFlag)
 
         return if (netProvider.errorDataAdapter().isErrorDataStub(result)) {//服务器数据格式错误
 
@@ -72,11 +71,11 @@ private suspend fun <T> realCall(
 
             val apiHandler = netProvider.aipHandler()
             apiHandler?.onApiError(result)
-            CallResult.Error(createException(result, exceptionFactory, hostFlag, netProvider))
+            CallResult.Error(createApiException(result, exceptionFactory, hostFlag, netProvider))
 
         } else if (requireNonNullData) { //如果约定必须返回的数据却没有返回数据，则认为是服务器错误。
 
-            val data = result.data
+            val data: T? = result.data
             if (data == null) {
                 CallResult.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
             } else {
@@ -87,14 +86,8 @@ private suspend fun <T> realCall(
             CallResult.Success(result.data)
         }
 
-    } catch (e: Throwable) {
-        return if (NetContext.get().isConnected) {
-            //有连接无数据，服务器错误
-            CallResult.Error(ServerErrorException(ServerErrorException.UNKNOW_ERROR))
-        } else {
-            //无连接网络错误
-            CallResult.Error(NetworkErrorException())
-        }
+    } catch (throwable: Throwable) {
+        return CallResult.Error(transformHttpException(throwable))
     }
 
 }

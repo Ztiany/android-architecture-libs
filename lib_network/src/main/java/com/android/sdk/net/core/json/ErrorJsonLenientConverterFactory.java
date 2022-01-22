@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import com.android.sdk.net.NetContext;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import okhttp3.RequestBody;
@@ -57,7 +56,7 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
                 Timber.e(e, "Json covert error --> error, type is %s", type);
                 //服务器数据格式错误
                 NetContext netContext = NetContext.get();
-                return netContext.netProviderByResultType(type).errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
+                return netContext.hostConfigProviderByResultType(type).errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
             }
         };
     }

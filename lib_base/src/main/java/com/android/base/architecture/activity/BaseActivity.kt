@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.android.base.foundation.activity.ActivityDelegate
 import com.android.base.foundation.activity.ActivityDelegateOwner
 import com.android.base.foundation.activity.ActivityState
-import com.android.base.utils.android.ScreenAdaptation
+import com.android.base.utils.android.TextSizeAdaptation
 import com.android.base.utils.android.compat.AndroidVersion
 import timber.log.Timber
 
@@ -199,7 +199,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner{
     ///////////////////////////////////////////////////////////////////////////
     // 字体大小适配【忽略字体大小】
     ///////////////////////////////////////////////////////////////////////////
-    private val screenAdaptation by lazy { ScreenAdaptation(this) }
+    private val screenAdaptation by lazy { TextSizeAdaptation(this) }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         screenAdaptation.onConfigurationChanged(newConfig)

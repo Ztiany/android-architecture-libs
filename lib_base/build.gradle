@@ -42,6 +42,7 @@ dependencies {
     //测试
     testImplementation TestLibraries.junit
 
+    api project(":lib_utils")
     api project(":lib_foundation")
 
     //AndroidSupport
@@ -84,8 +85,6 @@ dependencies {
     //Log
     api ThirdLibraries.timber
 
-    //Utils
-    api ThirdLibraries.okIO
-    api ThirdLibraries.utilcode
-    api ThirdLibraries.jOOR
+    //utils
+    implementation "com.blankj:utilcodex:1.30.0"//TODO: remove this
 }

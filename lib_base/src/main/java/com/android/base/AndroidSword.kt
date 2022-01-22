@@ -10,8 +10,7 @@ import com.android.base.architecture.ui.Paging
 import com.android.base.architecture.ui.RefreshLoadViewFactory
 import com.android.base.architecture.ui.RefreshLoadViewFactory.Factory
 import com.android.base.architecture.ui.RefreshViewFactory
-import com.android.base.network.NetworkState
-import com.android.base.network.observableState
+import com.android.base.utils.android.network.NetworkState
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.AppUtils
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +44,7 @@ object AndroidSword {
     }
 
     /**网络状态监听器*/
-    fun networkState(): Flow<NetworkState> = observableState()
+    fun networkState(): Flow<NetworkState> = coreAppDelegate.observableNetworkState()
 
     fun setCrashProcessor(crashProcessor: CrashProcessor): AndroidSword {
         coreAppDelegate.setCrashProcessor(crashProcessor)

@@ -8,7 +8,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Process
 import com.android.base.CrashProcessor
-import com.blankj.utilcode.util.AppUtils
+import com.android.base.utils.android.AppUtils
 import timber.log.Timber
 import java.io.File
 import java.io.PrintStream

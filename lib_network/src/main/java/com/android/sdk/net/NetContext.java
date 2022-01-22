@@ -93,15 +93,15 @@ public class NetContext {
         return NetworkUtils.isConnected(getContext());
     }
 
-    public HostConfigProvider netProvider() {
-        return netProvider(DEFAULT_FLAG);
+    public HostConfigProvider hostConfigProvider() {
+        return hostConfigProvider(DEFAULT_FLAG);
     }
 
-    public HostConfigProvider netProviderByResultType(Type type) {
-        return netProvider(getFlagHolder().getFlag(type));
+    public HostConfigProvider hostConfigProviderByResultType(Type type) {
+        return hostConfigProvider(getFlagHolder().getFlag(type));
     }
 
-    public HostConfigProvider netProvider(String flag) {
+    public HostConfigProvider hostConfigProvider(String flag) {
         HostConfigProvider hostConfigProvider = mProviderMap.get(flag);
 
         if (hostConfigProvider == null) {
@@ -116,7 +116,7 @@ public class NetContext {
     }
 
     public OkHttpClient httpClient(String flag) {
-        return mServiceHelper.getOkHttpClient(flag, netProvider(flag).httpConfig());
+        return mServiceHelper.getOkHttpClient(flag, hostConfigProvider(flag).httpConfig());
     }
 
     public ServiceFactory serviceFactory() {
@@ -124,7 +124,7 @@ public class NetContext {
     }
 
     public ServiceFactory serviceFactory(String flag) {
-        return mServiceHelper.getServiceFactory(flag, netProvider(flag).httpConfig());
+        return mServiceHelper.getServiceFactory(flag, hostConfigProvider(flag).httpConfig());
     }
 
     public Context getContext() {

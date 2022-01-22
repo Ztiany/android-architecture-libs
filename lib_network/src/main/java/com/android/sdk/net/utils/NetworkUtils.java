@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 
 import androidx.annotation.RequiresPermission;
 
+import retrofit2.HttpException;
+
 public class NetworkUtils {
 
     @RequiresPermission(ACCESS_NETWORK_STATE)
@@ -23,6 +25,10 @@ public class NetworkUtils {
             return null;
         }
         return cm.getActiveNetworkInfo();
+    }
+
+    public static boolean isServerInternalError(HttpException httpException) {
+        return httpException.code() >= 500;
     }
 
 }

@@ -3,13 +3,17 @@ package com.android.sdk.net.coroutines
 import com.android.sdk.net.HostConfigProvider
 import com.android.sdk.net.NetContext
 import com.android.sdk.net.core.exception.ApiErrorException
+import com.android.sdk.net.core.exception.NetworkErrorException
+import com.android.sdk.net.core.exception.ServerErrorException
 import com.android.sdk.net.core.result.ExceptionFactory
 import com.android.sdk.net.core.result.Result
+import com.android.sdk.net.utils.NetworkUtils
+import retrofit2.HttpException
 
 internal const val RETRY_TIMES = 3
 internal const val RETRY_DELAY = 3000L
 
-internal fun createException(
+internal fun createApiException(
     result: Result<*>,
     exceptionFactory: ExceptionFactory? = null,
     hostFlag: String,
@@ -47,4 +51,27 @@ private val EMPTY_ENTRY = object : CoroutinesResultPostProcessor {
     override suspend fun retry(throwable: Throwable): Boolean {
         return false
     }
+}
+
+internal fun transformHttpException(throwable: Throwable): Throwable {
+    val errorBodyHandler = NetContext.get().commonProvider().errorBodyHandler()
+
+    return if (errorBodyHandler != null && throwable is HttpException && !NetworkUtils.isServerInternalError(throwable)) {
+        val errorBody = throwable.response()?.errorBody()
+        if (errorBody == null) {
+            newNetworkErrorException()
+        } else {
+            errorBodyHandler.parseErrorBody(String(errorBody.bytes())) ?: newNetworkErrorException()
+        }
+    } else {
+        newNetworkErrorException()
+    }
+}
+
+private fun newNetworkErrorException() = if (NetContext.get().isConnected) {
+    //有连接无数据，服务器错误
+    ServerErrorException(ServerErrorException.UNKNOW_ERROR)
+} else {
+    //无连接网络错误
+    NetworkErrorException()
 }

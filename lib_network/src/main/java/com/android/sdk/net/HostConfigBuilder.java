@@ -4,6 +4,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 
 import com.android.sdk.net.core.provider.ApiHandler;
+import com.android.sdk.net.core.provider.ErrorBodyHandler;
 import com.android.sdk.net.core.provider.ErrorDataAdapter;
 import com.android.sdk.net.core.provider.HttpConfig;
 import com.android.sdk.net.core.result.ExceptionFactory;

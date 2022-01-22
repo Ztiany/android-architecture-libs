@@ -7,8 +7,10 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import com.android.base.CrashProcessor
-import com.android.base.network.NetStateReceiver
 import com.android.base.utils.BaseUtils
+import com.android.base.utils.android.network.NetStateReceiver
+import com.android.base.utils.android.network.NetworkState
+import com.android.base.utils.android.network.NetworkUtils
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils.OnAppStatusChangedListener
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +38,20 @@ class ApplicationDelegate internal constructor() {
 
     private val onAttachBaseCalled = AtomicBoolean(false)
 
+    private val networkStateFlow by lazy {
+        MutableStateFlow(
+            when {
+                NetworkUtils.isWifiConnected() -> NetworkState.STATE_WIFI
+                NetworkUtils.isConnected() -> NetworkState.STATE_GPRS
+                else -> NetworkState.STATE_NONE
+            }
+        )
+    }
+
+    internal fun observableNetworkState(): Flow<NetworkState> {
+        return networkStateFlow
+    }
+
     fun attachBaseContext(base: Context) {
         check(onAttachBaseCalled.compareAndSet(false, true)) { "Can only be called once" }
     }
@@ -49,7 +65,11 @@ class ApplicationDelegate internal constructor() {
         crashHandler = CrashHandler.register(application)
         //网络状态
         application.registerReceiver(
-            NetStateReceiver(),
+            object : NetStateReceiver() {
+                override fun onNetworkStateChanged(tempStatus: NetworkState) {
+                    networkStateFlow.value = tempStatus
+                }
+            },
             IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         )
         //App前台后台
