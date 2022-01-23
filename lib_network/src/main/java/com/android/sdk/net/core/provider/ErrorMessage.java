@@ -19,6 +19,12 @@ public interface ErrorMessage {
      */
     CharSequence serverDataErrorMessage(Throwable exception);
 
+
+    /**
+     * 服务器返回的数据是为 null 异常消息。
+     */
+    CharSequence serverReturningNullDataErrorMessage(Throwable exception);
+
     /**
      * 服务器错误，比如 500-600 响应码。
      */

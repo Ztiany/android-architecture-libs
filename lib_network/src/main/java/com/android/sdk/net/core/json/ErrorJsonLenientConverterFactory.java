@@ -3,7 +3,7 @@ package com.android.sdk.net.core.json;
 
 import androidx.annotation.NonNull;
 
-import com.android.sdk.net.NetContext;
+import com.android.sdk.net.core.exception.ServerErrorException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -52,11 +52,9 @@ public class ErrorJsonLenientConverterFactory extends Converter.Factory {
         return (Converter<ResponseBody, Object>) value -> {
             try {
                 return delegateConverter.convert(value);
-            } catch (Exception e/*防止闪退：JsonSyntaxException、IOException or MalformedJsonException*/) {
+            } catch (Exception e/*JsonSyntaxException、IOException or MalformedJsonException，高版本的 Retrofit 不再直接抛出异常，而是通过回调等方式将异常通知到调用者*/) {
                 Timber.e(e, "Json covert error --> error, type is %s", type);
-                //服务器数据格式错误
-                NetContext netContext = NetContext.get();
-                return netContext.hostConfigProviderByResultType(type).errorDataAdapter().createErrorDataStub(type, annotations, retrofit, value);
+                throw new ServerErrorException(ServerErrorException.SERVER_DATA_ERROR);
             }
         };
     }

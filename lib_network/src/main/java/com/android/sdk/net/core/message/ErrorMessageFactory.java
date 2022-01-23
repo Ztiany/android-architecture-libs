@@ -2,6 +2,8 @@ package com.android.sdk.net.core.message;
 
 import android.text.TextUtils;
 
+import androidx.annotation.RestrictTo;
+
 import com.android.sdk.net.NetContext;
 import com.android.sdk.net.core.exception.ApiErrorException;
 import com.android.sdk.net.core.exception.NetworkErrorException;
@@ -19,6 +21,7 @@ import timber.log.Timber;
  * Email: ztiany3@gmail.com
  * Date : 2018-11-08 16:11
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class ErrorMessageFactory {
 
     public static CharSequence createMessage(Throwable exception) {
@@ -41,6 +44,8 @@ public class ErrorMessageFactory {
                 message = errorMessage.serverDataErrorMessage(exception);
             } else if (errorType == ServerErrorException.UNKNOW_ERROR) {
                 message = errorMessage.serverErrorMessage(exception);
+            } else if (errorType == ServerErrorException.SERVER_NO_DATA) {
+                message = errorMessage.serverReturningNullDataErrorMessage(exception);
             }
         }
 

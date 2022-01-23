@@ -32,7 +32,6 @@ public class ServiceFactory {
             builder.baseUrl(mBaseUrl)
                     .client(okHttpClient)
                     .addConverterFactory(new ErrorJsonLenientConverterFactory(GsonConverterFactory.create(GsonUtils.gson())));
-                    //.addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()));
         }
 
         mRetrofit = builder.build();

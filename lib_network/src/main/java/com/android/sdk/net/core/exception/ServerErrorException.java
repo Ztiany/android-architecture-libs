@@ -1,4 +1,5 @@
 package com.android.sdk.net.core.exception;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -7,12 +8,13 @@ import androidx.annotation.NonNull;
  * @author Ztiany
  * Date :   2016-05-06 17:23
  */
-public class ServerErrorException extends Exception {
+public class ServerErrorException extends RuntimeException {
 
     private final int mErrorType;
 
     public static final int UNKNOW_ERROR = 1;
     public static final int SERVER_DATA_ERROR = 2;
+    public static final int SERVER_NO_DATA = 3;
 
     /**
      * @param errorType {@link #UNKNOW_ERROR},{@link #SERVER_DATA_ERROR}

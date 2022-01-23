@@ -6,10 +6,10 @@ import android.content.Context;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 
-import com.android.sdk.net.core.flag.FlagHolder;
+import com.android.sdk.net.core.host.HostFlagHolder;
+import com.android.sdk.net.core.message.ErrorMessageFactory;
 import com.android.sdk.net.core.service.ServiceFactory;
 import com.android.sdk.net.core.service.ServiceHelper;
-import com.android.sdk.net.utils.NetworkUtils;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class NetContext {
 
     private Context mContext;
 
-    private final FlagHolder mFlagHolder = new FlagHolder();
+    private final HostFlagHolder mHostFlagHolder = new HostFlagHolder();
 
     private final Map<String, HostConfigProvider> mProviderMap = new HashMap<>();
 
@@ -90,7 +90,7 @@ public class NetContext {
     }
 
     public boolean isConnected() {
-        return NetworkUtils.isConnected(getContext());
+        return NetContext.get().isConnected();
     }
 
     public HostConfigProvider hostConfigProvider() {
@@ -98,7 +98,7 @@ public class NetContext {
     }
 
     public HostConfigProvider hostConfigProviderByResultType(Type type) {
-        return hostConfigProvider(getFlagHolder().getFlag(type));
+        return hostConfigProvider(getHostFlagHolder().getFlag(type));
     }
 
     public HostConfigProvider hostConfigProvider(String flag) {
@@ -131,8 +131,12 @@ public class NetContext {
         return mContext;
     }
 
-    public FlagHolder getFlagHolder() {
-        return mFlagHolder;
+    public HostFlagHolder getHostFlagHolder() {
+        return mHostFlagHolder;
+    }
+
+    public CharSequence createMessage(Throwable exception) {
+        return ErrorMessageFactory.createMessage(exception);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.android.sdk.net.core.flag;
+package com.android.sdk.net.core.host;
 
 import com.android.sdk.net.NetContext;
 

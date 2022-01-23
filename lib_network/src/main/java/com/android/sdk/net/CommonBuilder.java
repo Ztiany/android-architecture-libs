@@ -4,8 +4,9 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.android.sdk.net.core.provider.ErrorBodyHandler;
+import com.android.sdk.net.core.provider.ErrorBodyParser;
 import com.android.sdk.net.core.provider.ErrorMessage;
+import com.android.sdk.net.core.provider.PlatformInteractor;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
 
 public class CommonBuilder {
@@ -23,8 +24,13 @@ public class CommonBuilder {
         return this;
     }
 
-    public CommonBuilder errorBodyHandler(@NonNull ErrorBodyHandler errorBodyHandler) {
-        mCommonProvider.mErrorBodyHandler = errorBodyHandler;
+    public CommonBuilder errorBodyHandler(@NonNull ErrorBodyParser errorBodyParser) {
+        mCommonProvider.mErrorBodyParser = errorBodyParser;
+        return this;
+    }
+
+    public CommonBuilder platformInteractor(@NonNull PlatformInteractor platformInteractor) {
+        mCommonProvider.mPlatformInteractor = platformInteractor;
         return this;
     }
 
@@ -38,6 +44,7 @@ public class CommonBuilder {
 
     @MainThread
     public NetContext setUp() {
+        mCommonProvider.checkRequirement();
         mNetContext.initCommonProvider(mCommonProvider);
         return mNetContext;
     }

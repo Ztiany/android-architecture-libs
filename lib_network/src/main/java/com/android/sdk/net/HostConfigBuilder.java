@@ -4,8 +4,6 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 
 import com.android.sdk.net.core.provider.ApiHandler;
-import com.android.sdk.net.core.provider.ErrorBodyHandler;
-import com.android.sdk.net.core.provider.ErrorDataAdapter;
 import com.android.sdk.net.core.provider.HttpConfig;
 import com.android.sdk.net.core.result.ExceptionFactory;
 import com.android.sdk.net.core.result.Result;
@@ -38,11 +36,6 @@ public class HostConfigBuilder {
         return this;
     }
 
-    public HostConfigBuilder errorDataAdapter(@NonNull ErrorDataAdapter errorDataAdapter) {
-        mNetProvider.mErrorDataAdapter = errorDataAdapter;
-        return this;
-    }
-
     public HostConfigBuilder exceptionFactory(@NonNull ExceptionFactory exceptionFactory) {
         mNetProvider.mExceptionFactory = exceptionFactory;
         return this;
@@ -62,7 +55,7 @@ public class HostConfigBuilder {
 
         if (mResultTypeList != null) {
             for (Class<? extends Result<?>> aClass : mResultTypeList) {
-                mNetContext.getFlagHolder().registerType(aClass, mFlag);
+                mNetContext.getHostFlagHolder().registerType(aClass, mFlag);
             }
         }
 

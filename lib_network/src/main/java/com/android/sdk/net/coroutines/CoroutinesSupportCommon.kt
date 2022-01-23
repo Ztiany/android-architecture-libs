@@ -7,7 +7,6 @@ import com.android.sdk.net.core.exception.NetworkErrorException
 import com.android.sdk.net.core.exception.ServerErrorException
 import com.android.sdk.net.core.result.ExceptionFactory
 import com.android.sdk.net.core.result.Result
-import com.android.sdk.net.utils.NetworkUtils
 import retrofit2.HttpException
 
 internal const val RETRY_TIMES = 3
@@ -54,14 +53,18 @@ private val EMPTY_ENTRY = object : CoroutinesResultPostProcessor {
 }
 
 internal fun transformHttpException(throwable: Throwable): Throwable {
+    if (throwable is ServerErrorException || throwable is ApiErrorException) {
+        return throwable
+    }
+
     val errorBodyHandler = NetContext.get().commonProvider().errorBodyHandler()
 
-    return if (errorBodyHandler != null && throwable is HttpException && !NetworkUtils.isServerInternalError(throwable)) {
+    return if (errorBodyHandler != null && throwable is HttpException && !isServerInternalError(throwable)) {
         val errorBody = throwable.response()?.errorBody()
         if (errorBody == null) {
             newNetworkErrorException()
         } else {
-            errorBodyHandler.parseErrorBody(String(errorBody.bytes())) ?: newNetworkErrorException()
+            errorBodyHandler.parseErrorBody(errorBody.string()) ?: newNetworkErrorException()
         }
     } else {
         newNetworkErrorException()
@@ -74,4 +77,8 @@ private fun newNetworkErrorException() = if (NetContext.get().isConnected) {
 } else {
     //无连接网络错误
     NetworkErrorException()
+}
+
+private fun isServerInternalError(httpException: HttpException): Boolean {
+    return httpException.code() >= 500/*http status code*/
 }

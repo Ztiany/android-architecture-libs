@@ -1,4 +1,4 @@
-package com.android.sdk.net.core.flag;
+package com.android.sdk.net.core.host;
 
 import com.android.sdk.net.NetContext;
 
@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class FlagHolder {
+public class HostFlagHolder {
 
     private final Map<Class<?>, String> mResultFlags = new ConcurrentHashMap<>();
 
