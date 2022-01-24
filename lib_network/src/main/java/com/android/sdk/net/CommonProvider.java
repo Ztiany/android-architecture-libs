@@ -19,7 +19,7 @@ public interface CommonProvider {
     @Nullable
     ErrorBodyParser errorBodyHandler();
 
-    @Nullable
+    @NonNull
     PlatformInteractor platformInteractor();
 
 }

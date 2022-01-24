@@ -90,7 +90,7 @@ public class NetContext {
     }
 
     public boolean isConnected() {
-        return NetContext.get().isConnected();
+        return commonProvider().platformInteractor().isConnected();
     }
 
     public HostConfigProvider hostConfigProvider() {

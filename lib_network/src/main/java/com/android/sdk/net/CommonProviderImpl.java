@@ -36,7 +36,7 @@ public class CommonProviderImpl implements CommonProvider {
         return mErrorBodyParser;
     }
 
-    @Nullable
+    @NonNull
     @Override
     public PlatformInteractor platformInteractor() {
         return mPlatformInteractor;

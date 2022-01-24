@@ -122,29 +122,6 @@ interface ViewBindingProperty<in R : Any, out V : ViewBinding> : ReadOnlyPropert
     fun clear()
 }
 
-class LazyViewBindingProperty<in R : Any, out V : ViewBinding>(
-    private val viewBinder: (R) -> V
-) : ViewBindingProperty<R, V> {
-
-    private var viewBinding: V? = null
-
-    @Suppress("UNCHECKED_CAST")
-    @MainThread
-    override fun getValue(thisRef: R, property: KProperty<*>): V {
-        // Already bound
-        viewBinding?.let { return it }
-
-        return viewBinder(thisRef).also {
-            this.viewBinding = it
-        }
-    }
-
-    @MainThread
-    override fun clear() {
-        viewBinding = null
-    }
-}
-
 abstract class LifecycleViewBindingProperty<in R : Any, out V : ViewBinding>(
     private val viewBinder: (R) -> V
 ) : ViewBindingProperty<R, V> {
@@ -200,6 +177,29 @@ class ActivityViewBindingProperty<in A : ComponentActivity, out V : ViewBinding>
         return thisRef
     }
 
+}
+
+class LazyViewBindingProperty<in R : Any, out V : ViewBinding>(
+    private val viewBinder: (R) -> V
+) : ViewBindingProperty<R, V> {
+
+    private var viewBinding: V? = null
+
+    @Suppress("UNCHECKED_CAST")
+    @MainThread
+    override fun getValue(thisRef: R, property: KProperty<*>): V {
+        // Already bound
+        viewBinding?.let { return it }
+
+        return viewBinder(thisRef).also {
+            this.viewBinding = it
+        }
+    }
+
+    @MainThread
+    override fun clear() {
+        viewBinding = null
+    }
 }
 
 // -------------------------------------------------------------------------------------

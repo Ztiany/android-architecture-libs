@@ -71,7 +71,7 @@ private val Any.findViewBindingType: Type
     }
 
 /**This class can be used when their is no xml layout.*/
-abstract class PViewBinding<out T : View>(private val rootView: T) : ViewBinding {
+abstract class AbsViewBinding<out T : View>(private val rootView: T) : ViewBinding {
 
     override fun getRoot(): View {
         return rootView

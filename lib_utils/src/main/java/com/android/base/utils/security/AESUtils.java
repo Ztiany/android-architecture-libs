@@ -2,10 +2,10 @@ package com.android.base.utils.security;
 
 import android.util.Base64;
 
+import androidx.annotation.Nullable;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-
-import androidx.annotation.Nullable;
 
 
 /**
@@ -94,6 +94,11 @@ public class AESUtils {
         return null;
     }
 
+    public static String decryptDataToString(byte[] content, String algorithm, String password) {
+        byte[] bytes = decryptData(content, algorithm, password);
+        return bytes == null ? "" : new String(bytes);
+    }
+
     /**
      * @param content base64 编码的密文
      */
@@ -108,6 +113,14 @@ public class AESUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * @param content base64 编码的密文
+     */
+    public static String decryptDataFromBase64ToString(String content, String algorithm, String password) {
+        byte[] bytes = decryptDataFromBase64(content, algorithm, password);
+        return bytes == null ? "" : new String(bytes);
     }
 
 }

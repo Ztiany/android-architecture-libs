@@ -4,7 +4,7 @@ import android.content.Context
 import com.android.base.foundation.adapter.DataManager
 
 /**
- * @see [drakeet/MultiTypeAdapter](https://github.com/drakeet/MultiType)
+ * @see [MultiTypeAdapter](https://github.com/drakeet/MultiType)
  */
 open class MultiTypeAdapter : com.drakeet.multitype.MultiTypeAdapter, DataManager<Any> {
 

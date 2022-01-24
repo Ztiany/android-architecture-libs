@@ -14,7 +14,7 @@ import androidx.viewbinding.ViewBinding
  */
 abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
         context: Context,
-        data: List<T> = mutableListOf()
+        data: List<T> = emptyList()
 ) : RecyclerAdapter<T, BindingViewHolder<VB>>(context, data) {
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<VB> {
@@ -23,17 +23,16 @@ abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
 
     protected open fun onViewHolderCreated(viewHolder: BindingViewHolder<VB>) = Unit
 
-    /**provide a layout id or a View*/
     abstract fun provideViewBinding(parent: ViewGroup, inflater: LayoutInflater): VB
 
     override fun onBindViewHolder(viewHolder: BindingViewHolder<VB>, position: Int) {
         val item = getItem(position)
         if (item != null) {
-            bind(viewHolder, item)
+            bindItem(viewHolder, item)
         }
     }
 
-    protected open fun bind(viewHolder: BindingViewHolder<VB>, item: T) {
+    protected open fun bindItem(viewHolder: BindingViewHolder<VB>, item: T) {
 
     }
 

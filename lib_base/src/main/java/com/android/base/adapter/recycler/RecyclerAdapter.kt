@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.base.foundation.adapter.DataManager
-import com.android.base.utils.common.toMutableListChecked
 
 /**
  * @param <T> 当前列表使用的数据类型
@@ -15,13 +14,13 @@ import com.android.base.utils.common.toMutableListChecked
  */
 abstract class RecyclerAdapter<T, VH : RecyclerView.ViewHolder> @JvmOverloads constructor(
         protected val context: Context,
-        data: List<T> = mutableListOf()
+        data: List<T> = emptyList()
 ) : RecyclerView.Adapter<VH>(), DataManager<T> {
 
     protected val inflater: LayoutInflater by lazy { LayoutInflater.from(context) }
 
     @Suppress("LeakingThis")
-    private val dataManager: RecyclerDataManagerImpl<T> = RecyclerDataManagerImpl(data.toMutableListChecked(), this)
+    private val dataManager: RecyclerDataManagerImpl<T> = RecyclerDataManagerImpl(data.toMutableList(), this)
 
     override fun getItemCount(): Int {
         return getDataSize()
