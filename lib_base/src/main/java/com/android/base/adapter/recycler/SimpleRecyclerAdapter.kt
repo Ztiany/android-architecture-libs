@@ -13,8 +13,8 @@ import androidx.viewbinding.ViewBinding
  * Date : 2019-01-15 11:41
  */
 abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
-        context: Context,
-        data: List<T> = emptyList()
+    context: Context,
+    data: List<T> = emptyList()
 ) : RecyclerAdapter<T, BindingViewHolder<VB>>(context, data) {
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<VB> {
@@ -29,7 +29,13 @@ abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
         val item = getItem(position)
         if (item != null) {
             bindItem(viewHolder, item)
+        } else {
+            bindOnOverPosition(viewHolder, position)
         }
+    }
+
+    protected open fun bindOnOverPosition(viewHolder: BindingViewHolder<VB>, position: Int) {
+
     }
 
     protected open fun bindItem(viewHolder: BindingViewHolder<VB>, item: T) {

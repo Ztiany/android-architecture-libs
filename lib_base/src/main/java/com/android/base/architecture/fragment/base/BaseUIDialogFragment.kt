@@ -25,9 +25,9 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
 
     private val reuseView by lazy { ReusableView() }
 
-    private var _viewBinding: VB? = null
-    protected val viewBinding: VB
-        get() = checkNotNull(_viewBinding) {
+    private var _vb: VB? = null
+    protected val vb: VB
+        get() = checkNotNull(_vb) {
             "access layout after calling onViewCreated()"
         }
 
@@ -38,8 +38,8 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
     ): View? {
 
         val factory = {
-            _viewBinding = inflateBindingWithParameterizedType(layoutInflater, container, false)
-            viewBinding.root
+            _vb = inflateBindingWithParameterizedType(layoutInflater, container, false)
+            vb.root
         }
         return reuseView.createView(factory)
     }
@@ -73,7 +73,7 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
     override fun onDestroyView() {
         super.onDestroyView()
         if (reuseView.destroyView()) {
-            _viewBinding = null
+            _vb = null
         }
     }
 

@@ -55,6 +55,8 @@ public class ClearableEditText extends AppCompatEditText {
     private static final int DOWN_POSITION_PASSWORD = 3;
     private int mDownPosition = DOWN_POSITION_NONE;
 
+    private int extendDrawableTouchingSize = 0;
+
     private PasswordTransformationMethod mVisibleTransformation;
 
     public interface OnShowPasswordListener {
@@ -87,6 +89,7 @@ public class ClearableEditText extends AppCompatEditText {
         mBitmapPaint.setAntiAlias(true);
         adjustPadding();
         addTextChangedListener(newWatcher());
+        extendDrawableTouchingSize = Sizes.dpToPx(getContext(), 10);
     }
 
     private void parseAttributes(Context context, AttributeSet attrs) {
@@ -181,14 +184,14 @@ public class ClearableEditText extends AppCompatEditText {
     }
 
     private Bitmap getPasswordBitmap() {
-        if (isPasswordSeeable()) {
+        if (isPasswordInvisible()) {
             return getPasswordInvisibleBitmap();
         } else {
             return getPasswordVisibleBitmap();
         }
     }
 
-    private PasswordTransformationMethod getVisibleTransformation() {
+    private PasswordTransformationMethod getInvisibleTransformation() {
         if (mVisibleTransformation == null) {
             mVisibleTransformation = new PasswordTransformationMethod();
         }
@@ -243,13 +246,13 @@ public class ClearableEditText extends AppCompatEditText {
                 if ((upPosition == DOWN_POSITION_CLEAR)) {
                     setText("");
                 } else if (upPosition == DOWN_POSITION_PASSWORD) {
-                    if (isPasswordSeeable()) {
-                        setTransformationMethod(null);
-                    } else {
+                    if (isPasswordInvisible()) {
                         if (mOnShowPasswordListener != null) {
                             mOnShowPasswordListener.onShowPassword(this);
                         }
-                        setTransformationMethod(getVisibleTransformation());
+                        setTransformationMethod(null);
+                    } else {
+                        setTransformationMethod(getInvisibleTransformation());
                     }
                     setSelection(getTextValue().length());
                 }
@@ -266,14 +269,14 @@ public class ClearableEditText extends AppCompatEditText {
 
             int passwordRight = getMeasuredWidth() - mInitPaddingRight - mBitmapRightEdgeOffset;
             int passwordLeft = passwordRight - getPasswordBitmap().getWidth();
-            if (eventX >= passwordLeft && eventX <= passwordRight) {
+            if (eventX >= passwordLeft - extendDrawableTouchingSize && eventX <= passwordRight + extendDrawableTouchingSize) {
                 return DOWN_POSITION_PASSWORD;
             }
 
             if (mContentClearableEnable && !TextUtils.isEmpty(getTextValue())) {
                 int clearRight = passwordLeft - mBitmapMargin;
                 int clearLeft = clearRight - mClearBitmap.getWidth();
-                if (eventX >= clearLeft && eventX <= clearRight) {
+                if (eventX >= clearLeft - extendDrawableTouchingSize && eventX <= clearRight + extendDrawableTouchingSize) {
                     return DOWN_POSITION_CLEAR;
                 }
             }
@@ -282,7 +285,7 @@ public class ClearableEditText extends AppCompatEditText {
 
             int clearRight = getMeasuredWidth() - mInitPaddingRight - mBitmapRightEdgeOffset;
             int clearLeft = clearRight - mClearBitmap.getWidth();
-            if (eventX >= clearLeft && eventX <= clearRight) {
+            if (eventX >= clearLeft - extendDrawableTouchingSize && eventX <= clearRight + extendDrawableTouchingSize) {
                 return DOWN_POSITION_CLEAR;
             }
         }
@@ -304,13 +307,38 @@ public class ClearableEditText extends AppCompatEditText {
         return passwordInputType || webPasswordInputType || numberPasswordInputType;
     }
 
-    public boolean isPasswordSeeable() {
+    public boolean isPasswordInvisible() {
         return getTransformationMethod() instanceof PasswordTransformationMethod;
     }
 
     public void setInitRightPadding(int initRightPadding) {
         mInitPaddingRight = initRightPadding;
         adjustPadding();
+    }
+
+    public void setPasswordVisibleEnable(boolean passwordVisibleEnable) {
+        mPasswordVisibleEnable = passwordVisibleEnable;
+        if (!mPasswordVisibleEnable) {
+            setTransformationMethod(null);
+        }
+        invalidate();
+    }
+
+    public void setContentClearableEnable(boolean contentClearableEnable) {
+        mContentClearableEnable = contentClearableEnable;
+        invalidate();
+    }
+
+    public void showPasswordIfEnable() {
+        if (mPasswordVisibleEnable && isInputTypePassword()) {
+            setTransformationMethod(null);
+            invalidate();
+        }
+    }
+
+    public void hidePassword() {
+        setTransformationMethod(getInvisibleTransformation());
+        invalidate();
     }
 
 }
