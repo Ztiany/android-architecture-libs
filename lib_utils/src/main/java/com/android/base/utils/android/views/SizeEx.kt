@@ -2,8 +2,9 @@
 
 package com.android.base.utils.android.views
 
+import android.content.res.Resources
 import android.util.TypedValue
-import com.android.base.utils.BaseUtils
+import kotlin.math.roundToInt
 
 fun dip(value: Int): Int = dpToPx(value)
 fun dip(value: Float): Float = dpToPx(value)
@@ -11,46 +12,46 @@ fun sp(value: Int): Int = spToPx(value)
 fun sp(value: Float): Float = spToPx(value)
 
 fun dpToPx(dp: Float): Float {
-    return dp * BaseUtils.getDisplayMetrics().density
+    return dp * Resources.getSystem().displayMetrics.density
 }
 
 fun dpToPx(dp: Int): Int {
-    return (dp * BaseUtils.getDisplayMetrics().density + 0.5f).toInt()
+    return (dp * Resources.getSystem().displayMetrics.density).roundToInt()
 }
 
 fun pxToDp(px: Float): Float {
-    return px / BaseUtils.getDisplayMetrics().density
+    return px / Resources.getSystem().displayMetrics.density
 }
 
 fun pxToDp(px: Int): Int {
-    return (px / BaseUtils.getDisplayMetrics().density + 0.5f).toInt()
+    return (px / Resources.getSystem().displayMetrics.density).roundToInt()
 }
 
 fun spToPx(sp: Float): Float {
-    return sp * BaseUtils.getDisplayMetrics().scaledDensity
+    return sp * Resources.getSystem().displayMetrics.scaledDensity
 }
 
 fun spToPx(sp: Int): Int {
-    return (sp * BaseUtils.getDisplayMetrics().scaledDensity + 0.5f).toInt()
+    return (sp * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
 }
 
 fun pxToSp(px: Float): Float {
-    return px / BaseUtils.getDisplayMetrics().scaledDensity
+    return px / Resources.getSystem().displayMetrics.scaledDensity
 }
 
 fun pxToSp(px: Int): Int {
-    return (px / BaseUtils.getDisplayMetrics().scaledDensity + 0.5f).toInt()
+    return (px / Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
 }
 
 /**
- * 各种单位转换，该方法存在于[TypedValue] 中
+ * 各种单位转换，该方法存在于[TypedValue] 中。
  *
  * @param unit  单位
  * @param value 值
  * @return 转换结果
  */
 fun applyDimension(unit: Int, value: Float): Float {
-    val metrics = BaseUtils.getDisplayMetrics()
+    val metrics = Resources.getSystem().displayMetrics
     when (unit) {
         TypedValue.COMPLEX_UNIT_PX -> return value
         TypedValue.COMPLEX_UNIT_DIP -> return value * metrics.density
