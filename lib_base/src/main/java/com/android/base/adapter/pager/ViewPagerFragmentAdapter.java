@@ -2,14 +2,14 @@ package com.android.base.adapter.pager;
 
 import android.content.Context;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 
 public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
 
@@ -50,10 +50,6 @@ public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return mTabs.get(position).title;
-    }
-
-    public List<ViewPagerInfo> getTabs() {
-        return mTabs;
     }
 
 }

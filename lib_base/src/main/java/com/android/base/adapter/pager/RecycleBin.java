@@ -24,8 +24,8 @@ public class RecycleBin {
      * Views in activeViews represent a contiguous range of Views, with position of the first
      * view store in mFirstActivePosition.
      */
-    private View[] activeViews = new View[0];
-    private int[] activeViewTypes = new int[0];
+    private final View[] activeViews = new View[0];
+    private final int[] activeViewTypes = new int[0];
 
     /**
      * Unsorted views that can be used by the adapter as a convert view.

@@ -23,7 +23,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /*
- * ViewBinding封装【代理方式】，具体参考：
+ * ViewBinding 封装【代理方式】，具体参考：
  *
  *  1. https://github.com/pengxurui/DemoHall
  *  2. [Android | ViewBinding 与 Kotlin 委托双剑合璧](https://juejin.cn/post/6960914424865488932)

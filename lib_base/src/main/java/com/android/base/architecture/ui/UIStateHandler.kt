@@ -41,6 +41,7 @@ class ResourceHandlerBuilder<T> {
 
     /** indicate whether the loading dialog is cancelable. */
     var forceLoading: Boolean = true
+
 }
 
 /**
@@ -55,13 +56,13 @@ class ResourceHandlerBuilder<T> {
  * 当然如果希望自动处理错误，则可以提供 [ResourceHandlerBuilder.onNoData] 回调。
  */
 fun <H, T> H.handleLiveData(
-    liveData: LiveData<Resource<T>>,
+    data: LiveData<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
 ) where H : LoadingView, H : LifecycleOwner {
     val builder = ResourceHandlerBuilder<T>()
     handlerBuilder(builder)
 
-    liveData.observe(this, { state ->
+    data.observe(this, { state ->
         handleResourceInternal(state, builder)
     })
 }
@@ -69,7 +70,7 @@ fun <H, T> H.handleLiveData(
 /** refer to [handleLiveData] */
 fun <H, T> H.handleFlowData(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
-    flow: Flow<Resource<T>>,
+    data: Flow<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
 ) where H : LoadingView, H : LifecycleOwner {
     val builder = ResourceHandlerBuilder<T>()
@@ -77,7 +78,7 @@ fun <H, T> H.handleFlowData(
 
     lifecycleScope.launch {
         repeatOnLifecycle(activeState) {
-            flow.onEach {
+            data.onEach {
                 handleResourceInternal(it, builder)
             }.launchIn(this)
         }

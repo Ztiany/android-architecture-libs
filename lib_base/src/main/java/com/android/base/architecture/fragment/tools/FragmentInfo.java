@@ -15,17 +15,15 @@ public class FragmentInfo {
     private final Class<? extends Fragment> mClazz;
     private final int mTitleId;
     private final Bundle mArguments;
-    private final boolean mIsToStack;
     private final String mStackName;
     private WeakReference<Fragment> mFragment;
 
-    private FragmentInfo(int pageId, String tag, Class<? extends Fragment> clazz, int titleId, Bundle arguments, boolean toStack, String stackName) {
+    private FragmentInfo(int pageId, String tag, Class<? extends Fragment> clazz, int titleId, Bundle arguments,  String stackName) {
         mPageId = pageId;
         mTag = tag;
         mClazz = clazz;
         mTitleId = titleId;
         mArguments = arguments;
-        mIsToStack = toStack;
         mStackName = stackName;
     }
 
@@ -39,10 +37,6 @@ public class FragmentInfo {
 
     public Fragment newFragment(Context context) {
         return Fragment.instantiate(context, mClazz.getName(), mArguments);
-    }
-
-    public boolean isToStack() {
-        return mIsToStack;
     }
 
     public String getStackName() {
@@ -81,11 +75,10 @@ public class FragmentInfo {
         private Class<? extends Fragment> mClazz;
         private int mTitleId;
         private Bundle mArguments;
-        private boolean mIsToStack;
         private String mStackName;
 
         public FragmentInfo build() {
-            return new FragmentInfo(mPagerId, mTag, mClazz, mTitleId, mArguments, mIsToStack, mStackName);
+            return new FragmentInfo(mPagerId, mTag, mClazz, mTitleId, mArguments, mStackName);
         }
 
         public PageBuilder pagerId(int pagerId) {
@@ -110,11 +103,6 @@ public class FragmentInfo {
 
         public PageBuilder arguments(Bundle arguments) {
             mArguments = arguments;
-            return this;
-        }
-
-        public PageBuilder toStack(boolean toStack) {
-            this.mIsToStack = toStack;
             return this;
         }
 
