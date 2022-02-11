@@ -154,7 +154,7 @@ public class StateActionProcessor extends StateProcessor {
         }
     }
 
-    private StateLayoutConfig mStateLayoutConfig = new StateLayoutConfig() {
+    private final StateLayoutConfig mStateLayoutConfig = new StateLayoutConfig() {
 
         @Override
         public StateLayoutConfig setStateMessage(@ViewState int state, CharSequence message) {

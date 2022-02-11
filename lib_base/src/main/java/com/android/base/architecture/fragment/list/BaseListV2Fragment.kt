@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.base.BaseUIFragment
-import com.android.base.architecture.ui.AutoPaging
-import com.android.base.architecture.ui.Paging
-import com.android.base.architecture.ui.RefreshListLayout
-import com.android.base.architecture.ui.StateLayoutConfig
+import com.android.base.architecture.ui.*
 import com.android.base.foundation.adapter.DataManager
+import kotlin.properties.Delegates
 
 
 /**
- * 区别于 [BaseListFragment] 只能支持 RecyclerView。[BaseListFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
- * 在底部添加 load more view 的 item，来实现加载更多。[BaseListV2Fragment] 没有采用此种方式，所以你使用的 RefreshView 应该是支持这下来刷新和加载更多功能的。
+ *  [BaseListFragment] 只能支持 RecyclerView。因为 [BaseListFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
+ * 在底部添加 load more view 的 item，来实现加载更多。[BaseListV2Fragment] 没有采用此种方式，所以你使用的 RefreshView 应该是支持下来刷新和加载更多功能的。
  *
- * 在调用 [BaseListV2Fragment] 的 [onActivityCreated] 之前，你应该设置好 [dataManager]。
+ * 另外，使用前需要先设置 [dataManager] 。
  *
  *@author Ztiany
  *      Email: ztiany3@gmail.com
@@ -25,21 +23,32 @@ abstract class BaseListV2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), R
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
-    protected open lateinit var dataManager: DataManager<T>
+    protected var dataManager: DataManager<T> by Delegates.notNull()
 
     override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
         stateLayout = RefreshLoadMoreStateLayoutImpl(view)
-        stateLayout.refreshView.setRefreshHandler {
-            onRefresh()
-        }
-        stateLayout.refreshView.setLoadMoreHandler {
-            onLoadMore()
-        }
-        stateLayout.setStateRetryListener(this::onRetry)
+
+        stateLayout.refreshView.setRefreshHandler(object : RefreshLoadMoreView.RefreshHandler {
+            override fun onRefresh() {
+                this@BaseListV2Fragment.onRefresh()
+            }
+        })
+
+        stateLayout.refreshView.setLoadMoreHandler(object : RefreshLoadMoreView.LoadMoreHandler {
+            override fun onLoadMore() {
+                this@BaseListV2Fragment.onLoadMore()
+            }
+        })
+
+        stateLayout.setStateRetryListener(object : OnRetryActionListener {
+            override fun onRetry(state: Int) {
+                this@BaseListV2Fragment.onRetry(state)
+            }
+        })
     }
 
     protected open fun onRetry(state: Int) {
-        if (!isRefreshing) {
+        if (!isRefreshing()) {
             autoRefresh()
         }
     }
@@ -48,7 +57,7 @@ abstract class BaseListV2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), R
 
     protected open fun onLoadMore() = onStartLoad()
 
-    /** call by [onRefresh] or [onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore]. */
+    /** called by [onRefresh] or [onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore]. */
     protected open fun onStartLoad() {}
 
     override fun onDestroyView() {
@@ -64,16 +73,20 @@ abstract class BaseListV2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), R
         dataManager.addItems(data)
     }
 
-    fun setRefreshEnable(enable: Boolean) = stateLayout.refreshView.setRefreshEnable(enable)
+    fun setRefreshEnable(enable: Boolean) {
+        stateLayout.setRefreshEnable(enable)
+    }
 
-    fun setLoadMoreEnable(enable: Boolean) = stateLayout.refreshView.setLoadMoreEnable(enable)
+    fun setLoadMoreEnable(enable: Boolean) {
+        stateLayout.setLoadMoreEnable(enable)
+    }
 
     override fun isEmpty(): Boolean {
         return dataManager.isEmpty()
     }
 
     override fun isLoadingMore(): Boolean {
-        return stateLayout.refreshView.isLoadingMore
+        return stateLayout.isLoadingMore()
     }
 
     private val _paging: Paging by lazy { AutoPaging(this, dataManager) }
@@ -87,7 +100,15 @@ abstract class BaseListV2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), R
 
     override fun loadMoreFailed() = stateLayout.refreshView.loadMoreFailed()
 
-    override fun isRefreshing() = stateLayout.refreshView.isRefreshing
+    override fun isRefreshing() = stateLayout.isRefreshing()
+
+    override fun isRefreshEnable(): Boolean {
+        return stateLayout.isRefreshEnable()
+    }
+
+    override fun isLoadMoreEnable(): Boolean {
+        return stateLayout.isLoadMoreEnable()
+    }
 
     override fun showContentLayout() = stateLayout.showContentLayout()
 

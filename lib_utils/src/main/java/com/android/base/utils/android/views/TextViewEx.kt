@@ -1,3 +1,5 @@
+@file:JvmName("TextViews")
+
 package com.android.base.utils.android.views
 
 import android.graphics.drawable.Drawable
@@ -11,7 +13,6 @@ import androidx.core.content.ContextCompat
 import com.android.base.utils.android.adaption.TextWatcherAdapter
 import com.google.android.material.textfield.TextInputLayout
 import java.util.regex.Pattern
-
 
 inline fun TextView.textWatcher(init: KTextWatcher.() -> Unit) = addTextChangedListener(KTextWatcher().apply(init))
 

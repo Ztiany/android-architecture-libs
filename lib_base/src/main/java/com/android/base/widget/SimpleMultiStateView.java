@@ -61,7 +61,7 @@ public class SimpleMultiStateView extends MultiStateView implements StateLayout 
                 mStateProcessor = (StateProcessor) processorClass.newInstance();
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
-                Timber.e("initProcessor() called can not instance processor: " + processorPath);
+                Timber.e("initProcessor() called can not instance processor: %s", processorPath);
             }
         }
 

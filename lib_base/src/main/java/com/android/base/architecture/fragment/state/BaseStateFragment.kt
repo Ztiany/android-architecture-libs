@@ -5,19 +5,18 @@ import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.R
 import com.android.base.architecture.fragment.base.BaseUIFragment
+import com.android.base.architecture.ui.OnRetryActionListener
 import com.android.base.architecture.ui.RefreshStateLayout
 import com.android.base.architecture.ui.RefreshView
 import com.android.base.architecture.ui.RefreshView.RefreshHandler
 import com.android.base.architecture.ui.StateLayoutConfig
 import com.android.base.architecture.ui.StateLayoutConfig.RetryableState
-import com.android.base.utils.common.ifNonNull
-import com.android.base.utils.common.otherwise
 
 /**
- * 1. 支持显示{CONTENT, LOADING, ERROR, EMPTY}等状态布局、支持下拉刷新
- * 2. 使用的布局中必须有一个id = [R.id.base_state_layout] 的 Layout，确保 Layout 实现了[com.android.base.architecture.ui.StateLayout]
- * 3. [RefreshView] (下拉刷新)的 id 必须设置为 ：[R.id.base_refresh_layout]，没有添加则表示不需要下拉刷新功能
- * 4. 默认所有重试和下拉刷新都会调用 [onRefresh]，子类可以修改该行为
+ * 1. 支持显示{CONTENT, LOADING, ERROR, EMPTY}等状态布局、支持下拉刷新。
+ * 2. 使用的布局中必须有一个id = [R.id.base_state_layout] 的 Layout，确保 Layout 实现了[com.android.base.architecture.ui.StateLayout]。
+ * 3. [RefreshView] (下拉刷新)的 id 必须设置为 ：[R.id.base_refresh_layout]，没有添加则表示不需要下拉刷新功能。
+ * 4. 默认所有重试和下拉刷新都会调用 [onRefresh]，子类可以修改该行为。
  *
  * @author Ztiany
  * date :   2016-03-19 23:09
@@ -29,6 +28,7 @@ abstract class BaseStateFragment<VB : ViewBinding> : BaseUIFragment<VB>(), Refre
 
     override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
         stateLayout = RefreshableStateLayoutImpl(view)
+
         stateLayout.setRefreshHandler(object : RefreshHandler() {
             override fun onRefresh() {
                 this@BaseStateFragment.onRefresh()
@@ -38,7 +38,12 @@ abstract class BaseStateFragment<VB : ViewBinding> : BaseUIFragment<VB>(), Refre
                 return this@BaseStateFragment.canRefresh()
             }
         })
-        stateLayout.setStateRetryListenerUnchecked { state -> onRetry(state) }
+
+        stateLayout.setStateRetryListenerUnchecked(object : OnRetryActionListener {
+            override fun onRetry(state: Int) {
+                this@BaseStateFragment.onRetry(state)
+            }
+        })
     }
 
     override fun onDestroyView() {
@@ -49,22 +54,28 @@ abstract class BaseStateFragment<VB : ViewBinding> : BaseUIFragment<VB>(), Refre
     internal open fun canRefresh() = true
 
     protected open fun onRetry(@RetryableState state: Int) {
-        stateLayout.refreshView.ifNonNull {
-            if (!this.isRefreshing) {
-                autoRefresh()
+        if (stateLayout.isRefreshEnable()) {
+            if (!isRefreshing()) {
+                stateLayout.autoRefresh()
             }
-        } otherwise {
+        } else {
             onRefresh()
         }
     }
 
     protected open fun onRefresh() {}
 
-    fun setRefreshEnable(enable: Boolean) = stateLayout.refreshView?.setRefreshEnable(enable)
+    fun setRefreshEnable(enable: Boolean) {
+        stateLayout.setRefreshEnable(enable)
+    }
+
+    override fun isRefreshEnable(): Boolean {
+        return stateLayout.isRefreshEnable()
+    }
 
     override fun getStateLayoutConfig(): StateLayoutConfig = stateLayout.stateLayoutConfig
 
-    override fun isRefreshing() = stateLayout.isRefreshing
+    override fun isRefreshing() = stateLayout.isRefreshing()
 
     override fun refreshCompleted() = stateLayout.refreshCompleted()
 

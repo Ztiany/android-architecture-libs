@@ -41,7 +41,7 @@ open class BaseFragment : Fragment(), OnBackPressListener, FragmentDelegateOwner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.tag(tag()).d("-->onCreate  savedInstanceState   =   $savedInstanceState")
+        Timber.tag(tag()).d("-->onCreate  savedInstanceState  =  $savedInstanceState")
         fragmentDelegates.onCreate(savedInstanceState)
     }
 
@@ -62,7 +62,7 @@ open class BaseFragment : Fragment(), OnBackPressListener, FragmentDelegateOwner
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Timber.tag(tag()).d("-->onActivityCreated savedInstanceState   =   $savedInstanceState")
+        Timber.tag(tag()).d("-->onActivityCreated savedInstanceState  =  $savedInstanceState")
         fragmentDelegates.onActivityCreated(savedInstanceState)
     }
 
@@ -115,7 +115,7 @@ open class BaseFragment : Fragment(), OnBackPressListener, FragmentDelegateOwner
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        Timber.tag(tag()).d("-->setUserVisibleHint ==$isVisibleToUser")
+        Timber.tag(tag()).d("-->setUserVisibleHint = $isVisibleToUser")
         fragmentDelegates.setUserVisibleHint(isVisibleToUser)
     }
 

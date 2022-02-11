@@ -9,7 +9,7 @@ private fun <T> newDefaultChecker(): ((T) -> Boolean) {
     }
 }
 
-fun <T> RefreshStateLayout.handleResultState(
+fun <T> RefreshStateLayout.handleSateResource(
     resource: Resource<T>,
     ifEmpty: ((T) -> Boolean)? = newDefaultChecker(),
     onEmpty: (() -> Unit)? = null,
@@ -17,25 +17,26 @@ fun <T> RefreshStateLayout.handleResultState(
 ) {
     when (resource) {
         is Loading -> showLoadingLayout()
-        is Error -> handleResultError(resource.error)
+        is Error -> handleStateError(resource.error)
         is Success<T> -> {
             when (resource) {
-                is NoData -> handleResult(null, ifEmpty, onEmpty, onResult)
-                is Data<T> -> handleResult(resource.value, ifEmpty, onEmpty, onResult)
+                is NoData -> handleStateResult(null, ifEmpty, onEmpty, onResult)
+                is Data<T> -> handleStateResult(resource.value, ifEmpty, onEmpty, onResult)
             }
         }
     }
 }
 
-fun <T> RefreshStateLayout.handleResult(
+fun <T> RefreshStateLayout.handleStateResult(
     t: T?,
     isEmpty: ((T) -> Boolean)? = newDefaultChecker(),
     onEmpty: (() -> Unit)? = null,
     onResult: ((T) -> Unit)
 ) {
-    if (isRefreshing) {
+    if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }
+
     if (t == null || isEmpty?.invoke(t) == true) {
         if (onEmpty != null) {
             onEmpty()
@@ -48,10 +49,11 @@ fun <T> RefreshStateLayout.handleResult(
     }
 }
 
-fun RefreshStateLayout.handleResultError(throwable: Throwable) {
-    if (isRefreshing) {
+fun RefreshStateLayout.handleStateError(throwable: Throwable) {
+    if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }
+
     val errorTypeClassifier = AndroidSword.errorClassifier
     if (errorTypeClassifier != null) {
         when {

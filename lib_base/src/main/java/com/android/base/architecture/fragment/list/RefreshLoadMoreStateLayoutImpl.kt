@@ -81,4 +81,28 @@ internal class RefreshLoadMoreStateLayoutImpl constructor(layout: View) : StateL
         }
     }
 
+    fun isLoadingMore(): Boolean {
+        return refreshView.isLoadingMore()
+    }
+
+    fun isRefreshing(): Boolean {
+        return refreshView.isRefreshing()
+    }
+
+    fun isRefreshEnable(): Boolean {
+        return refreshView.isRefreshEnable
+    }
+
+    fun isLoadMoreEnable(): Boolean {
+        return refreshView.isLoadMoreEnable
+    }
+
+    fun setRefreshEnable(enable: Boolean) {
+        refreshView.isRefreshEnable = enable
+    }
+
+    fun setLoadMoreEnable(enable: Boolean) {
+        refreshView.isLoadMoreEnable = enable
+    }
+
 }

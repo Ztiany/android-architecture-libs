@@ -23,6 +23,6 @@ interface RefreshListLayout<T> : RefreshStateLayout {
 
     fun isLoadingMore(): Boolean
 
-    override fun isRefreshing(): Boolean
+    fun isLoadMoreEnable(): Boolean
 
 }

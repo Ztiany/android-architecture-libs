@@ -18,10 +18,10 @@ abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
 ) : RecyclerAdapter<T, BindingViewHolder<VB>>(context, data) {
 
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<VB> {
-        return BindingViewHolder(provideViewBinding(parent, inflater))
+        return BindingViewHolder(provideViewBinding(parent, inflater)).also {
+            onViewHolderCreated(it)
+        }
     }
-
-    protected open fun onViewHolderCreated(viewHolder: BindingViewHolder<VB>) = Unit
 
     abstract fun provideViewBinding(parent: ViewGroup, inflater: LayoutInflater): VB
 
@@ -30,15 +30,15 @@ abstract class SimpleRecyclerAdapter<T, VB : ViewBinding>(
         if (item != null) {
             bindItem(viewHolder, item)
         } else {
-            bindOnOverPosition(viewHolder, position)
+            bindOnOverPosition(viewHolder)
         }
     }
 
-    protected open fun bindOnOverPosition(viewHolder: BindingViewHolder<VB>, position: Int) {
+    abstract fun bindItem(viewHolder: BindingViewHolder<VB>, item: T)
 
-    }
+    protected open fun onViewHolderCreated(viewHolder: BindingViewHolder<VB>) = Unit
 
-    protected open fun bindItem(viewHolder: BindingViewHolder<VB>, item: T) {
+    protected open fun bindOnOverPosition(viewHolder: BindingViewHolder<VB>) {
 
     }
 

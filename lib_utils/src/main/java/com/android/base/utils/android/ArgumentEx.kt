@@ -12,6 +12,8 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/* copy from https://github.com/pengxurui/DemoHall */
+
 fun <T> Fragment.requireArgument(name: String): T {
     @Suppress("UNCHECKED_CAST")
     return arguments?.get(name) as? T
@@ -23,8 +25,6 @@ fun <T> Fragment.getArgument(name: String, defaultValue: T? = null): T? {
     @Suppress("UNCHECKED_CAST")
     return arguments.get(name) as? T
 }
-
-/* copy from https://github.com/pengxurui/DemoHall */
 
 fun <T> Fragment.argumentNullable(name: String? = null) = FragmentArgumentPropertyNullable<T>(name)
 

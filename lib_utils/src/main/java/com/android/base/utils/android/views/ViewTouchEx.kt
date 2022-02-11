@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.ViewGroupUtils
 
 /**
- * @see [Layout_DSL](https://github.com/wisdomtl/Layout_DSL/blob/master/app/src/main/java/taylor/com/dsl/Layout.kt)
+ * @see [LayoutDSL](https://github.com/wisdomtl/Layout_DSL/blob/master/app/src/main/java/taylor/com/dsl/Layout.kt)
  */
 @SuppressLint("RestrictedApi")
 fun View.expand(dx: Int, dy: Int) {

@@ -365,9 +365,9 @@ public class MultiStateView extends FrameLayout {
         void onStateInflated(@ViewState int viewState, @NonNull View view);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         private View mView;
-        private int mViewLayoutId;
+        private final int mViewLayoutId;
 
         ViewHolder(int viewLayoutId) {
             this(null, viewLayoutId);

@@ -1,3 +1,5 @@
+@file:JvmName("Bitmaps")
+
 package com.android.base.utils.android
 
 import android.graphics.Bitmap

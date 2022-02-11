@@ -41,6 +41,7 @@ dependencies {
     compileOnly AndroidLibraries.fragmentKtx
     compileOnly AndroidLibraries.appcompat
     compileOnly AndroidLibraries.material
+    compileOnly AndroidLibraries.viewpager2
 
     //Kotlin
     api KotlinLibraries.kotlinStdlib

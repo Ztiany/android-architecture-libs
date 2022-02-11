@@ -4,9 +4,6 @@ import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,11 +12,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.PagerAdapter;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import timber.log.Timber;
 
 /**
  * 修改了 {@link androidx.fragment.app.FragmentPagerAdapter#destroyItem(ViewGroup, int, Object)} 部分，不再无差别 remove，返回了 POSITION_NONE 的才 remove。
- * 具体用法参考 <a href='http://note.youdao.com/noteshare?id=2e0b28231c31685891c5714d0a0206a3&sub=F520E34569074A4F9CAA0F424C1BBB3E'>ViewPager 刷新问题</a>。
  */
 public abstract class FixedFragmentPagerAdapter extends PagerAdapter {
 

@@ -1,9 +1,10 @@
+@file:JvmName("WebViews")
+
 package com.android.base.utils.android.views
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.webkit.WebView
-
 
 fun captureBitmapFromWebView(webView: WebView): Bitmap {
     val snapShot = webView.capturePicture()

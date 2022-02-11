@@ -7,7 +7,7 @@ import com.android.base.architecture.ui.AutoPaging
 import com.android.base.architecture.ui.Paging
 import com.android.base.architecture.ui.RefreshListLayout
 import com.android.base.foundation.adapter.DataManager
-import com.ztiany.loadmore.adapter.ILoadMore
+import com.ztiany.loadmore.adapter.LoadMore
 import com.ztiany.loadmore.adapter.OnLoadMoreListener
 import com.ztiany.loadmore.adapter.WrapperAdapter
 import kotlin.properties.Delegates
@@ -23,29 +23,27 @@ import kotlin.properties.Delegates
 abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), RefreshListLayout<T> {
 
     /**加载更多*/
-    private var loadMore: ILoadMore? = null
+    private var loadMore: LoadMore? = null
 
     /**列表数据管理*/
     protected var dataManager: DataManager<T> by Delegates.notNull()
 
     /**分页页码*/
-    private var paging: Paging? = null
+    private val paging: Paging by lazy { AutoPaging(this, dataManager) }
 
     protected fun setupLoadMore(
         recyclerAdapter: Adapter<*>,
-        standardPagingNumber: Boolean = true,
-        paging: Paging = AutoPaging(this, dataManager)
+        triggerByScroll: Boolean = false
     ): Adapter<*> {
-        this.paging = paging
 
-        return WrapperAdapter.wrap(recyclerAdapter, !standardPagingNumber).apply {
+        return WrapperAdapter.wrap(recyclerAdapter, triggerByScroll).apply {
             setOnLoadMoreListener(object : OnLoadMoreListener {
                 override fun onLoadMore() {
                     this@BaseListFragment.onLoadMore()
                 }
 
                 override fun canLoadMore(): Boolean {
-                    return !isRefreshing
+                    return !isRefreshing()
                 }
             })
             loadMore = this
@@ -74,11 +72,11 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
     }
 
     override fun getPager(): Paging {
-        return paging ?: throw NullPointerException("you need to call setupLoadMore first")
+        return paging
     }
 
-    val loadMoreController: ILoadMore
-        get() = loadMore ?: throw NullPointerException("you need to call setupLoadMore first")
+    val loadMoreController: LoadMore
+        get() = loadMore ?: throw NullPointerException("you need to call setupLoadMore first.")
 
     override fun loadMoreCompleted(hasMore: Boolean) {
         loadMore?.loadCompleted(hasMore)
@@ -86,6 +84,10 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
 
     override fun loadMoreFailed() {
         loadMore?.loadFail()
+    }
+
+    override fun isLoadMoreEnable(): Boolean {
+        return loadMore != null
     }
 
 }

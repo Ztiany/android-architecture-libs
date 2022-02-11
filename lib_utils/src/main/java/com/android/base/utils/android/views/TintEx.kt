@@ -1,4 +1,4 @@
-@file:JvmName("TintUtils")
+@file:JvmName("TintKit")
 
 package com.android.base.utils.android.views
 

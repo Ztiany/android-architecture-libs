@@ -10,12 +10,13 @@ import com.android.base.foundation.fragment.FragmentDelegateOwner
  * 用于在ViewPager中实现懒加载的Fragment：
  *
  * - changed-1: Android Support 24 把 setUserVisibleHint 方法放到了Attach 之前调用了，所以请在在构造代码块中设置 LazyDelegate。
+ * - changed-2: 对于 AndroidX 中 ViewPager，仅支持 [androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT] 模式。
  *
  * @author Ztiany
  * Date : Date : 2016-05-06 15:02
  * Email: 1169654504@qq.com
  */
-open class LazyDelegate private constructor() : FragmentDelegate<Fragment> {
+open class LazyLoadDelegate private constructor() : FragmentDelegate<Fragment> {
 
     /** View是否准备好，如果不需要绑定view数据，只是加载网络数据，那么该字段可以去掉 */
     private var isViewPrepared = false
@@ -74,8 +75,8 @@ open class LazyDelegate private constructor() : FragmentDelegate<Fragment> {
     }
 
     companion object {
-        fun attach(delegateFragment: FragmentDelegateOwner, onPreparedListener: () -> Unit): LazyDelegate {
-            val delegate = LazyDelegate()
+        fun attach(delegateFragment: FragmentDelegateOwner, onPreparedListener: () -> Unit): LazyLoadDelegate {
+            val delegate = LazyLoadDelegate()
             delegate.preparedListener = onPreparedListener
             delegateFragment.addDelegate(delegate)
             return delegate

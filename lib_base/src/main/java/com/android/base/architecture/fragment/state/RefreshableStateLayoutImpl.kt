@@ -14,8 +14,7 @@ internal class RefreshableStateLayoutImpl constructor(layoutView: View) : Refres
 
     private var multiStateView: StateLayout? = null
 
-    var refreshView: RefreshView? = null
-        private set
+    private var refreshView: RefreshView? = null
 
     private var refreshHandler: RefreshView.RefreshHandler? = null
 
@@ -39,11 +38,11 @@ internal class RefreshableStateLayoutImpl constructor(layoutView: View) : Refres
         RefreshViewFactory.createRefreshView(refreshLayout).apply {
             setRefreshHandler(object : RefreshView.RefreshHandler() {
                 override fun canRefresh(): Boolean {
-                    return refreshHandler!!.canRefresh()
+                    return refreshHandler?.canRefresh() ?: false
                 }
 
                 override fun onRefresh() {
-                    refreshHandler!!.onRefresh()
+                    refreshHandler?.onRefresh()
                 }
             })
 
@@ -52,9 +51,7 @@ internal class RefreshableStateLayoutImpl constructor(layoutView: View) : Refres
     }
 
     override fun autoRefresh() {
-        if (refreshView != null) {
-            refreshView!!.autoRefresh()
-        }
+        refreshView?.autoRefresh()
     }
 
     override fun showLoadingLayout() {
@@ -110,9 +107,12 @@ internal class RefreshableStateLayoutImpl constructor(layoutView: View) : Refres
     }
 
     override fun isRefreshing(): Boolean {
-        return if (refreshView != null) {
-            refreshView!!.isRefreshing
-        } else false
+        return refreshView?.isRefreshing ?: false
+    }
+
+    override fun isRefreshEnable(): Boolean {
+        val refreshView = refreshView
+        return refreshView != null && refreshView.isRefreshEnable
     }
 
     override fun setStateMessage(@RetryableState state: Int, message: CharSequence): StateLayoutConfig {
@@ -151,6 +151,10 @@ internal class RefreshableStateLayoutImpl constructor(layoutView: View) : Refres
 
     private fun checkMultiStateView(): StateLayout {
         return checkNotNull(multiStateView) { "Calling this function requires defining a view that implements StateLayout in the Layout" }
+    }
+
+    fun setRefreshEnable(enable: Boolean) {
+        refreshView?.isRefreshEnable = enable
     }
 
     init {
