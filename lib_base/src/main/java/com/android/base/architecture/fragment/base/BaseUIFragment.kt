@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.viewbinding.ViewBinding
 import com.android.base.AndroidSword
@@ -49,6 +50,7 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
         return reuseView.createView(factory)
     }
 
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (reuseView.isNotTheSameView(view)) {
             internalOnViewPrepared(view, savedInstanceState)

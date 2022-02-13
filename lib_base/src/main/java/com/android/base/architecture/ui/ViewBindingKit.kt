@@ -15,12 +15,14 @@ import java.lang.reflect.Type
  */
 
 @JvmName("inflateWithGeneric")
+@Suppress("UNCHECKED_CAST")
 fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(layoutInflater: LayoutInflater): VB =
     withGenericBindingClass(this) { clazz ->
         clazz.getMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as VB
     }
 
 @JvmName("inflateWithGeneric")
+@Suppress("UNCHECKED_CAST")
 fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(
     layoutInflater: LayoutInflater,
     parent: ViewGroup?
@@ -31,6 +33,7 @@ fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(
     }
 
 @JvmName("inflateWithGeneric")
+@Suppress("UNCHECKED_CAST")
 fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(
     layoutInflater: LayoutInflater,
     parent: ViewGroup?,
@@ -45,6 +48,7 @@ fun <VB : ViewBinding> Any.inflateBindingWithParameterizedType(
         ).invoke(null, layoutInflater, parent, attachToParent) as VB
     }
 
+@Suppress("UNCHECKED_CAST")
 private fun <VB : ViewBinding> withGenericBindingClass(any: Any, block: (Class<VB>) -> VB): VB {
     return block(any.findViewBindingType as Class<VB>)
 }

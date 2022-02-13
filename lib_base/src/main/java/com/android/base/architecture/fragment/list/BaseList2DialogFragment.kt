@@ -12,9 +12,9 @@ import kotlin.properties.Delegates
  *@author Ztiany
  *      Email: ztiany3@gmail.com
  *      Date : 2019-03-26 15:06
- *@see [BaseListV2Fragment]
+ *@see [BaseList2Fragment]
  */
-abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseList2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshListLayout<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
@@ -25,19 +25,19 @@ abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragm
 
         stateLayout.refreshView.setRefreshHandler(object : RefreshLoadMoreView.RefreshHandler {
             override fun onRefresh() {
-                this@BaseListV2DialogFragment.onRefresh()
+                this@BaseList2DialogFragment.onRefresh()
             }
         })
 
         stateLayout.refreshView.setLoadMoreHandler(object : RefreshLoadMoreView.LoadMoreHandler {
             override fun onLoadMore() {
-                this@BaseListV2DialogFragment.onLoadMore()
+                this@BaseList2DialogFragment.onLoadMore()
             }
         })
 
         stateLayout.setStateRetryListener(object : OnRetryActionListener {
             override fun onRetry(state: Int) {
-                this@BaseListV2DialogFragment.onRetry(state)
+                this@BaseList2DialogFragment.onRetry(state)
             }
         })
     }
@@ -129,6 +129,7 @@ abstract class BaseListV2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragm
 
     override fun currentStatus() = stateLayout.currentStatus()
 
+    @Suppress("UNUSED")
     companion object {
         const val CONTENT = StateLayoutConfig.CONTENT
         const val LOADING = StateLayoutConfig.LOADING

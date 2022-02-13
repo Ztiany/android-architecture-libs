@@ -6,8 +6,8 @@ import com.android.base.utils.common.isEmpty
 import java.util.*
 
 internal class ListDataManagerImpl<T>(
-        private var internalList: MutableList<T>,
-        private val baseAdapter: BaseAdapter
+    private var internalList: MutableList<T>,
+    private val baseAdapter: BaseAdapter
 ) : DataManager<T> {
 
     override fun add(element: T) {

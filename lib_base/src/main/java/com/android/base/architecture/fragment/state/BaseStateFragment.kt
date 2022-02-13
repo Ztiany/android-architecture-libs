@@ -99,6 +99,7 @@ abstract class BaseStateFragment<VB : ViewBinding> : BaseUIFragment<VB>(), Refre
 
     override fun currentStatus() = stateLayout.currentStatus()
 
+    @Suppress("UNUSED")
     companion object {
         const val CONTENT = StateLayoutConfig.CONTENT
         const val LOADING = StateLayoutConfig.LOADING

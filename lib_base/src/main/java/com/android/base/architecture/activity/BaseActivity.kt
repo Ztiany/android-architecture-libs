@@ -17,13 +17,12 @@ import timber.log.Timber
  *
  * 1. 封装通用流程。
  * 2. [onBackPressed] 事件分发，优先交给 [Fragment] 处理。
- * 3. 提供 RxJava 的生命周期绑定。
  *
  * @author Ztiany
  * Date : 2016-05-04 15:40
  * Email: 1169654504@qq.com
  */
-abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner{
+abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner {
 
     @Suppress("LeakingThis")
     private val activityDelegates = ActivityDelegates(this)

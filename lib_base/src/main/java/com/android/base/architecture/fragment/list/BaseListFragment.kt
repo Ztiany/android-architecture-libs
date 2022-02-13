@@ -50,7 +50,7 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
         }
     }
 
-    /**call by [.onRefresh] or [.onLoadMore], you can get current loading type from [.isRefreshing] or [.isLoadingMore].*/
+    /**called by [.onRefresh] or [.onLoadMore], you can get current loading type from [.isRefreshing] or [.isLoadingMore].*/
     protected open fun onStartLoad() {}
 
     override fun onRefresh() = onStartLoad()

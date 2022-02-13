@@ -2,6 +2,7 @@
 
 package com.android.base.architecture.ui
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import com.android.base.AndroidSword
 import com.android.base.foundation.data.*
@@ -45,13 +46,13 @@ class ResourceHandlerBuilder<T> {
 }
 
 /**
- * 这是一个网络请求状态的通用逻辑封装，一般情况下，网络请求流程为：
+ * 这是一个网络请求状态转换处理的通用逻辑封装，一般情况下，网络请求流程为：
  *
  * 1. 发起网络请求，展示 loading 对话框。
  * 2. 网络请求正常返回，则展示调用结果。
  * 3. 网络请求发送错误，则提示用户请求错误。
  *
- * [Resource] 表示请求状态，每次状态变更，LiveData 都应该进行通知，该方法订阅 LiveData 并对各种状态进行处理。
+ * [Resource] 表示请求状态，每次状态变更，[LiveData] 都应该进行通知，该方法订阅 [LiveData] 并对各种状态进行处理。
  * 展示 loading 和对错误进行提示都是自动进行的，通常情况下，只需要提供 [ResourceHandlerBuilder.onSuccess] 对正常的网络结果进行处理即可。
  * 当然如果希望自动处理错误，则可以提供 [ResourceHandlerBuilder.onNoData] 回调。
  */
@@ -67,8 +68,8 @@ fun <H, T> H.handleLiveData(
     })
 }
 
-/** refer to [handleLiveData] */
-fun <H, T> H.handleFlowData(
+/** refer to [handleLiveData]. */
+fun <H, T> H.handleFlowDataWithLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
@@ -83,6 +84,34 @@ fun <H, T> H.handleFlowData(
             }.launchIn(this)
         }
     }
+}
+
+/** refer to [handleLiveData]. Notes：Call this method on [Fragment.onViewCreated]. */
+fun <H, T> H.handleFlowDataWithViewLifecycle(
+    activeState: Lifecycle.State = Lifecycle.State.STARTED,
+    data: Flow<Resource<T>>,
+    handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
+) where H : LoadingView, H : Fragment {
+    val builder = ResourceHandlerBuilder<T>()
+    handlerBuilder(builder)
+
+    viewLifecycleOwner.lifecycleScope.launch {
+        repeatOnLifecycle(activeState) {
+            data.onEach {
+                handleResourceInternal(it, builder)
+            }.launchIn(this)
+        }
+    }
+}
+
+/** refer to [handleLiveData]. */
+fun <H, T> H.handleResource(
+    state: Resource<T>,
+    handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
+) where H : LoadingView, H : LifecycleOwner {
+    val builder = ResourceHandlerBuilder<T>()
+    handlerBuilder(builder)
+    handleResourceInternal(state, builder)
 }
 
 private fun <H, T> H.handleResourceInternal(
@@ -105,11 +134,10 @@ private fun <H, T> H.handleResourceInternal(
         //----------------------------------------error
         is Error -> {
             if (state.isHandled) {
-                dismissLoadingDialog()
                 return
             }
-
             state.markAsHandled()
+
             dismissLoadingDialogDelayed {
                 val onError = handlerBuilder.onError
                 if (onError != null) {
@@ -123,11 +151,10 @@ private fun <H, T> H.handleResourceInternal(
         //----------------------------------------success
         is Success<T> -> {
             if (state.isHandled) {
-                dismissLoadingDialog()
                 return
             }
-
             state.markAsHandled()
+
             dismissLoadingDialogDelayed {
                 when (state) {
                     is NoData -> {
@@ -143,4 +170,3 @@ private fun <H, T> H.handleResourceInternal(
         }
     }
 }
-

@@ -1,7 +1,7 @@
 package com.android.base.architecture.ui
 
 /**
- * 列表视图行为
+ * 列表视图行为。
  *
  * @author Ztiany
  * Email: 1169654504@qq.com

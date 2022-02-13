@@ -14,7 +14,9 @@ import java.util.*
  * Date : 2016-12-20 11:43
  */
 @UiThread
-internal class ActivityDelegates(private val baseActivity: AppCompatActivity) {
+internal class ActivityDelegates(
+    private val baseActivity: AppCompatActivity
+) {
 
     private val delegates: MutableList<ActivityDelegate<*>> = ArrayList(4)
 

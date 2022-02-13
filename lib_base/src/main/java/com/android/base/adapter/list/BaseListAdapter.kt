@@ -9,14 +9,14 @@ import com.android.base.R
 import com.android.base.foundation.adapter.DataManager
 
 /**
- * absListView通用的Adapter,注意：只有setDataSource才能替换原有数据源的引用。
+ * AbsListView 通用的 Adapter 封装，注意：只有 setDataSource 才能替换原有数据源的引用。
  *
  * @param <T> 数据模型
  * @author Ztiany
-</T> */
+ */
 abstract class BaseListAdapter<T, VH : ViewHolder>(
-        protected val context: Context,
-        data: MutableList<T> = mutableListOf()
+    protected val context: Context,
+    data: MutableList<T> = mutableListOf()
 ) : BaseAdapter(), DataManager<T> {
 
     private val dataManager = ListDataManagerImpl(data, this)

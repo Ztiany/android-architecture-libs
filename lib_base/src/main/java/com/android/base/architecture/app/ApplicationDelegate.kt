@@ -48,19 +48,15 @@ class ApplicationDelegate internal constructor() {
     }
 
     fun onTerminate() {
-
     }
 
     fun onConfigurationChanged(@Suppress("UNUSED_PARAMETER") newConfig: Configuration) {
-
     }
 
     fun onTrimMemory(@Suppress("UNUSED_PARAMETER") level: Int) {
-
     }
 
     fun onLowMemory() {
-
     }
 
     private fun listenActivityLifecycleCallbacks() {

@@ -92,6 +92,7 @@ abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<
 
     override fun currentStatus() = stateLayout.currentStatus()
 
+    @Suppress("UNUSED")
     companion object {
         const val CONTENT = StateLayoutConfig.CONTENT
         const val LOADING = StateLayoutConfig.LOADING

@@ -7,6 +7,7 @@ import com.android.base.foundation.adapter.DataManager;
  * Email: ztiany3@gmail.com
  * Date : 2018-04-27 14:04
  */
+@SuppressWarnings("rawtypes")
 public class AutoPaging extends Paging {
 
     private final DataManager mDataManager;

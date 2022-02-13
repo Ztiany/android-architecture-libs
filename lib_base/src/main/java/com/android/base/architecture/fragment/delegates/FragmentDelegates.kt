@@ -11,7 +11,9 @@ import com.android.base.foundation.fragment.FragmentDelegateOwner
 import java.util.*
 
 @UiThread
-internal class FragmentDelegates(private val delegateOwner: Fragment) : FragmentDelegate<Fragment>, FragmentDelegateOwner {
+internal class FragmentDelegates(
+    private val delegateOwner: Fragment
+) : FragmentDelegate<Fragment>, FragmentDelegateOwner {
 
     private val delegates: MutableList<FragmentDelegate<*>> = ArrayList(4)
 
@@ -125,7 +127,7 @@ internal class FragmentDelegates(private val delegateOwner: Fragment) : Fragment
         return remove
     }
 
-    override fun findDelegate(predicate:  (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
+    override fun findDelegate(predicate: (FragmentDelegate<*>) -> Boolean): FragmentDelegate<*>? {
         for (delegate in delegates) {
             if (predicate(delegate)) {
                 return delegate

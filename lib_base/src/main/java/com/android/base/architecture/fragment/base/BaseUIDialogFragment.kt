@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
 import androidx.viewbinding.ViewBinding
 import com.android.base.AndroidSword
@@ -44,6 +45,7 @@ abstract class BaseUIDialogFragment<VB : ViewBinding> : BaseDialogFragment(), Lo
         return reuseView.createView(factory)
     }
 
+    @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (reuseView.isNotTheSameView(view)) {
             internalOnViewPrepared(view, savedInstanceState)

@@ -12,14 +12,21 @@ import androidx.annotation.StringRes
 interface LoadingView {
 
     fun showLoadingDialog()
+
     fun showLoadingDialog(cancelable: Boolean)
+
     fun showLoadingDialog(message: CharSequence, cancelable: Boolean)
+
     fun showLoadingDialog(@StringRes messageId: Int, cancelable: Boolean)
+
     fun dismissLoadingDialog()
+
     fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)? = null)
+
     fun isLoadingDialogShowing(): Boolean
 
     fun showMessage(message: CharSequence)
+
     fun showMessage(@StringRes messageId: Int)
 
 }
