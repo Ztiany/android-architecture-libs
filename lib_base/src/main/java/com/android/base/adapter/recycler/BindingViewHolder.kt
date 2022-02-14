@@ -9,5 +9,11 @@ import androidx.viewbinding.ViewBinding
  *      Date : 2021-03-06 02:50
  */
 open class BindingViewHolder<VB : ViewBinding>(
-        val vb: VB
-) : RecyclerView.ViewHolder(vb.root)
+    val vb: VB
+) : RecyclerView.ViewHolder(vb.root) {
+
+    fun withVB(action: VB.() -> Unit) {
+        with(vb, action)
+    }
+
+}

@@ -33,7 +33,7 @@ import timber.log.Timber;
 
 /**
  * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/AppUtils.java'>AndroidUtilCode's AppUtils</a>
- * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/ActivityUtils.java'>ActivityUtils's ActivityUtils</a>
+ * @see <a href='https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/src/main/java/com/blankj/utilcode/util/ActivityUtils.java'>AndroidUtilCode's ActivityUtils</a>
  */
 public class AppUtils {
 
