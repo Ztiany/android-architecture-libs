@@ -7,7 +7,6 @@ import androidx.viewbinding.ViewBinding
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-09-13 15:33
  */
 abstract class ItemViewBinder<T, VH : RecyclerView.ViewHolder> : com.drakeet.multitype.ItemViewBinder<T, VH>() {

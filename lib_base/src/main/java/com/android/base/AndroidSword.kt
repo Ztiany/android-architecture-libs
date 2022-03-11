@@ -5,11 +5,11 @@ import android.content.Context
 import com.android.base.architecture.app.ApplicationDelegate
 import com.android.base.architecture.fragment.animator.FragmentAnimator
 import com.android.base.architecture.fragment.tools.FragmentConfig
-import com.android.base.architecture.ui.LoadingView
-import com.android.base.architecture.ui.Paging
-import com.android.base.architecture.ui.RefreshLoadViewFactory
-import com.android.base.architecture.ui.RefreshLoadViewFactory.Factory
-import com.android.base.architecture.ui.RefreshViewFactory
+import com.android.base.architecture.ui.loading.LoadingViewHost
+import com.android.base.architecture.ui.list.Paging
+import com.android.base.architecture.ui.list.RefreshLoadViewFactory
+import com.android.base.architecture.ui.list.RefreshLoadViewFactory.Factory
+import com.android.base.architecture.ui.list.RefreshViewFactory
 import com.android.base.utils.android.AppUtils
 import com.android.base.utils.android.network.NetworkState
 import com.android.base.utils.android.network.NetworkUtils
@@ -34,7 +34,7 @@ object AndroidSword {
     var minimumShowingDialogMills: Long = 0
 
     /** 用于创建 LoadingView*/
-    var loadingViewFactory: ((Context) -> LoadingView)? = null
+    var sLoadingViewHostFactory: ((Context) -> LoadingViewHost)? = null
 
     /** [Throwable] 到可读的 [CharSequence] 转换*/
     var errorConvert: ErrorConvert = object : ErrorConvert {

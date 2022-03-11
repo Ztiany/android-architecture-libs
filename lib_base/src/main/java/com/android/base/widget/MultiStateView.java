@@ -1,13 +1,13 @@
 package com.android.base.widget;
 
-import static com.android.base.architecture.ui.StateLayoutConfig.BLANK;
-import static com.android.base.architecture.ui.StateLayoutConfig.CONTENT;
-import static com.android.base.architecture.ui.StateLayoutConfig.EMPTY;
-import static com.android.base.architecture.ui.StateLayoutConfig.ERROR;
-import static com.android.base.architecture.ui.StateLayoutConfig.LOADING;
-import static com.android.base.architecture.ui.StateLayoutConfig.NET_ERROR;
-import static com.android.base.architecture.ui.StateLayoutConfig.REQUESTING;
-import static com.android.base.architecture.ui.StateLayoutConfig.SERVER_ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.BLANK;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.CONTENT;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.EMPTY;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.LOADING;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.NET_ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.REQUESTING;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.SERVER_ERROR;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.base.R;
-import com.android.base.architecture.ui.StateLayoutConfig.ViewState;
+import com.android.base.architecture.ui.state.StateLayoutConfig.ViewState;
 
 /**
  * View that contains 7 different states: Content, Error/NetError/ServerError, Empty, and Loading/Request.

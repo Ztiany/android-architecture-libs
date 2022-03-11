@@ -16,7 +16,6 @@ import okhttp3.ResponseBody;
  * 下载APK
  *
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-01-04 10:40
  */
 final class ApkDownloader {

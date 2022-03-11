@@ -1,11 +1,12 @@
 package com.android.base.architecture.ui
 
 import com.android.base.AndroidSword
+import com.android.base.architecture.ui.list.ListLayoutHost
 import com.android.base.foundation.data.*
 
 //----------------------------------------------Loading In List And With State----------------------------------------------
 
-fun <T> RefreshListLayout<T>.handleListResource(
+fun <T> ListLayoutHost<T>.handleListResource(
     resource: Resource<List<T>>,
     hasMore: (() -> Boolean)? = null,
     onEmpty: (() -> Unit)? = null
@@ -22,7 +23,7 @@ fun <T> RefreshListLayout<T>.handleListResource(
     }
 }
 
-fun <T> RefreshListLayout<T>.handleListResult(
+fun <T> ListLayoutHost<T>.handleListResult(
     list: List<T>?,
     hasMore: (() -> Boolean)? = null,
     onEmpty: (() -> Unit)? = null
@@ -58,7 +59,7 @@ fun <T> RefreshListLayout<T>.handleListResult(
     }
 }
 
-fun RefreshListLayout<*>.handleListError(throwable: Throwable) {
+fun ListLayoutHost<*>.handleListError(throwable: Throwable) {
     if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }
@@ -83,7 +84,7 @@ fun RefreshListLayout<*>.handleListError(throwable: Throwable) {
     }
 }
 
-fun RefreshListLayout<*>.showLoadingIfEmpty() {
+fun ListLayoutHost<*>.showLoadingIfEmpty() {
     if (isEmpty()) {
         if (isRefreshing()) {
             showBlank()
@@ -95,7 +96,7 @@ fun RefreshListLayout<*>.showLoadingIfEmpty() {
 
 //----------------------------------------------Fully Submit List And With State----------------------------------------------
 
-fun <T> RefreshListLayout<T>.submitListResource(resource: Resource<List<T>>, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
+fun <T> ListLayoutHost<T>.submitListResource(resource: Resource<List<T>>, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
     when (resource) {
         is Loading -> showLoadingIfEmpty()
         is Error -> handleListError(resource.error)
@@ -108,7 +109,7 @@ fun <T> RefreshListLayout<T>.submitListResource(resource: Resource<List<T>>, has
     }
 }
 
-fun <T> RefreshListLayout<T>.submitListResult(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
+fun <T> ListLayoutHost<T>.submitListResult(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
     if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }
@@ -132,7 +133,7 @@ fun <T> RefreshListLayout<T>.submitListResult(list: List<T>?, hasMore: Boolean, 
 
 //----------------------------------------------Loading In List And Without State----------------------------------------------
 
-fun <T> RefreshListLayout<T>.handleListResultWithoutState(list: List<T>?, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
+fun <T> ListLayoutHost<T>.handleListResultWithoutState(list: List<T>?, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
     if (isLoadingMore()) {
         if (!list.isNullOrEmpty()) {
             addData(list)
@@ -157,7 +158,7 @@ fun <T> RefreshListLayout<T>.handleListResultWithoutState(list: List<T>?, hasMor
     }
 }
 
-fun RefreshListLayout<*>.handleListErrorWithoutState() {
+fun ListLayoutHost<*>.handleListErrorWithoutState() {
     if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }
@@ -169,7 +170,7 @@ fun RefreshListLayout<*>.handleListErrorWithoutState() {
 
 //----------------------------------------------Fully Submit List And Without State----------------------------------------------
 
-fun <T> RefreshListLayout<T>.submitListResultWithoutState(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
+fun <T> ListLayoutHost<T>.submitListResultWithoutState(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
     if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }

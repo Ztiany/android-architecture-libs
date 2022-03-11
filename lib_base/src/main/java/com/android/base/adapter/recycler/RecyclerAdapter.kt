@@ -9,12 +9,11 @@ import com.android.base.foundation.adapter.DataManager
 /**
  * @param <T> 当前列表使用的数据类型
  * @author Ztiany
- * date :    2015-05-11 22:38
- * email:    1169654504@qq.com
+ * Date :    2015-05-11 22:38
  */
 abstract class RecyclerAdapter<T, VH : RecyclerView.ViewHolder> @JvmOverloads constructor(
-        protected val context: Context,
-        data: List<T> = emptyList()
+    protected val context: Context,
+    data: List<T> = emptyList()
 ) : RecyclerView.Adapter<VH>(), DataManager<T> {
 
     protected val inflater: LayoutInflater by lazy { LayoutInflater.from(context) }

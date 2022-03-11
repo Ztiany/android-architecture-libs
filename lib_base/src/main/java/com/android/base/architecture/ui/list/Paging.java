@@ -1,4 +1,4 @@
-package com.android.base.architecture.ui;
+package com.android.base.architecture.ui.list;
 
 import timber.log.Timber;
 

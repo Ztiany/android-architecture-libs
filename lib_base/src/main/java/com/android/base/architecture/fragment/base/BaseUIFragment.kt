@@ -13,7 +13,7 @@ import com.android.base.architecture.fragment.animator.FragmentAnimatorHelper
 import com.android.base.architecture.fragment.tools.FragmentConfig
 import com.android.base.architecture.fragment.tools.ReusableView
 import com.android.base.architecture.fragment.tools.dismissDialog
-import com.android.base.architecture.ui.LoadingView
+import com.android.base.architecture.ui.loading.LoadingViewHost
 import com.android.base.architecture.ui.inflateBindingWithParameterizedType
 
 /**
@@ -21,13 +21,13 @@ import com.android.base.architecture.ui.inflateBindingWithParameterizedType
  *      Email: ztiany3@gmail.com
  *      Date : 2021-03-06 23:00
  */
-abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
+abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingViewHost {
 
     private var fragmentAnimatorHelper: FragmentAnimatorHelper? = null
 
     private var recentShowingDialogTime: Long = 0
 
-    private var loadingView: LoadingView? = null
+    private var mLoadingViewHost: LoadingViewHost? = null
 
     private val reuseView by lazy { ReusableView() }
 
@@ -42,12 +42,19 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val factory = {
-            _vb = inflateBindingWithParameterizedType(layoutInflater, container, false)
-            vb.root
+            provideVBFactory(inflater, container, savedInstanceState).invoke().run {
+                _vb = this
+                root
+            }
         }
         return reuseView.createView(factory)
+    }
+
+    protected open fun provideVBFactory(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): () -> VB {
+        return {
+            inflateBindingWithParameterizedType(layoutInflater, container, false)
+        }
     }
 
     @CallSuper
@@ -90,17 +97,17 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
         _vb = null
     }
 
-    private fun loadingView(): LoadingView {
-        val loadingViewImpl = loadingView
+    private fun loadingView(): LoadingViewHost {
+        val loadingViewImpl = mLoadingViewHost
         return if (loadingViewImpl != null) {
             loadingViewImpl
         } else {
-            loadingView = onCreateLoadingView() ?: AndroidSword.loadingViewFactory?.invoke(requireContext())
-            loadingView ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
+            mLoadingViewHost = onCreateLoadingView() ?: AndroidSword.sLoadingViewHostFactory?.invoke(requireContext())
+            mLoadingViewHost ?: throw NullPointerException("you need to config LoadingViewFactory in Sword or implement onCreateLoadingView.")
         }
     }
 
-    protected open fun onCreateLoadingView(): LoadingView? {
+    protected open fun onCreateLoadingView(): LoadingViewHost? {
         return null
     }
 
@@ -125,7 +132,7 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
     }
 
     override fun dismissLoadingDialog() {
-        loadingView?.dismissLoadingDialog()
+        mLoadingViewHost?.dismissLoadingDialog()
     }
 
     override fun dismissLoadingDialog(minimumMills: Long, onDismiss: (() -> Unit)?) {
@@ -133,7 +140,7 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingView {
     }
 
     override fun isLoadingDialogShowing(): Boolean {
-        return loadingView != null && loadingView().isLoadingDialogShowing()
+        return mLoadingViewHost != null && loadingView().isLoadingDialogShowing()
     }
 
     override fun showMessage(message: CharSequence) {

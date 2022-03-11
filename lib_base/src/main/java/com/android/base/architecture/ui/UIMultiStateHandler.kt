@@ -1,6 +1,7 @@
 package com.android.base.architecture.ui
 
 import com.android.base.AndroidSword
+import com.android.base.architecture.ui.state.StateLayoutHost
 import com.android.base.foundation.data.*
 
 private fun <T> newDefaultChecker(): ((T) -> Boolean) {
@@ -9,7 +10,7 @@ private fun <T> newDefaultChecker(): ((T) -> Boolean) {
     }
 }
 
-fun <T> RefreshStateLayout.handleSateResource(
+fun <T> StateLayoutHost.handleSateResource(
     resource: Resource<T>,
     ifEmpty: ((T) -> Boolean)? = newDefaultChecker(),
     onEmpty: (() -> Unit)? = null,
@@ -27,7 +28,7 @@ fun <T> RefreshStateLayout.handleSateResource(
     }
 }
 
-fun <T> RefreshStateLayout.handleStateResult(
+fun <T> StateLayoutHost.handleStateResult(
     t: T?,
     isEmpty: ((T) -> Boolean)? = newDefaultChecker(),
     onEmpty: (() -> Unit)? = null,
@@ -49,7 +50,7 @@ fun <T> RefreshStateLayout.handleStateResult(
     }
 }
 
-fun RefreshStateLayout.handleStateError(throwable: Throwable) {
+fun StateLayoutHost.handleStateError(throwable: Throwable) {
     if (isRefreshEnable() && isRefreshing()) {
         refreshCompleted()
     }

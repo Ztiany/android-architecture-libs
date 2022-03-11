@@ -6,11 +6,9 @@ import android.os.Bundle
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import com.android.base.foundation.activity.ActivityDelegate
-import java.util.*
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2016-12-20 11:43
  */
 @UiThread

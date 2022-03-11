@@ -3,7 +3,6 @@ package com.android.base.foundation.adapter
 /**
  * @author Ztiany
  * Date : 2016-09-12 11:33
- * Email: 1169654504@qq.com
  */
 interface DataManager<T> {
 

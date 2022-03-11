@@ -9,7 +9,6 @@ import android.os.Bundle
  *
  * @author Ztiany
  * Date : 2016-05-06 15:04
- * Email: 1169654504@qq.com
  */
 interface ActivityDelegate<T : Activity> {
 

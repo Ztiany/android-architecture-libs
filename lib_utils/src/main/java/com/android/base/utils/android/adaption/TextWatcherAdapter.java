@@ -5,8 +5,7 @@ import android.text.TextWatcher;
 
 /**
  * @author Ztiany
- *         Email: 1169654504@qq.com
- *         Date : 2017-07-05 18:01
+ * Date : 2017-07-05 18:01
  */
 public interface TextWatcherAdapter extends TextWatcher {
 

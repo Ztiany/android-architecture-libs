@@ -1,8 +1,7 @@
-package com.android.base.architecture.ui;
+package com.android.base.architecture.ui.state;
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-07-08 14:52
  */
 public interface StateLayout {

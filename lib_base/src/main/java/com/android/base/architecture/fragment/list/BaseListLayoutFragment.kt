@@ -3,9 +3,9 @@ package com.android.base.architecture.fragment.list
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.state.BaseStateFragment
-import com.android.base.architecture.ui.AutoPaging
-import com.android.base.architecture.ui.Paging
-import com.android.base.architecture.ui.RefreshListLayout
+import com.android.base.architecture.ui.list.AutoPaging
+import com.android.base.architecture.ui.list.ListLayoutHost
+import com.android.base.architecture.ui.list.Paging
 import com.android.base.foundation.adapter.DataManager
 import com.ztiany.loadmore.adapter.LoadMore
 import com.ztiany.loadmore.adapter.OnLoadMoreListener
@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
  *      Email: ztiany3@gmail.com
  *      Date : 2019-03-26 15:06
  */
-abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListLayoutFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), ListLayoutHost<T> {
 
     /**加载更多*/
     private var loadMore: LoadMore? = null
@@ -39,7 +39,7 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
         return WrapperAdapter.wrap(recyclerAdapter, triggerByScroll).apply {
             setOnLoadMoreListener(object : OnLoadMoreListener {
                 override fun onLoadMore() {
-                    this@BaseListFragment.onLoadMore()
+                    this@BaseListLayoutFragment.onLoadMore()
                 }
 
                 override fun canLoadMore(): Boolean {
@@ -50,7 +50,7 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseStateFragment<VB>(), 
         }
     }
 
-    /**called by [.onRefresh] or [.onLoadMore], you can get current loading type from [.isRefreshing] or [.isLoadingMore].*/
+    /**called by [.onRefresh] or [.onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore].*/
     protected open fun onStartLoad() {}
 
     override fun onRefresh() = onStartLoad()

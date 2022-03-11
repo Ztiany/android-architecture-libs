@@ -1,6 +1,6 @@
-package com.android.base.architecture.ui
+package com.android.base.architecture.ui.state
 
-interface RefreshStateLayout : StateLayout {
+interface StateLayoutHost : StateLayout {
 
     fun autoRefresh()
 

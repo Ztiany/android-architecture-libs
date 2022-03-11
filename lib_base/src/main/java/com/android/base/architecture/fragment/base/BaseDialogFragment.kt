@@ -17,8 +17,7 @@ import timber.log.Timber
 
 /**
  * @author Ztiany
- * date :   2016-03-19 23:09
- * email:    1169654504@qq.com
+ * Date :   2016-03-19 23:09
  */
 open class BaseDialogFragment : AppCompatDialogFragment(), OnBackPressListener, FragmentDelegateOwner {
 

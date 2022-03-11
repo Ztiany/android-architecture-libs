@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-06-07 18:19
  */
 public class ServiceFactory {

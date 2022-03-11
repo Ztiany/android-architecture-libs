@@ -13,8 +13,7 @@ import java.util.concurrent.Executor
  *
  * @param <T> 当前列表使用的数据类型
  * @author Ztiany
- * date :    2015-05-11 22:38
- * email:    1169654504@qq.com
+ * Date :    2015-05-11 22:38
  */
 abstract class DiffRecyclerAdapter<T, VH : RecyclerView.ViewHolder> @JvmOverloads constructor(
         val context: Context,

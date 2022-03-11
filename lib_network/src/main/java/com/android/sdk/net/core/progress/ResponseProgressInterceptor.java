@@ -1,15 +1,15 @@
 package com.android.sdk.net.core.progress;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
-import androidx.annotation.NonNull;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
 /**
  * @author Ztiany
- *         Email: 1169654504@qq.com
- *         Date : 2017-09-20 15:39
+ * Date : 2017-09-20 15:39
  */
 public class ResponseProgressInterceptor implements Interceptor {
 

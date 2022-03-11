@@ -24,8 +24,7 @@ import timber.log.Timber
  * 4. 可以添加生命周期代理。
  *
  * @author Ztiany
- * date :   2016-03-19 23:09
- * email:    1169654504@qq.com
+ * Date :   2016-03-19 23:09
  */
 open class BaseFragment : Fragment(), OnBackPressListener, FragmentDelegateOwner {
 

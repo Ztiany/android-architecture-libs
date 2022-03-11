@@ -1,10 +1,10 @@
 package com.android.base.widget;
 
-import static com.android.base.architecture.ui.StateLayoutConfig.CONTENT;
-import static com.android.base.architecture.ui.StateLayoutConfig.EMPTY;
-import static com.android.base.architecture.ui.StateLayoutConfig.ERROR;
-import static com.android.base.architecture.ui.StateLayoutConfig.LOADING;
-import static com.android.base.architecture.ui.StateLayoutConfig.ViewState;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.CONTENT;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.EMPTY;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.LOADING;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.ViewState;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,14 +15,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.android.base.R;
-import com.android.base.architecture.ui.StateLayout;
-import com.android.base.architecture.ui.StateLayoutConfig;
+import com.android.base.architecture.ui.state.StateLayout;
+import com.android.base.architecture.ui.state.StateLayoutConfig;
 
 import timber.log.Timber;
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-04-21 10:21
  */
 public class SimpleMultiStateView extends MultiStateView implements StateLayout {

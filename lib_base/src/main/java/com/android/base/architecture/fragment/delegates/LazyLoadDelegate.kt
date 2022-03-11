@@ -14,7 +14,6 @@ import com.android.base.foundation.fragment.FragmentDelegateOwner
  *
  * @author Ztiany
  * Date : Date : 2016-05-06 15:02
- * Email: 1169654504@qq.com
  */
 open class LazyLoadDelegate private constructor() : FragmentDelegate<Fragment> {
 

@@ -1,4 +1,4 @@
-package com.android.base.architecture.ui;
+package com.android.base.architecture.ui.list;
 
 import android.view.View;
 
@@ -6,7 +6,6 @@ import android.view.View;
  * RefreshLoadMoreView Factory
  *
  * @author Ztiany
- * Email: 1169654504@qq.com
  * @version 1.0
  */
 public class RefreshLoadViewFactory {

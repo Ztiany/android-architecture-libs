@@ -4,14 +4,19 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.base.BaseUIFragment
-import com.android.base.architecture.ui.*
+import com.android.base.architecture.ui.list.AutoPaging
+import com.android.base.architecture.ui.list.Paging
+import com.android.base.architecture.ui.list.ListLayoutHost
+import com.android.base.architecture.ui.state.OnRetryActionListener
+import com.android.base.architecture.ui.list.RefreshLoadMoreView
+import com.android.base.architecture.ui.state.StateLayoutConfig
 import com.android.base.foundation.adapter.DataManager
 import kotlin.properties.Delegates
 
 
 /**
- *  [BaseListFragment] 只能支持 RecyclerView。因为 [BaseListFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
- * 在底部添加 load more view 的 item，来实现加载更多。[BaseList2Fragment] 没有采用此种方式，所以你使用的 RefreshView 应该是支持下来刷新和加载更多功能的。
+ *  [BaseListLayoutFragment] 只能支持 RecyclerView。因为 [BaseListLayoutFragment] 采用包装 [androidx.recyclerview.widget.RecyclerView.Adapter] 的方式，
+ * 在底部添加 load more view 的 item，来实现加载更多。[BaseListLayout2Fragment] 没有采用此种方式，所以你使用的 RefreshView 应该是支持下来刷新和加载更多功能的。
  *
  * 另外，使用前需要先设置 [dataManager] 。
  *
@@ -19,7 +24,7 @@ import kotlin.properties.Delegates
  *      Email: ztiany3@gmail.com
  *      Date : 2019-03-26 15:06
  */
-abstract class BaseList2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListLayout2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), ListLayoutHost<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
@@ -30,19 +35,19 @@ abstract class BaseList2Fragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), Re
 
         stateLayout.refreshView.setRefreshHandler(object : RefreshLoadMoreView.RefreshHandler {
             override fun onRefresh() {
-                this@BaseList2Fragment.onRefresh()
+                this@BaseListLayout2Fragment.onRefresh()
             }
         })
 
         stateLayout.refreshView.setLoadMoreHandler(object : RefreshLoadMoreView.LoadMoreHandler {
             override fun onLoadMore() {
-                this@BaseList2Fragment.onLoadMore()
+                this@BaseListLayout2Fragment.onLoadMore()
             }
         })
 
         stateLayout.setStateRetryListener(object : OnRetryActionListener {
             override fun onRetry(state: Int) {
-                this@BaseList2Fragment.onRetry(state)
+                this@BaseListLayout2Fragment.onRetry(state)
             }
         })
     }

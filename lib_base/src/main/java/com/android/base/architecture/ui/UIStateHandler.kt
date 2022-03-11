@@ -5,6 +5,7 @@ package com.android.base.architecture.ui
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import com.android.base.AndroidSword
+import com.android.base.architecture.ui.loading.LoadingViewHost
 import com.android.base.foundation.data.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 //----------------------------------------------Common->Loading->Dialog ----------------------------------------------
-fun LoadingView.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
+fun LoadingViewHost.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
     dismissLoadingDialog(AndroidSword.minimumShowingDialogMills, onDismiss)
 }
 
@@ -59,13 +60,13 @@ class ResourceHandlerBuilder<T> {
 fun <H, T> H.handleLiveData(
     data: LiveData<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
-) where H : LoadingView, H : LifecycleOwner {
+) where H : LoadingViewHost, H : LifecycleOwner {
     val builder = ResourceHandlerBuilder<T>()
     handlerBuilder(builder)
 
-    data.observe(this, { state ->
+    data.observe(this) { state ->
         handleResourceInternal(state, builder)
-    })
+    }
 }
 
 /** refer to [handleLiveData]. */
@@ -73,7 +74,7 @@ fun <H, T> H.handleFlowDataWithLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
-) where H : LoadingView, H : LifecycleOwner {
+) where H : LoadingViewHost, H : LifecycleOwner {
     val builder = ResourceHandlerBuilder<T>()
     handlerBuilder(builder)
 
@@ -91,7 +92,7 @@ fun <H, T> H.handleFlowDataWithViewLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<Resource<T>>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
-) where H : LoadingView, H : Fragment {
+) where H : LoadingViewHost, H : Fragment {
     val builder = ResourceHandlerBuilder<T>()
     handlerBuilder(builder)
 
@@ -108,7 +109,7 @@ fun <H, T> H.handleFlowDataWithViewLifecycle(
 fun <H, T> H.handleResource(
     state: Resource<T>,
     handlerBuilder: ResourceHandlerBuilder<T>.() -> Unit
-) where H : LoadingView, H : LifecycleOwner {
+) where H : LoadingViewHost, H : LifecycleOwner {
     val builder = ResourceHandlerBuilder<T>()
     handlerBuilder(builder)
     handleResourceInternal(state, builder)
@@ -117,7 +118,7 @@ fun <H, T> H.handleResource(
 private fun <H, T> H.handleResourceInternal(
     state: Resource<T>,
     handlerBuilder: ResourceHandlerBuilder<T>
-) where H : LoadingView, H : LifecycleOwner {
+) where H : LoadingViewHost, H : LifecycleOwner {
 
     when (state) {
         //----------------------------------------loading

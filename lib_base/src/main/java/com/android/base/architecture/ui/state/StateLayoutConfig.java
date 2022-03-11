@@ -1,4 +1,4 @@
-package com.android.base.architecture.ui;
+package com.android.base.architecture.ui.state;
 
 import android.graphics.drawable.Drawable;
 
@@ -12,7 +12,6 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-04-20 23:32
  */
 public interface StateLayoutConfig {

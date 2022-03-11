@@ -2,7 +2,12 @@ package com.android.base.architecture.fragment.list
 
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.android.base.architecture.ui.*
+import com.android.base.architecture.ui.CommonId
+import com.android.base.architecture.ui.list.RefreshLoadMoreView
+import com.android.base.architecture.ui.list.RefreshLoadViewFactory
+import com.android.base.architecture.ui.state.OnRetryActionListener
+import com.android.base.architecture.ui.state.StateLayout
+import com.android.base.architecture.ui.state.StateLayoutConfig
 import com.android.base.widget.StateProcessor
 
 internal class RefreshLoadMoreStateLayoutImpl constructor(layout: View) : StateLayout, StateLayoutConfig {

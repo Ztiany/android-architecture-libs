@@ -1,4 +1,4 @@
-package com.android.base.architecture.ui
+package com.android.base.architecture.ui.loading
 
 import androidx.annotation.StringRes
 
@@ -6,10 +6,9 @@ import androidx.annotation.StringRes
  * 显示通用的 LoadingDialog 和 Message
  *
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2016-12-02 15:12
  */
-interface LoadingView {
+interface LoadingViewHost {
 
     fun showLoadingDialog()
 

@@ -5,7 +5,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.android.base.architecture.ui.StateLayoutConfig;
+import com.android.base.architecture.ui.state.StateLayoutConfig;
 
 /**
  * @author Ztiany

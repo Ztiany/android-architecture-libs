@@ -3,9 +3,9 @@ package com.android.base.architecture.fragment.list
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.state.BaseStateDialogFragment
-import com.android.base.architecture.ui.AutoPaging
-import com.android.base.architecture.ui.Paging
-import com.android.base.architecture.ui.RefreshListLayout
+import com.android.base.architecture.ui.list.AutoPaging
+import com.android.base.architecture.ui.list.ListLayoutHost
+import com.android.base.architecture.ui.list.Paging
 import com.android.base.foundation.adapter.DataManager
 import com.ztiany.loadmore.adapter.LoadMore
 import com.ztiany.loadmore.adapter.OnLoadMoreListener
@@ -14,11 +14,10 @@ import kotlin.properties.Delegates
 
 /**
  * @author Ztiany
- * date : 2016-03-19 23:09
- * email: 1169654504@qq.com
- *@see [BaseListFragment]
+ * Date : 2016-03-19 23:09
+ *@see [BaseListLayoutFragment]
  */
-abstract class BaseListDialogFragment<T, VB : ViewBinding> : BaseStateDialogFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListLayoutDialogFragment<T, VB : ViewBinding> : BaseStateDialogFragment<VB>(), ListLayoutHost<T> {
 
     /**加载更多*/
     private var loadMore: LoadMore? = null
@@ -36,7 +35,7 @@ abstract class BaseListDialogFragment<T, VB : ViewBinding> : BaseStateDialogFrag
         return WrapperAdapter.wrap(recyclerAdapter, triggerByScroll).apply {
             setOnLoadMoreListener(object : OnLoadMoreListener {
                 override fun onLoadMore() {
-                    this@BaseListDialogFragment.onLoadMore()
+                    this@BaseListLayoutDialogFragment.onLoadMore()
                 }
 
                 override fun canLoadMore(): Boolean {
@@ -47,7 +46,7 @@ abstract class BaseListDialogFragment<T, VB : ViewBinding> : BaseStateDialogFrag
         }
     }
 
-    /** called by [.onRefresh] or [.onLoadMore], you can get current loading type from [.isRefreshing] or [.isLoadingMore].*/
+    /**called by [.onRefresh] or [.onLoadMore], you can get current loading type from [isRefreshing] or [isLoadingMore].*/
     protected open fun onStartLoad() {}
 
     override fun onRefresh() = onStartLoad()

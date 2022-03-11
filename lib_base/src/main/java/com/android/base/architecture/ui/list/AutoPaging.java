@@ -1,4 +1,4 @@
-package com.android.base.architecture.ui;
+package com.android.base.architecture.ui.list;
 
 import com.android.base.foundation.adapter.DataManager;
 
@@ -11,10 +11,10 @@ import com.android.base.foundation.adapter.DataManager;
 public class AutoPaging extends Paging {
 
     private final DataManager mDataManager;
-    private final RefreshListLayout mRefreshListLayout;
+    private final ListLayoutHost mRefreshListLayoutHost;
 
-    public AutoPaging(RefreshListLayout refreshListLayout, DataManager dataManager) {
-        mRefreshListLayout = refreshListLayout;
+    public AutoPaging(ListLayoutHost refreshListLayoutHost, DataManager dataManager) {
+        mRefreshListLayoutHost = refreshListLayoutHost;
         mDataManager = dataManager;
     }
 
@@ -25,7 +25,7 @@ public class AutoPaging extends Paging {
 
     @Override
     public int getLoadingPage() {
-        if (mRefreshListLayout.isRefreshing()) {
+        if (mRefreshListLayoutHost.isRefreshing()) {
             return getPageStart();
         } else {
             return getCurrentPage() + 1;

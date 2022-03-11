@@ -3,8 +3,15 @@ package com.android.sdk.permission.impl.selfstudy;
 
 import android.content.Intent;
 
-import com.android.sdk.permission.utils.HostWrapper;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+
 import com.android.sdk.permission.api.PermissionRequest;
+import com.android.sdk.permission.utils.HostWrapper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,19 +19,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import timber.log.Timber;
 
 /**
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-01-11 15:09
  */
 public class InternalPermissionRequester implements PermissionRequest {

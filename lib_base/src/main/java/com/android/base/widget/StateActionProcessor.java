@@ -1,9 +1,9 @@
 package com.android.base.widget;
 
-import static com.android.base.architecture.ui.StateLayoutConfig.EMPTY;
-import static com.android.base.architecture.ui.StateLayoutConfig.ERROR;
-import static com.android.base.architecture.ui.StateLayoutConfig.NET_ERROR;
-import static com.android.base.architecture.ui.StateLayoutConfig.SERVER_ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.EMPTY;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.NET_ERROR;
+import static com.android.base.architecture.ui.state.StateLayoutConfig.SERVER_ERROR;
 
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -19,8 +19,8 @@ import androidx.core.content.ContextCompat;
 
 import com.android.base.R;
 import com.android.base.architecture.ui.CommonId;
-import com.android.base.architecture.ui.OnRetryActionListener;
-import com.android.base.architecture.ui.StateLayoutConfig;
+import com.android.base.architecture.ui.state.OnRetryActionListener;
+import com.android.base.architecture.ui.state.StateLayoutConfig;
 
 
 /**

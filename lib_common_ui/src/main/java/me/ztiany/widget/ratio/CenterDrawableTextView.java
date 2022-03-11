@@ -13,7 +13,6 @@ import android.view.Gravity;
  * 优先级为：左、上、右、下。
  *
  * @author Ztiany
- * Email: 1169654504@qq.com
  */
 public class CenterDrawableTextView extends RatioTextView {
 

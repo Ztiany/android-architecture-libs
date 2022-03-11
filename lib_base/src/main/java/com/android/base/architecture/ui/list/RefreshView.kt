@@ -1,8 +1,7 @@
-package com.android.base.architecture.ui
+package com.android.base.architecture.ui.list
 
 /**
- * <br></br>   对下拉刷新的抽象
- * <br></br>   Email: 1169654504@qq.com
+ *对下拉刷新的抽象
  *
  * @author Ztiany
  * @version 1.0

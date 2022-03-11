@@ -20,7 +20,6 @@ import timber.log.Timber
  *
  * @author Ztiany
  * Date : 2016-05-04 15:40
- * Email: 1169654504@qq.com
  */
 abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner {
 

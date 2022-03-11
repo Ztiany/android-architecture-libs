@@ -1,13 +1,14 @@
-package com.android.base.architecture.ui
+package com.android.base.architecture.ui.list
+
+import com.android.base.architecture.ui.state.StateLayoutHost
 
 /**
  * 列表视图行为。
  *
  * @author Ztiany
- * Email: 1169654504@qq.com
  * Date : 2017-03-29 22:16
  */
-interface RefreshListLayout<T> : RefreshStateLayout {
+interface ListLayoutHost<T> : StateLayoutHost {
 
     fun replaceData(data: List<T>)
 

@@ -4,7 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.base.BaseUIDialogFragment
-import com.android.base.architecture.ui.*
+import com.android.base.architecture.ui.list.AutoPaging
+import com.android.base.architecture.ui.list.Paging
+import com.android.base.architecture.ui.list.ListLayoutHost
+import com.android.base.architecture.ui.state.OnRetryActionListener
+import com.android.base.architecture.ui.list.RefreshLoadMoreView
+import com.android.base.architecture.ui.state.StateLayoutConfig
 import com.android.base.foundation.adapter.DataManager
 import kotlin.properties.Delegates
 
@@ -12,9 +17,9 @@ import kotlin.properties.Delegates
  *@author Ztiany
  *      Email: ztiany3@gmail.com
  *      Date : 2019-03-26 15:06
- *@see [BaseList2Fragment]
+ *@see [BaseListLayout2Fragment]
  */
-abstract class BaseList2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), RefreshListLayout<T> {
+abstract class BaseListLayout2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragment<VB>(), ListLayoutHost<T> {
 
     private lateinit var stateLayout: RefreshLoadMoreStateLayoutImpl
 
@@ -25,19 +30,19 @@ abstract class BaseList2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragme
 
         stateLayout.refreshView.setRefreshHandler(object : RefreshLoadMoreView.RefreshHandler {
             override fun onRefresh() {
-                this@BaseList2DialogFragment.onRefresh()
+                this@BaseListLayout2DialogFragment.onRefresh()
             }
         })
 
         stateLayout.refreshView.setLoadMoreHandler(object : RefreshLoadMoreView.LoadMoreHandler {
             override fun onLoadMore() {
-                this@BaseList2DialogFragment.onLoadMore()
+                this@BaseListLayout2DialogFragment.onLoadMore()
             }
         })
 
         stateLayout.setStateRetryListener(object : OnRetryActionListener {
             override fun onRetry(state: Int) {
-                this@BaseList2DialogFragment.onRetry(state)
+                this@BaseListLayout2DialogFragment.onRetry(state)
             }
         })
     }
