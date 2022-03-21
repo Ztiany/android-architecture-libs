@@ -35,12 +35,12 @@ fun <T> ListLayoutHost<T>.handleListResult(
         }
     } else {
         replaceData(list ?: emptyList())
-        if (isRefreshEnable() && isRefreshing()) {
+        if (isRefreshEnable && isRefreshing()) {
             refreshCompleted()
         }
     }
 
-    if (isLoadMoreEnable()) {
+    if (isLoadMoreEnable) {
         if (hasMore == null) {
             loadMoreCompleted(list != null && getPager().hasMore(list.size))
         } else {
@@ -60,11 +60,11 @@ fun <T> ListLayoutHost<T>.handleListResult(
 }
 
 fun ListLayoutHost<*>.handleListError(throwable: Throwable) {
-    if (isRefreshEnable() && isRefreshing()) {
+    if (isRefreshEnable && isRefreshing()) {
         refreshCompleted()
     }
 
-    if (isLoadMoreEnable() && isLoadingMore()) {
+    if (isLoadMoreEnable && isLoadingMore()) {
         loadMoreFailed()
     }
 
@@ -110,13 +110,13 @@ fun <T> ListLayoutHost<T>.submitListResource(resource: Resource<List<T>>, hasMor
 }
 
 fun <T> ListLayoutHost<T>.submitListResult(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
-    if (isRefreshEnable() && isRefreshing()) {
+    if (isRefreshEnable && isRefreshing()) {
         refreshCompleted()
     }
 
     replaceData(list ?: emptyList())
 
-    if (isLoadMoreEnable()) {
+    if (isLoadMoreEnable) {
         loadMoreCompleted(hasMore)
     }
 
@@ -128,60 +128,5 @@ fun <T> ListLayoutHost<T>.submitListResult(list: List<T>?, hasMore: Boolean, onE
         }
     } else {
         showContentLayout()
-    }
-}
-
-//----------------------------------------------Loading In List And Without State----------------------------------------------
-
-fun <T> ListLayoutHost<T>.handleListResultWithoutState(list: List<T>?, hasMore: (() -> Boolean)? = null, onEmpty: (() -> Unit)? = null) {
-    if (isLoadingMore()) {
-        if (!list.isNullOrEmpty()) {
-            addData(list)
-        }
-    } else {
-        replaceData(list ?: emptyList())
-        if (isRefreshEnable()) {
-            refreshCompleted()
-        }
-    }
-
-    if (isLoadMoreEnable()) {
-        if (hasMore == null) {
-            loadMoreCompleted(list != null && getPager().hasMore(list.size))
-        } else {
-            loadMoreCompleted(hasMore())
-        }
-    }
-
-    if (onEmpty != null && isEmpty()) {
-        onEmpty()
-    }
-}
-
-fun ListLayoutHost<*>.handleListErrorWithoutState() {
-    if (isRefreshEnable() && isRefreshing()) {
-        refreshCompleted()
-    }
-
-    if (isLoadMoreEnable() && isLoadingMore()) {
-        loadMoreFailed()
-    }
-}
-
-//----------------------------------------------Fully Submit List And Without State----------------------------------------------
-
-fun <T> ListLayoutHost<T>.submitListResultWithoutState(list: List<T>?, hasMore: Boolean, onEmpty: (() -> Unit)? = null) {
-    if (isRefreshEnable() && isRefreshing()) {
-        refreshCompleted()
-    }
-
-    replaceData(list ?: emptyList())
-
-    if (isLoadMoreEnable()) {
-        loadMoreCompleted(hasMore)
-    }
-
-    if (onEmpty != null && isEmpty()) {
-        onEmpty()
     }
 }

@@ -7,8 +7,8 @@ import com.android.base.architecture.fragment.animator.FragmentAnimator
 import com.android.base.architecture.fragment.tools.FragmentConfig
 import com.android.base.architecture.ui.loading.LoadingViewHost
 import com.android.base.architecture.ui.list.Paging
-import com.android.base.architecture.ui.list.RefreshLoadViewFactory
-import com.android.base.architecture.ui.list.RefreshLoadViewFactory.Factory
+import com.android.base.architecture.ui.list.RefreshLoadMoreViewFactory
+import com.android.base.architecture.ui.list.RefreshLoadMoreViewFactory.Factory
 import com.android.base.architecture.ui.list.RefreshViewFactory
 import com.android.base.utils.android.AppUtils
 import com.android.base.utils.android.network.NetworkState
@@ -83,7 +83,7 @@ object AndroidSword {
         get() = AppUtils.isAppForeground()
 
     fun registerRefreshLoadViewFactory(factory: Factory): AndroidSword {
-        RefreshLoadViewFactory.registerFactory(factory)
+        RefreshLoadMoreViewFactory.registerFactory(factory)
         return this
     }
 

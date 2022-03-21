@@ -8,6 +8,6 @@ interface StateLayoutHost : StateLayout {
 
     fun isRefreshing(): Boolean
 
-    fun isRefreshEnable(): Boolean
+    var isRefreshEnable: Boolean
 
 }

@@ -24,6 +24,6 @@ interface ListLayoutHost<T> : StateLayoutHost {
 
     fun isLoadingMore(): Boolean
 
-    fun isLoadMoreEnable(): Boolean
+    var isLoadMoreEnable: Boolean
 
 }

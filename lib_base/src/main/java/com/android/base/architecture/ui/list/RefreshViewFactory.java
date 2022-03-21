@@ -2,18 +2,17 @@ package com.android.base.architecture.ui.list;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
- * RefreshView Factory
- *
  * @author Ztiany
- * @version 1.0
  */
 public class RefreshViewFactory {
 
     private static Factory sFactory;
 
+    @NonNull
     public static RefreshView createRefreshView(View view) {
         if (sFactory != null) {
             return sFactory.createRefreshView(view);
@@ -31,4 +30,5 @@ public class RefreshViewFactory {
     public interface Factory {
         RefreshView createRefreshView(View view);
     }
+
 }

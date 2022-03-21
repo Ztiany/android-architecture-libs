@@ -4,8 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.base.BaseUIDialogFragment
-import com.android.base.architecture.ui.list.RefreshView
-import com.android.base.architecture.ui.state.OnRetryActionListener
+import com.android.base.architecture.ui.CommonId
 import com.android.base.architecture.ui.state.StateLayoutConfig
 import com.android.base.architecture.ui.state.StateLayoutHost
 
@@ -16,26 +15,20 @@ import com.android.base.architecture.ui.state.StateLayoutHost
  */
 abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<VB>(), StateLayoutHost {
 
-    private lateinit var mStateLayout: StateLayoutHostImpl
+    private lateinit var stateLayoutHostImpl: StateLayoutHost
 
     override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
-        mStateLayout = StateLayoutHostImpl(view)
-
-        mStateLayout.setRefreshHandler(object : RefreshView.RefreshHandler() {
-            override fun onRefresh() {
+        stateLayoutHostImpl = buildStateLayoutHost(
+            view.findViewById(CommonId.STATE_ID),
+            view.findViewById(CommonId.REFRESH_ID)
+        ) {
+            this.onRefresh = {
                 this@BaseStateDialogFragment.onRefresh()
             }
-
-            override fun canRefresh(): Boolean {
-                return this@BaseStateDialogFragment.canRefresh()
+            this.onRetry = {
+                this@BaseStateDialogFragment.onRetry(it)
             }
-        })
-
-        mStateLayout.setStateRetryListenerUnchecked(object : OnRetryActionListener {
-            override fun onRetry(state: Int) {
-                this@BaseStateDialogFragment.onRetry(state)
-            }
-        })
+        }
     }
 
     override fun onDestroyView() {
@@ -43,12 +36,10 @@ abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<
         refreshCompleted()
     }
 
-    internal open fun canRefresh() = true
-
     protected open fun onRetry(@StateLayoutConfig.RetryableState state: Int) {
-        if (mStateLayout.isRefreshEnable()) {
+        if (stateLayoutHostImpl.isRefreshEnable) {
             if (!isRefreshing()) {
-                mStateLayout.autoRefresh()
+                stateLayoutHostImpl.autoRefresh()
             }
         } else {
             onRefresh()
@@ -57,39 +48,33 @@ abstract class BaseStateDialogFragment<VB : ViewBinding> : BaseUIDialogFragment<
 
     protected open fun onRefresh() {}
 
-    fun setRefreshEnable(enable: Boolean) {
-        mStateLayout.setRefreshEnable(enable)
-    }
+    override var isRefreshEnable = stateLayoutHostImpl.isRefreshEnable
 
-    override fun isRefreshEnable(): Boolean {
-        return mStateLayout.isRefreshEnable()
-    }
+    override fun getStateLayoutConfig(): StateLayoutConfig = stateLayoutHostImpl.stateLayoutConfig
 
-    override fun getStateLayoutConfig(): StateLayoutConfig = mStateLayout.stateLayoutConfig
+    override fun isRefreshing() = stateLayoutHostImpl.isRefreshing()
 
-    override fun isRefreshing() = mStateLayout.isRefreshing()
+    override fun refreshCompleted() = stateLayoutHostImpl.refreshCompleted()
 
-    override fun refreshCompleted() = mStateLayout.refreshCompleted()
+    override fun autoRefresh() = stateLayoutHostImpl.autoRefresh()
 
-    override fun autoRefresh() = mStateLayout.autoRefresh()
+    override fun showContentLayout() = stateLayoutHostImpl.showContentLayout()
 
-    override fun showContentLayout() = mStateLayout.showContentLayout()
+    override fun showLoadingLayout() = stateLayoutHostImpl.showLoadingLayout()
 
-    override fun showLoadingLayout() = mStateLayout.showLoadingLayout()
+    override fun showEmptyLayout() = stateLayoutHostImpl.showEmptyLayout()
 
-    override fun showEmptyLayout() = mStateLayout.showEmptyLayout()
+    override fun showErrorLayout() = stateLayoutHostImpl.showErrorLayout()
 
-    override fun showErrorLayout() = mStateLayout.showErrorLayout()
+    override fun showRequesting() = stateLayoutHostImpl.showRequesting()
 
-    override fun showRequesting() = mStateLayout.showRequesting()
+    override fun showBlank() = stateLayoutHostImpl.showBlank()
 
-    override fun showBlank() = mStateLayout.showBlank()
+    override fun showNetErrorLayout() = stateLayoutHostImpl.showNetErrorLayout()
 
-    override fun showNetErrorLayout() = mStateLayout.showNetErrorLayout()
+    override fun showServerErrorLayout() = stateLayoutHostImpl.showServerErrorLayout()
 
-    override fun showServerErrorLayout() = mStateLayout.showServerErrorLayout()
-
-    override fun currentStatus() = mStateLayout.currentStatus()
+    override fun currentStatus() = stateLayoutHostImpl.currentStatus()
 
     @Suppress("UNUSED")
     companion object {

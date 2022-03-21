@@ -34,7 +34,7 @@ fun <T> StateLayoutHost.handleStateResult(
     onEmpty: (() -> Unit)? = null,
     onResult: ((T) -> Unit)
 ) {
-    if (isRefreshEnable() && isRefreshing()) {
+    if (isRefreshEnable && isRefreshing()) {
         refreshCompleted()
     }
 
@@ -51,7 +51,7 @@ fun <T> StateLayoutHost.handleStateResult(
 }
 
 fun StateLayoutHost.handleStateError(throwable: Throwable) {
-    if (isRefreshEnable() && isRefreshing()) {
+    if (isRefreshEnable && isRefreshing()) {
         refreshCompleted()
     }
 
