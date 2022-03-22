@@ -6,7 +6,7 @@ import com.android.sdk.net.coroutines.*
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-
+/** TODO: If the real parameterized Type of Result is needed for more features, obtain that by reflecting. */
 suspend fun <T : Any?> apiCallNullable(
     exceptionFactory: ExceptionFactory? = null,
     call: suspend () -> Result<T>

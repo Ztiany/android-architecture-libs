@@ -1,4 +1,4 @@
-package com.android.sdk.net.coroutines
+package com.android.sdk.net.coroutines.flow
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 /**
- *TODO: verify if this method is necessary.
+ *TODO: verify if wrapping calls to flow is necessary.
  *
  * @param requestBlock 请求的整体逻辑
  * @return Flow<T>
