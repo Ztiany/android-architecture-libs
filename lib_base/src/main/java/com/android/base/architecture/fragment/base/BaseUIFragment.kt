@@ -13,8 +13,8 @@ import com.android.base.architecture.fragment.animator.FragmentAnimatorHelper
 import com.android.base.architecture.fragment.tools.FragmentConfig
 import com.android.base.architecture.fragment.tools.ReusableView
 import com.android.base.architecture.fragment.tools.dismissDialog
-import com.android.base.architecture.ui.loading.LoadingViewHost
 import com.android.base.architecture.ui.inflateBindingWithParameterizedType
+import com.android.base.architecture.ui.loading.LoadingViewHost
 
 /**
  *@author Ztiany
@@ -34,7 +34,7 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingViewHos
     private var _vb: VB? = null
     protected val vb: VB
         get() = checkNotNull(_vb) {
-            "access layout after calling onViewCreated()"
+            "access this after onCreateView() is called."
         }
 
     override fun onCreateView(
@@ -43,19 +43,13 @@ abstract class BaseUIFragment<VB : ViewBinding> : BaseFragment(), LoadingViewHos
         savedInstanceState: Bundle?
     ): View? {
         val factory = {
-            provideVBFactory(inflater, container, savedInstanceState).invoke().run {
-                _vb = this
-                root
-            }
+            _vb = provideViewBinding(inflater, savedInstanceState) ?: inflateBindingWithParameterizedType(layoutInflater, container, false)
+            vb.root
         }
         return reuseView.createView(factory)
     }
 
-    protected open fun provideVBFactory(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): () -> VB {
-        return {
-            inflateBindingWithParameterizedType(layoutInflater, container, false)
-        }
-    }
+    protected open fun provideViewBinding(inflater: LayoutInflater, savedInstanceState: Bundle?): VB? = null
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
