@@ -1,5 +1,7 @@
 package com.android.base.architecture.fragment.list
 
+import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewbinding.ViewBinding
@@ -13,7 +15,7 @@ import com.ztiany.loadmore.adapter.LoadMore
 import kotlin.properties.Delegates
 
 /**
- * 通用的基于 RecyclerView 的列表界面，支持下拉刷新和加载更多，使用前需要先调用 [setUpList] 。
+ * 通用的基于 RecyclerView 的列表界面，支持下拉刷新和加载更多。
  *
  * @param <T> 当前列表使用的数据类型
  * @author Ztiany
@@ -24,20 +26,38 @@ abstract class BaseListFragment<T, VB : ViewBinding> : BaseUIFragment<VB>(), Lis
 
     private var listLayoutHostImpl: ListLayoutHost<T> by Delegates.notNull()
 
+    override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
+        super.internalOnViewPrepared(view, savedInstanceState)
+        listLayoutHostImpl = provideListImplementation(view, savedInstanceState)
+    }
+
+    /**
+     *  1. This Method will be called before [onViewCreated] and [onViewPrepared].
+     *  2. You should invoke [setUpList] to return a real [ListLayoutHost].
+     */
+    abstract fun provideListImplementation(view: View, savedInstanceState: Bundle?): ListLayoutHost<T>
+
+    @SuppressWarnings("WeakerAccess")
     protected fun <A> setUpList(
         dataManager: A,
         recyclerView: RecyclerView,
         enableLoadMore: Boolean = false,
         triggerLoadMoreByScroll: Boolean = false
-    ) where A : DataManager<T>, A : Adapter<*> {
+    ): ListLayoutHost<T> where A : DataManager<T>, A : Adapter<*> {
 
-        listLayoutHostImpl = buildListLayoutHost(
+        if (!enableLoadMore) {
+            recyclerView.adapter = dataManager
+        }
+
+        return buildListLayoutHost(
             dataManager,
             vb.root.findViewById(CommonId.STATE_ID),
             vb.root.findViewById(CommonId.REFRESH_ID)
         ) {
             this.enableLoadMore = enableLoadMore
             this.triggerLoadMoreByScroll = triggerLoadMoreByScroll
+
+            /*if load-more is enabled.*/
             onLoadMoreCreated = {
                 loadMore = it
                 recyclerView.adapter = it

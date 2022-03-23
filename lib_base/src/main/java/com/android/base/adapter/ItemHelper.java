@@ -11,8 +11,6 @@ import androidx.annotation.StringRes;
 
 /**
  * @author Ztiany
- * Email ：1169654504@qq.com
- * Date ：015-12-29 20:47
  */
 public class ItemHelper {
 

@@ -8,10 +8,11 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 /*
- * ViewBinding 封装【基类反射方式】，具体参考：
+ * 基于反射的 ViewBinding 封装，具体参考：
  *
- *      1. https://juejin.cn/post/6906153878312452103
- *      2. https://github.com/DylanCaiCoding/ViewBindingKtx
+ *      1. [优雅地封装和使用 ViewBinding](https://juejin.cn/post/6906153878312452103)
+ *      2. [ViewBindingKtx](https://github.com/DylanCaiCoding/ViewBindingKtx)
+ *      3. [新技术 ViewBinding 最佳实践 & 原理击穿](https://mp.weixin.qq.com/s/FTHSAysWNJOi4XcClYDjKg)
  */
 
 @JvmName("inflateWithGeneric")

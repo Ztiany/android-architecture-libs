@@ -1,5 +1,7 @@
 package com.android.base.architecture.fragment.list2
 
+import android.os.Bundle
+import android.view.View
 import androidx.viewbinding.ViewBinding
 import com.android.base.architecture.fragment.base.BaseUIDialogFragment
 import com.android.base.architecture.ui.CommonId
@@ -17,10 +19,22 @@ abstract class BaseList2DialogFragment<T, VB : ViewBinding> : BaseUIDialogFragme
 
     private var listLayoutHostImpl: ListLayoutHost<T> by Delegates.notNull()
 
+    override fun internalOnViewPrepared(view: View, savedInstanceState: Bundle?) {
+        super.internalOnViewPrepared(view, savedInstanceState)
+        listLayoutHostImpl = provideListImplementation(view, savedInstanceState)
+    }
+
+    /**
+     *  1. This Method will be called before [onViewCreated] and [onViewPrepared].
+     *  2. You should invoke [setUpList] to return a real [ListLayoutHost].
+     */
+    abstract fun provideListImplementation(view: View, savedInstanceState: Bundle?): ListLayoutHost<T>
+
+    @SuppressWarnings("WeakerAccess")
     protected fun setUpList(
         dataManager: DataManager<T>
-    ) {
-        listLayoutHostImpl = buildListLayoutHost2(
+    ): ListLayoutHost<T> {
+        return buildListLayoutHost2(
             dataManager,
             vb.root.findViewById(CommonId.STATE_ID),
             vb.root.findViewById(CommonId.REFRESH_ID)

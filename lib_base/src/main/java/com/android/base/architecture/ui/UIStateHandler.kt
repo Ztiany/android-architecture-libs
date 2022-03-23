@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-//----------------------------------------------Common->Loading->Dialog ----------------------------------------------
 fun LoadingViewHost.dismissLoadingDialogDelayed(onDismiss: (() -> Unit)? = null) {
     dismissLoadingDialog(AndroidSword.minimumShowingDialogMills, onDismiss)
 }
@@ -121,7 +120,7 @@ private fun <H, T> H.handleResourceInternal(
 ) where H : LoadingViewHost, H : LifecycleOwner {
 
     when (state) {
-        //----------------------------------------loading
+        //----------------------------------------loading start
         is Loading -> {
             if (handlerBuilder.showLoading) {
                 if (handlerBuilder.onLoading == null) {
@@ -131,8 +130,9 @@ private fun <H, T> H.handleResourceInternal(
                 }
             }
         }
+        //----------------------------------------loading end
 
-        //----------------------------------------error
+        //----------------------------------------error start
         is Error -> {
             if (state.isHandled) {
                 return
@@ -148,8 +148,9 @@ private fun <H, T> H.handleResourceInternal(
                 }
             }
         }
+        //----------------------------------------error end
 
-        //----------------------------------------success
+        //----------------------------------------success start
         is Success<T> -> {
             if (state.isHandled) {
                 return
@@ -169,5 +170,7 @@ private fun <H, T> H.handleResourceInternal(
                 }
             }
         }
+        //----------------------------------------success end
+
     }
 }

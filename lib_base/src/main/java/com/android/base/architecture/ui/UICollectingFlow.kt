@@ -1,6 +1,7 @@
 package com.android.base.architecture.ui
 
 import android.app.Activity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.Flow
@@ -9,11 +10,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
- * Collect flow in [Activity].
+ * Collect flow in an [Activity] or sometimes in a [DialogFragment].
  *
  * Notes: call the method in [Activity.onCreate].
+ *
+ * @see [collectFlowOnViewLifecycle]
  */
-fun <T> LifecycleOwner.collectFlowOnLifecycleRepeat(
+fun <T> LifecycleOwner.collectFlowOnLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<T>,
     onResult: (result: T) -> Unit
@@ -28,13 +31,13 @@ fun <T> LifecycleOwner.collectFlowOnLifecycleRepeat(
 }
 
 /**
- *  Fragments should *always* use the `viewLifecycleOwner` to trigger UI updates. However, that’s not the case for `DialogFragment`s which might not have a `View` sometimes. For `DialogFragment`s, you can use the `lifecycleOwner`.
+ *  Fragments should **always** use the [Fragment.getViewLifecycleOwner] to trigger UI updates. However, that’s not the case for [DialogFragment]s which might not have a `View` sometimes. For [DialogFragment]s, you can use the [LifecycleOwner].
  *
  *  Notes: call the method in [Fragment.onViewCreated].
  *
  *  Refer to [A safer way to collect flows from Android UIs](https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda) for detail.
  */
-fun <T> Fragment.collectFlowOnViewLifecycleRepeat(
+fun <T> Fragment.collectFlowOnViewLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<T>,
     onResult: (result: T) -> Unit
@@ -48,8 +51,11 @@ fun <T> Fragment.collectFlowOnViewLifecycleRepeat(
     }
 }
 
-/** Collect flow in [Activity] or [Fragment]. */
-fun <T> LifecycleOwner.collectFlowOnLifecycle(
+/** Collect flow in [Activity] or [Fragment] just once.
+ *
+ *  Notes: Normally, You should not use this method in a [Fragment], unless the [Fragment] has no UI.
+ */
+fun <T> LifecycleOwner.collectFlowOnceOnLifecycle(
     activeState: Lifecycle.State = Lifecycle.State.STARTED,
     data: Flow<T>,
     onResult: (result: T) -> Unit
@@ -75,13 +81,13 @@ fun <T> LifecycleOwner.collectFlowOnLifecycle(
 }
 
 /**
- *  Collect flow in [Fragment].
+ *  Collect flow in [Fragment] just once.
  *
  *  Notes:
  *  1. Call this method after [Fragment.onViewCreated].
  *  2. when  [Fragment.onDestroyView] is called, the collecting ends.
  */
-fun <T> Fragment.collectFlowOnViewLifecycle(
+fun <T> Fragment.collectFlowOnceOnViewLifecycle(
     data: Flow<T>,
     onResult: (result: T) -> Unit
 ) {
