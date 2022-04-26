@@ -22,10 +22,13 @@ final class ApkDownloader {
 
     private final String mUrl;
     private final String mDigitalAbstract;
+
     private final ApkDownloaderListener mApkDownloaderListener;
     private final UpgradeInteractor mUpgradeInteractor;
+
     private final File mDesFile;
     private final File mTempDesFile;
+
     private static final String TEMP_MASK = "temp_%s";
     private long mNotifyTime = 0;
 

@@ -7,10 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import com.android.base.utils.BaseUtils
 import com.android.base.utils.android.AppUtils
 import com.android.base.utils.android.ServiceUtils
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
 import java.io.File
 
 /**
@@ -74,7 +70,6 @@ object AppUpgradeChecker {
 
     @SuppressLint("CheckResult")
     fun checkAppUpgrade(
-        scope: CoroutineScope,
         justOnce: Boolean = true
     ): LiveData<CheckingState> {
         val liveData = MutableLiveData<CheckingState>()
@@ -91,21 +86,19 @@ object AppUpgradeChecker {
         }
 
         /*执行检测*/
-        // TODO: 2021/9/27 test the code.
-        upgradeInteractor.checkUpgrade()
-            .onStart {
+        upgradeInteractor.checkUpgrade(
+            onStart = {
                 liveData.postValue(CheckingState(isLoading = true))
-            }
-            .catch {
+            },
+            onError = {
                 liveData.postValue(CheckingState(error = it))
-            }
-            .onEach {
+            },
+            onSuccess = {
                 succeededOnce = true
-                processUpdateInfo(upgradeInfo)
-                liveData.postValue(CheckingState(upgradeInfo = upgradeInfo))
+                processUpdateInfo(it)
+                liveData.postValue(CheckingState(upgradeInfo = it))
             }
-            .flowOn(Dispatchers.IO)
-            .launchIn(scope)
+        )
 
         return liveData
     }

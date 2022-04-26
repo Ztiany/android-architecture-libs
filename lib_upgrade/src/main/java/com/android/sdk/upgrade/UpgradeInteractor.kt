@@ -2,7 +2,6 @@ package com.android.sdk.upgrade
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -14,7 +13,11 @@ import java.io.File
 interface UpgradeInteractor {
 
     /**when this method called, you should to ask server if there is a new version.*/
-    fun checkUpgrade(): Flow<UpgradeInfo>
+    fun checkUpgrade(
+        onStart: (() -> Unit),
+        onError: ((Throwable) -> Unit),
+        onSuccess: ((UpgradeInfo) -> Unit)
+    )
 
     /**a dialog used to show information about information of new apk.*/
     fun showUpgradeDialog(
