@@ -68,7 +68,7 @@ inline fun ignoreCrash(code: () -> Unit) {
 }
 
 /**
- * 安静关闭IO
+ * 关闭 IO
  */
 fun closeIO(closeable: Closeable?) {
     if (closeable != null) {
@@ -81,7 +81,7 @@ fun closeIO(closeable: Closeable?) {
 }
 
 /**
- * 关闭IO
+ * 安静关闭 IO
  */
 fun closeIOQuietly(closeable: Closeable?) {
     if (closeable != null) {
@@ -93,11 +93,11 @@ fun closeIOQuietly(closeable: Closeable?) {
 }
 
 /**
- * 关闭IO
+ * 关闭 IO
  *
  * @param closeables closeable
  */
-fun closeIO(vararg closeables: Closeable?) {
+fun closeIOs(vararg closeables: Closeable?) {
     for (closeable in closeables) {
         closeIO(closeable)
     }
@@ -108,7 +108,7 @@ fun closeIO(vararg closeables: Closeable?) {
  *
  * @param closeables closeable
  */
-fun closeIOQuietly(vararg closeables: Closeable?) {
+fun closeIOsQuietly(vararg closeables: Closeable?) {
     for (closeable in closeables) {
         closeIOQuietly(closeable)
     }
