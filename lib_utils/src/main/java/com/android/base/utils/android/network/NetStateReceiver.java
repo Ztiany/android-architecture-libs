@@ -23,22 +23,14 @@ import timber.log.Timber;
 /**
  * 网络监听，需要权限：
  * <pre>{@code
- *
- *   <receiver android:name="com.library.receiver.NetStateReceiver">
- *          <intent-filter>
- *               <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
- *               <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
- *               <action android:name="android.net.wifi.STATE_CHANGE" />
- *          </intent-filter>
- *      </receiver>
+ *      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  * }
- *
  * </pre>
  *
  * @author Ztiany
  * email 1169654504@qq.com
  * date 2015-12-08 14:50
- * @see <a href="http://www.jianshu.com/p/983889116526">Android：检测网络状态&监听网络变化</a>
+ * @see <a href="http://www.jianshu.com/p/983889116526">Android：检测网络状态 & 监听网络变化</a>
  */
 public abstract class NetStateReceiver extends BroadcastReceiver {
 
