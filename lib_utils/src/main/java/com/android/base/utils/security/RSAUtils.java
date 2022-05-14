@@ -2,6 +2,8 @@ package com.android.base.utils.security;
 
 import android.util.Base64;
 
+import androidx.annotation.Nullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +22,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
-
-import androidx.annotation.Nullable;
 
 /**
  * @see <a href='https://android-developers.googleblog.com/2018/03/cryptography-changes-in-android-p.html'>cryptography-changes-in-android-p.html<a/>

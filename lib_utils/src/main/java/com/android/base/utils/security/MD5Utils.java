@@ -1,12 +1,12 @@
 package com.android.base.utils.security;
 
+import androidx.annotation.Nullable;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import androidx.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public class MD5Utils {
@@ -22,9 +22,6 @@ public class MD5Utils {
         return sb.toString();
     }
 
-    /**
-     * 文件加密
-     */
     @Nullable
     public static String md5file(String filename) {
         InputStream fis;
@@ -45,9 +42,6 @@ public class MD5Utils {
         }
     }
 
-    /**
-     * 字符串加密
-     */
     public static String md5(String string) {
         byte[] hash;
         try {
