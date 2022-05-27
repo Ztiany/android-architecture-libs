@@ -7,6 +7,7 @@ import com.android.sdk.net.core.provider.ErrorBodyParser;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.PlatformInteractor;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava2.RxResultPostTransformer;
 
 public interface CommonProvider {
 
@@ -15,6 +16,9 @@ public interface CommonProvider {
 
     @Nullable
     CoroutinesResultPostProcessor coroutinesResultPostProcessor();
+
+    @Nullable
+    RxResultPostTransformer<?> rxResultPostTransformer();
 
     @Nullable
     ErrorBodyParser errorBodyHandler();

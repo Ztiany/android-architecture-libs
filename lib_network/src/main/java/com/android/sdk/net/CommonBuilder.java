@@ -8,6 +8,7 @@ import com.android.sdk.net.core.provider.ErrorBodyParser;
 import com.android.sdk.net.core.provider.ErrorMessage;
 import com.android.sdk.net.core.provider.PlatformInteractor;
 import com.android.sdk.net.coroutines.CoroutinesResultPostProcessor;
+import com.android.sdk.net.rxjava2.RxResultPostTransformer;
 
 public class CommonBuilder {
 
@@ -39,6 +40,14 @@ public class CommonBuilder {
      */
     public CommonBuilder coroutinesResultPostProcessor(@Nullable CoroutinesResultPostProcessor resultPostProcessor) {
         mCommonProvider.mCoroutinesResultPostProcessor = resultPostProcessor;
+        return this;
+    }
+
+    /**
+     * If you use RxJava2, you can use this to set up a piece of logic that will be executed before retrial.
+     */
+    public CommonBuilder rx2ResultPostTransformer(@NonNull RxResultPostTransformer<?> resultPostProcessor) {
+        mCommonProvider.mRxResultPostTransformer = resultPostProcessor;
         return this;
     }
 
