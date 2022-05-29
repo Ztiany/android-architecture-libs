@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.res.Configuration
 
 /**
- * This interface is designed for initialize the modules which consist of a completed APP. How to collect Module Initializer?
+ * This interface is designed for initialize business modules which consist of a completed APP. How to collect Module Initializer?
  *
  * option1: use Dagger2.
  * ```

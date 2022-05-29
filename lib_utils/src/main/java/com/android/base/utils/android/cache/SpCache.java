@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import timber.log.Timber;
 
 /**
- * modified from <a href='https://github.com/hongyangAndroid/SpCache'>hongyangAndroid/SpCache</a>
+ * modified from <a href='https://github.com/hongyangAndroid/SpCache'>hongyangAndroid/SpCache</a>.
  */
 @SuppressWarnings("unused")
 public class SpCache {

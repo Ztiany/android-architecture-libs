@@ -3,11 +3,9 @@ package com.android.base.foundation.data
 
 /**
  * @author Ztiany
- * Email: ztiany3@gmail.com
- * Date : 2018-05-15 16:23
  */
 sealed class Resource<out T> {
-    
+
     companion object {
 
         fun <T> noData(): Resource<T> {

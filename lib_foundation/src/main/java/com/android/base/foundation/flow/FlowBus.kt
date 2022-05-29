@@ -3,27 +3,33 @@ package com.android.base.foundation.flow
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import java.util.concurrent.ConcurrentHashMap
 
 /**
- * SharedFlowBus 只会将更新通知给活跃的观察者。
+ * An event bus implementation by  SharedFlow. Notes: Don't spread a Bus everywhere, restrict a Bus within a module.
  */
 abstract class FlowBus {
 
-    private var events = ConcurrentHashMap<Any, MutableSharedFlow<Any>>()
-    private var stickyEvents = ConcurrentHashMap<Any, MutableSharedFlow<Any>>()
+    private val events = HashMap<Any, MutableSharedFlow<Any>>()
+
+    private val stickyEvents = HashMap<Any, MutableSharedFlow<Any>>()
 
     fun <T> with(objectKey: Class<T>): MutableSharedFlow<T> {
-        if (!events.containsKey(objectKey)) {
-            events[objectKey] = MutableSharedFlow(0, 1, BufferOverflow.DROP_OLDEST)
+        synchronized(events) {
+            if (!events.containsKey(objectKey)) {
+                events[objectKey] = MutableSharedFlow(0, 1, BufferOverflow.DROP_OLDEST)
+            }
         }
+
         return events[objectKey] as MutableSharedFlow<T>
     }
 
     fun <T> withSticky(objectKey: Class<T>): MutableSharedFlow<T> {
-        if (!stickyEvents.containsKey(objectKey)) {
-            stickyEvents[objectKey] = MutableSharedFlow(1, 1, BufferOverflow.DROP_OLDEST)
+        synchronized(stickyEvents) {
+            if (!stickyEvents.containsKey(objectKey)) {
+                stickyEvents[objectKey] = MutableSharedFlow(1, 1, BufferOverflow.DROP_OLDEST)
+            }
         }
+
         return stickyEvents[objectKey] as MutableSharedFlow<T>
     }
 

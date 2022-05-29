@@ -14,8 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author Ztiany
- * Email: ztiany3@gmail.com
- * Date : 2018-10-12 18:19
  */
 class ApplicationDelegate internal constructor() {
 

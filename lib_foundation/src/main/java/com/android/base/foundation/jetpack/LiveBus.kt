@@ -7,8 +7,6 @@ import androidx.lifecycle.MutableLiveData
  * Don't spread a Bus everywhere, restrict a Bus within a module.
  *
  *@author Ztiany
- *      Email: ztiany3@gmail.com
- *      Date : 2020-09-21 20:16
  */
 @Deprecated("LiveData is not designed for events, use SharedFlow instead.")
 abstract class LiveBus {

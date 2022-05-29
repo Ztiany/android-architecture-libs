@@ -23,8 +23,7 @@ import timber.log.Timber
  */
 abstract class BaseActivity : AppCompatActivity(), ActivityDelegateOwner {
 
-    @Suppress("LeakingThis")
-    private val activityDelegates = ActivityDelegates(this)
+    private val activityDelegates by lazy { ActivityDelegates(this) }
 
     private var activityState = ActivityState.INITIALIZED
 

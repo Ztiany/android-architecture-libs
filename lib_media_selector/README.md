@@ -1,9 +1,8 @@
 # 多媒体文件选择库
 
-
 ## 1 应用内多媒体文件选择
 
-### 版本1：基于 boxing 封装（已废弃）
+### 版本1：基于 boxing 封装
 
 版本 1 基于 boxing 封装，由于内部存在一些 bug，后改为本地依赖并对 bug 进行了修复。
 
@@ -24,10 +23,10 @@
 ### 其他可选方案
 
 -  [EasyPhotos](https://github.com/HuanTanSheng/EasyPhotos)
--  [Matisse](https://github.com/zhihu/Matisse)
--  [ImagePicker](https://github.com/jeasonlzy/ImagePicker)
--  [PictureSelector](https://github.com/LuckSiege/PictureSelector)
--  [Album](https://github.com/yanzhenjie/Album)
+- [Matisse](https://github.com/zhihu/Matisse)
+- [ImagePicker](https://github.com/jeasonlzy/ImagePicker)
+- [PictureSelector](https://github.com/LuckSiege/PictureSelector)
+- [Album](https://github.com/yanzhenjie/Album)
 
 ## 2 使用系统内置组件进行文件选择
 
@@ -51,8 +50,8 @@ SystemMediaSelector 用于调用系统相机或 SAF 获取图片或文件。
 
 使用系统裁剪是发现不同设备厂商以及不同系统版本之间有这样那样的问题，于是决定内置图片裁剪库，可选裁剪库有：
 
--  [uCrop](https://github.com/Yalantis/uCrop)
--  [smartCropper](https://github.com/pqpo/SmartCropper)
--  [simpleCropper](https://github.com/igreenwood/SimpleCropView)
+- [uCrop](https://github.com/Yalantis/uCrop)
+- [smartCropper](https://github.com/pqpo/SmartCropper)
+- [simpleCropper](https://github.com/igreenwood/SimpleCropView)
 
 目前采用的是 uCrop

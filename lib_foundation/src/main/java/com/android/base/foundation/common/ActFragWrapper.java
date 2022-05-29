@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 /**
- * 包含了Activity和Fragment的相关操作
+ * 包含了 Activity 和 Fragment 的相关操作
  */
 public class ActFragWrapper {
 

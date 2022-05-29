@@ -39,8 +39,6 @@ dependencies {
 
     compileOnly AndroidLibraries.activityKtx
     compileOnly AndroidLibraries.fragmentKtx
-
     compileOnly KotlinLibraries.kotlinStdlib
-
     compileOnly ThirdLibraries.timber
 }

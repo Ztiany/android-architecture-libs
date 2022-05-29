@@ -8,9 +8,9 @@ import java.util.List;
 
 /**
  * <pre>
- *        1.Fragment需要自己处理BackPress事件，如果不处理，就交给子Fragment处理。都不处理则由Activity处理
- *        2.BackPress的传递由低层往深层传递，同一层级的中外层中的 Fragment优先处理。
- *        3.在Fragment中嵌套使用Fragment时，请使用getSupportChildFragmentManager
+ *        1.Fragment 需要自己处理 BackPress 事件，如果不处理，就交给子 Fragment 处理。都不处理则由 Activity 处理。
+ *        2.BackPress 的传递由低层往深层传递，同一层级的中外层中的 Fragment 优先处理。
+ *        3.在 Fragment 中嵌套使用 Fragment 时，请使用 getSupportChildFragmentManager。
  * </pre>
  */
 @SuppressWarnings("WeakerAccess")

@@ -3,13 +3,12 @@ package com.android.base.foundation.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.annotation.UiThread
 
 /**
- * Activity生命周期代理
- *
- * @author Ztiany
- * Date : 2016-05-06 15:04
+ * Activity 生命周期代理
  */
+@UiThread
 interface ActivityDelegate<T : Activity> {
 
     fun onAttachedToActivity(activity: T) {}

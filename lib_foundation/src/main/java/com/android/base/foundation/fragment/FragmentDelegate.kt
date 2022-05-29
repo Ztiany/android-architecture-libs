@@ -4,12 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
 
+@UiThread
 interface FragmentDelegate<T : Fragment> {
 
     /**该Delegate被添加到Fragment中*/
     fun onAttachToFragment(fragment: T) {}
+
     /**调用此方法时，清除Fragment的引用*/
     fun onDetachFromFragment() {}
 
